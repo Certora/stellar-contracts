@@ -3,9 +3,13 @@ use soroban_sdk::{contractclient, contracttype, panic_with_error, Address, Env};
 use crate::rwa::{
     claim_issuer::ClaimIssuerClient,
     claim_topics_and_issuers::ClaimTopicsAndIssuersClient,
-    emit_claim_topics_and_issuers_set,
     identity_claims::{generate_claim_id, Claim, IdentityClaimsClient},
     RWAError,
+};
+
+#[cfg(not(feature = "certora"))]
+use crate::rwa::{
+    emit_claim_topics_and_issuers_set,
 };
 
 /// Storage keys for the data associated with `RWA` token
@@ -75,7 +79,7 @@ pub fn identity_registry_storage(e: &Env) -> Address {
 ///
 /// # Errors
 ///
-/// * [`RWAError::IdentityVefificationFailed`] - When the identity of the
+/// * [`RWAError::IdentityVerificationFailed`] - When the identity of the
 ///   account cannot be verified.
 pub fn verify_identity(e: &Env, account: &Address) {
     let irs_addr = identity_registry_storage(e);
@@ -187,6 +191,7 @@ pub fn set_claim_topics_and_issuers(e: &Env, claim_topics_and_issuers: &Address)
     e.storage()
         .instance()
         .set(&IdentityVerifierStorageKey::ClaimTopicsAndIssuers, claim_topics_and_issuers);
+    #[cfg(not(feature = "certora"))]
     emit_claim_topics_and_issuers_set(e, claim_topics_and_issuers);
 }
 

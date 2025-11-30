@@ -1,0 +1,2 @@
+pub mod upgradeable_sanity_rules;
+pub mod upgradeable_migratable_contract;

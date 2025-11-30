@@ -1,5 +1,8 @@
 # certora
 .certora_internal
+emv-*
+local.conf
+*.wat
 
 **/target/
 /.idea
@@ -18,10 +21,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
-# Documentation
-docs/node_modules
-docs/build
 
 # Code Coverage
 htmlcov/

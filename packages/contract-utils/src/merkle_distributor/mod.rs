@@ -51,9 +51,18 @@ mod storage;
 #[cfg(test)]
 mod test;
 
+#[cfg(feature = "certora")]
+pub mod specs;
+
 use core::marker::PhantomData;
 
-use soroban_sdk::{contracterror, contractevent, Bytes, Env, Val};
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+
+use soroban_sdk::{contracterror, Bytes, Env, Val};
 
 use crate::crypto::hasher::Hasher;
 pub use crate::merkle_distributor::storage::MerkleDistributorStorageKey;
@@ -106,6 +115,7 @@ pub struct SetClaimed {
 ///
 /// * `e` - The Soroban environment.
 /// * `root` - The merkle root.
+#[cfg(not(feature = "certora"))]
 pub fn emit_set_root(e: &Env, root: Bytes) {
     SetRoot { root }.publish(e);
 }
@@ -116,6 +126,7 @@ pub fn emit_set_root(e: &Env, root: Bytes) {
 ///
 /// * `e` - The Soroban environment.
 /// * `index` - The index that was claimed.
+#[cfg(not(feature = "certora"))]
 pub fn emit_set_claimed(e: &Env, index: Val) {
     SetClaimed { index }.publish(e);
 }

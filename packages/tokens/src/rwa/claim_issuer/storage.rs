@@ -75,11 +75,17 @@ use soroban_sdk::{contracttype, panic_with_error, xdr::ToXdr, Address, Bytes, By
 
 use crate::rwa::{
     claim_issuer::{
-        emit_key_allowed, emit_key_removed, emit_revocation_event, emit_signatures_invalidated,
         ClaimIssuerError, SignatureVerifier, CLAIMS_EXTEND_AMOUNT, CLAIMS_TTL_THRESHOLD,
         KEYS_EXTEND_AMOUNT, KEYS_TTL_THRESHOLD, MAX_KEYS_PER_TOPIC, MAX_REGISTRIES_PER_KEY,
     },
     claim_topics_and_issuers::ClaimTopicsAndIssuersClient,
+};
+
+#[cfg(not(feature = "certora"))]
+use crate::rwa::{
+    claim_issuer::{
+        emit_key_allowed, emit_key_removed, emit_revocation_event, emit_signatures_invalidated,
+    },
 };
 
 #[contracttype]
@@ -93,7 +99,7 @@ pub struct SigningKey {
 #[contracttype]
 #[derive(Clone)]
 pub enum ClaimIssuerStorageKey {
-    /// Maps Topic -> Vec<SigningKey>
+    /// Maps Topic -> `Vec<SigningKey>`
     Topics(u32),
     /// Maps SigningKey -> Vec<(Topic, Registry)>
     Pairs(SigningKey),
@@ -316,7 +322,17 @@ pub fn get_registries(e: &Env, signing_key: &SigningKey) -> Vec<Address> {
         .iter()
         .map(|(_, addr)| addr);
 
-    Vec::from_iter(e, iter)
+    #[cfg(not(feature = "certora"))]
+    return Vec::from_iter(e, iter);
+
+    #[cfg(feature = "certora")]
+    {
+        let mut v: Vec<Address> = Vec::new(e);
+        for addr in iter {
+            v.push_back(addr);
+        }
+        v
+    }
 }
 
 /// Checks if a public key and its scheme are allowed to sign claims for a
@@ -427,12 +443,12 @@ pub fn is_authorized_for(e: &Env, registry: &Address, claim_topic: u32) -> bool 
 /// # Errors
 ///
 /// * [`ClaimIssuerError::KeyIsEmpty`] - If attempting to allow an empty key.
-/// * [`ClaimIssuerError::IssuerNotRegistered`] - If this claim issuer is not
-///   registered at the `claim_topics_and_issuers` registry.
-/// * [`ClaimIssuerError::ClaimTopicNotAllowed`] - If this claim issuer is not
-///   allowed to sign claims about the `claim_topic`.
+/// * [`ClaimIssuerError::NotAllowed`] - If this claim issuer is not allowed to
+///   sign claims about the `claim_topic`.
 /// * [`ClaimIssuerError::KeyAlreadyAllowed`] - If this exact (key, topic,
 ///   registry) combination is already registered.
+/// * [`ClaimIssuerError::LimitExceeded`] - If maximum keys per topic or
+///   registries per key limit is exceeded.
 ///
 /// # Events
 ///
@@ -455,14 +471,9 @@ pub fn allow_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, c
 
     let registry_client = ClaimTopicsAndIssuersClient::new(e, registry);
 
-    // Check claim issuer is registered at claim_topics_and_issuers registry
-    if !registry_client.is_trusted_issuer(&e.current_contract_address()) {
-        panic_with_error!(e, ClaimIssuerError::IssuerNotRegistered)
-    }
-
     // Check claim issuer can sign claim about a specific topic
     if !registry_client.has_claim_topic(&e.current_contract_address(), &claim_topic) {
-        panic_with_error!(e, ClaimIssuerError::ClaimTopicNotAllowed)
+        panic_with_error!(e, ClaimIssuerError::NotAllowed)
     }
 
     let signing_key = SigningKey { public_key: public_key.clone(), scheme };
@@ -474,7 +485,7 @@ pub fn allow_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, c
             e.storage().persistent().get(&key).unwrap_or_else(|| Vec::new(e));
 
         if topic_keys.len() >= MAX_KEYS_PER_TOPIC {
-            panic_with_error!(e, ClaimIssuerError::MaxKeysPerTopicExceeded)
+            panic_with_error!(e, ClaimIssuerError::LimitExceeded)
         }
 
         topic_keys.push_back(signing_key.clone());
@@ -494,11 +505,11 @@ pub fn allow_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, c
     pairs.push_back((claim_topic, registry.clone()));
 
     if pairs.len() >= MAX_REGISTRIES_PER_KEY {
-        panic_with_error!(e, ClaimIssuerError::MaxRegistriesPerKeyExceeded)
+        panic_with_error!(e, ClaimIssuerError::LimitExceeded)
     }
 
     e.storage().persistent().set(&pairs_storage_key, &pairs);
-
+    #[cfg(not(feature = "certora"))]
     emit_key_allowed(e, public_key, registry, scheme, claim_topic);
 }
 
@@ -570,7 +581,7 @@ pub fn remove_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, 
             e.storage().persistent().set(&topics_storage_key, &topic_keys);
         }
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_key_removed(e, public_key, registry, scheme, claim_topic);
 }
 
@@ -624,6 +635,11 @@ pub fn get_current_nonce_for(e: &Env, identity: &Address, claim_topic: u32) -> u
 /// * `identity` - The identity address to invalidate signatures for.
 /// * `claim_topic` - The claim topic to invalidate signatures for.
 ///
+/// # Errors
+///
+/// * [`ClaimIssuerError::MathOverflow`] - If the nonce has reached `u32::MAX`
+///   and cannot be incremented further.
+///
 /// # Events
 ///
 /// * topics - `["signatures_invalidated", identity: Address, claim_topic: u32]`
@@ -642,9 +658,12 @@ pub fn invalidate_claim_signatures(e: &Env, identity: &Address, claim_topic: u32
     let nonce_key = ClaimIssuerStorageKey::ClaimNonce(identity.clone(), claim_topic);
     let mut nonce: u32 = e.storage().persistent().get(&nonce_key).unwrap_or(0);
 
+    #[cfg(not(feature = "certora"))]
     emit_signatures_invalidated(e, identity, claim_topic, nonce);
 
-    nonce += 1;
+    nonce = nonce
+        .checked_add(1)
+        .unwrap_or_else(|| panic_with_error!(e, ClaimIssuerError::MathOverflow));
     e.storage().persistent().set(&nonce_key, &nonce);
 }
 
@@ -686,6 +705,7 @@ pub fn set_claim_revoked(
 
     e.storage().persistent().set(&ClaimIssuerStorageKey::RevokedClaim(claim_digest), &revoked);
 
+    #[cfg(not(feature = "certora"))]
     emit_revocation_event(e, identity, claim_topic, claim_data, revoked);
 }
 

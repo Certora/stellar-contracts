@@ -30,15 +30,22 @@
 //! Not providing a direct ownership transfer is a deliberate design decision to
 //! help avoid mistakes by transferring to a wrong address.
 
-#[cfg(feature = "certora")]
-pub mod spec;
-
 mod storage;
 
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, Env};
+#[cfg(feature = "certora")]
+pub mod specs;
+
+use soroban_sdk::{contracterror, Address, Env};
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::{contractevent};
+
 
 pub use crate::ownable::storage::{
     accept_ownership, enforce_owner_auth, get_owner, renounce_ownership, set_owner,
@@ -130,9 +137,9 @@ pub trait Ownable {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 #[repr(u32)]
 pub enum OwnableError {
-    OwnerNotSet = 1220,
-    TransferInProgress = 1221,
-    OwnerAlreadySet = 1222,
+    OwnerNotSet = 2100,
+    TransferInProgress = 2101,
+    OwnerAlreadySet = 2102,
 }
 
 // ################## EVENTS ##################
@@ -155,6 +162,7 @@ pub struct OwnershipTransfer {
 /// * `new_owner` - The address of the proposed new owner.
 /// * `live_until_ledger` - The ledger number until which the new owner can
 ///   accept the transfer.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_transfer(
     e: &Env,
     old_owner: &Address,
@@ -182,6 +190,7 @@ pub struct OwnershipTransferCompleted {
 ///
 /// * `e` - Access to the Soroban environment.
 /// * `new_owner` - The address of the new owner.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_transfer_completed(e: &Env, new_owner: &Address) {
     OwnershipTransferCompleted { new_owner: new_owner.clone() }.publish(e);
 }
@@ -199,6 +208,7 @@ pub struct OwnershipRenounced {
 ///
 /// * `e` - Access to the Soroban environment.
 /// * `old_owner` - The address of the owner who renounced ownership.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_renounced(e: &Env, old_owner: &Address) {
     OwnershipRenounced { old_owner: old_owner.clone() }.publish(e);
 }

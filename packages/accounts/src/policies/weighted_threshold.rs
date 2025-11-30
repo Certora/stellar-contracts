@@ -61,10 +61,18 @@
 //! }
 //! ```
 
+use cvlr::nondet::*;
+use cvlr_soroban::nondet_map;
 use soroban_sdk::{
-    auth::Context, contracterror, contractevent, contracttype, panic_with_error, Address, Env, Map,
+    auth::Context, contracterror, contracttype, panic_with_error, Address, Env, Map,
     Vec,
 };
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::{contractevent};
 
 // re-export
 use crate::smart_account::{ContextRule, Signer};
@@ -90,19 +98,29 @@ pub struct WeightedThresholdAccountParams {
     pub threshold: u32,
 }
 
+impl Nondet for WeightedThresholdAccountParams {
+    fn nondet() -> Self {
+        WeightedThresholdAccountParams {
+            signer_weights: nondet_map(),
+            threshold: nondet(),
+        }
+    }
+    
+}
+
 /// Error codes for weighted threshold policy operations.
 #[contracterror]
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u32)]
 pub enum WeightedThresholdError {
     /// The smart account does not have a weighted threshold policy installed.
-    SmartAccountNotInstalled = 2210,
+    SmartAccountNotInstalled = 3210,
     /// The threshold value is invalid.
-    InvalidThreshold = 2211,
+    InvalidThreshold = 3211,
     /// A mathematical operation would overflow.
-    MathOverflow = 2212,
+    MathOverflow = 3212,
     /// The transaction is not allowed by this policy.
-    NotAllowed = 2213,
+    NotAllowed = 3213,
 }
 
 /// Storage keys for weighted threshold policy data.
@@ -300,6 +318,7 @@ pub fn enforce(
 
     if total_weight >= params.threshold {
         // emit event
+        #[cfg(not(feature = "certora"))]
         WeightedPolicyEnforced {
             smart_account: smart_account.clone(),
             context: context.clone(),

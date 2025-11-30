@@ -75,11 +75,20 @@ mod utils;
 #[cfg(test)]
 mod test;
 
-pub use extensions::{allowlist, blocklist, burnable, capped, vault};
+pub use extensions::{allowlist, blocklist, burnable, capped};
 pub use overrides::{Base, ContractOverrides};
-use soroban_sdk::{contracterror, contractevent, Address, Env, String};
+use soroban_sdk::{contracterror, Address, Env, String};
 pub use storage::{AllowanceData, AllowanceKey, StorageKey};
 pub use utils::{sac_admin_generic, sac_admin_wrapper};
+
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
 
 /// Vanilla Fungible Token Trait
 ///
@@ -314,26 +323,6 @@ pub enum FungibleTokenError {
     UserNotAllowed = 113,
     /// The user is blocked and cannot perform this operation
     UserBlocked = 114,
-    /// Indicates access to uninitialized vault asset address.
-    VaultAssetAddressNotSet = 115,
-    /// Indicates that vault asset address is already set.
-    VaultAssetAddressAlreadySet = 116,
-    /// Indicates that vault virtual decimals offset is already set.
-    VaultVirtualDecimalsOffsetAlreadySet = 117,
-    /// Indicates the amount is not a valid vault assets value.
-    VaultInvalidAssetsAmount = 118,
-    /// Indicates the amount is not a valid vault shares value.
-    VaultInvalidSharesAmount = 119,
-    /// Attempted to deposit more assets than the max amount for address.
-    VaultExceededMaxDeposit = 120,
-    /// Attempted to mint more shares than the max amount for address.
-    VaultExceededMaxMint = 121,
-    /// Attempted to withdraw more assets than the max amount for address.
-    VaultExceededMaxWithdraw = 122,
-    /// Attempted to redeem more shares than the max amount for address.
-    VaultExceededMaxRedeem = 123,
-    /// Maximum number of decimals offset exceeded
-    VaultMaxDecimalsOffsetExceeded = 124,
 }
 
 // ################## CONSTANTS ##################
@@ -345,9 +334,6 @@ pub const ALLOW_BLOCK_EXTEND_AMOUNT: u32 = 30 * DAY_IN_LEDGERS;
 pub const ALLOW_BLOCK_TTL_THRESHOLD: u32 = ALLOW_BLOCK_EXTEND_AMOUNT - DAY_IN_LEDGERS;
 pub const INSTANCE_EXTEND_AMOUNT: u32 = 7 * DAY_IN_LEDGERS;
 pub const INSTANCE_TTL_THRESHOLD: u32 = INSTANCE_EXTEND_AMOUNT - DAY_IN_LEDGERS;
-
-// Suggested upper-bound for decimals to maximize both security and UX
-pub const MAX_DECIMALS_OFFSET: u32 = 10;
 
 // ################## EVENTS ##################
 
@@ -370,6 +356,7 @@ pub struct Transfer {
 /// * `from` - The address holding the tokens.
 /// * `to` - The address receiving the transferred tokens.
 /// * `amount` - The amount of tokens to be transferred.
+#[cfg(not(feature = "certora"))]
 pub fn emit_transfer(e: &Env, from: &Address, to: &Address, amount: i128) {
     Transfer { from: from.clone(), to: to.clone(), amount }.publish(e);
 }
@@ -395,6 +382,7 @@ pub struct Approve {
 /// * `spender` - The address authorized to spend the tokens.
 /// * `amount` - The amount of tokens made available to `spender`.
 /// * `live_until_ledger` - The ledger number at which the allowance expires.
+#[cfg(not(feature = "certora"))]
 pub fn emit_approve(
     e: &Env,
     owner: &Address,
@@ -422,6 +410,7 @@ pub struct Mint {
 /// * `e` - Access to Soroban environment.
 /// * `to` - The address receiving the new tokens.
 /// * `amount` - The amount of tokens to mint.
+#[cfg(not(feature = "certora"))]
 pub fn emit_mint(e: &Env, to: &Address, amount: i128) {
     Mint { to: to.clone(), amount }.publish(e);
 }

@@ -29,9 +29,15 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, BytesN, Env, String, Vec};
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+
+use soroban_sdk::{contracterror, Address, BytesN, Env, String, Vec};
 pub use storage::{
-    get_all_documents, get_document, get_document_by_index, get_document_count, remove_document,
+    get_document, get_document_by_index, get_document_count, get_documents, remove_document,
     set_document, Document, DocumentStorageKey,
 };
 
@@ -100,12 +106,15 @@ pub trait DocumentManager: RWAToken {
     /// * data - `[]`
     fn remove_document(e: &Env, name: BytesN<32>, operator: Address);
 
-    /// Retrieves a full list of all documents attached to the contract.
+    /// Retrieves documents from a specific bucket.
+    ///
+    /// Returns an empty vector if the bucket is empty or doesn't exist.
     ///
     /// # Arguments
     ///
     /// * `e` - The Soroban environment.
-    fn get_all_documents(e: &Env) -> Vec<(BytesN<32>, Document)>;
+    /// * `bucket_index` - The index of the bucket to retrieve documents from.
+    fn get_documents(e: &Env, bucket_index: u32) -> Vec<(BytesN<32>, Document)>;
 }
 
 // ################## ERRORS ##################
@@ -119,6 +128,8 @@ pub enum DocumentError {
     DocumentNotFound = 380,
     /// Maximum number of documents has been reached.
     MaxDocumentsReached = 381,
+    /// The URI exceeds the maximum allowed length.
+    UriTooLong = 382,
 }
 
 // ################## CONSTANTS ##################
@@ -133,6 +144,8 @@ pub const MAX_BUCKETS: u32 = 100;
 pub const BUCKET_SIZE: u32 = 50;
 /// Maximum number of documents that can be stored.
 pub const MAX_DOCUMENTS: u32 = BUCKET_SIZE * MAX_BUCKETS; // 5_000
+/// Maximum length for document URI.
+pub const MAX_URI_LEN: u32 = 200;
 
 // ################## EVENTS ##################
 
@@ -156,6 +169,7 @@ pub struct DocumentUpdated {
 /// * `uri` - The document URI.
 /// * `document_hash` - The document hash.
 /// * `timestamp` - The timestamp of the operation.
+#[cfg(not(feature = "certora"))]
 pub fn emit_document_updated(
     e: &Env,
     name: &BytesN<32>,
@@ -186,6 +200,7 @@ pub struct DocumentRemoved {
 ///
 /// * `e` - The Soroban environment.
 /// * `name` - The document name.
+#[cfg(not(feature = "certora"))]
 pub fn emit_document_removed(e: &Env, name: &BytesN<32>) {
     DocumentRemoved { name: name.clone() }.publish(e);
 }

@@ -2,15 +2,27 @@ mod storage;
 #[cfg(test)]
 mod test;
 use soroban_sdk::{
-    auth::CustomAccountInterface, contractclient, contracterror, contractevent, Address, Env, Map,
+    auth::CustomAccountInterface, contractclient, contracterror, Address, Env, Map,
     String, Symbol, Val, Vec,
 };
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::{contractevent};
+
 pub use storage::{
     add_context_rule, add_policy, add_signer, authenticate, do_check_auth, get_context_rule,
     get_context_rules, get_validated_context, remove_context_rule, remove_policy, remove_signer,
     update_context_rule_name, update_context_rule_valid_until, ContextRule, ContextRuleType, Meta,
     Signatures, Signer,
 };
+
+
+#[cfg(feature = "certora")]
+pub mod specs;
+
 
 /// Core trait for smart account functionality, extending Soroban's
 /// CustomAccountInterface with context rule management capabilities.
@@ -310,31 +322,31 @@ pub const MAX_CONTEXT_RULES: u32 = 15;
 #[repr(u32)]
 pub enum SmartAccountError {
     /// The specified context rule does not exist.
-    ContextRuleNotFound = 2000,
+    ContextRuleNotFound = 3000,
     /// A duplicate context rule already exists.
-    DuplicateContextRule = 2001,
+    DuplicateContextRule = 3001,
     /// The provided context cannot be validated against any rule.
-    UnvalidatedContext = 2002,
+    UnvalidatedContext = 3002,
     /// External signature verification failed.
-    ExternalVerificationFailed = 2003,
+    ExternalVerificationFailed = 3003,
     /// Context rule must have at least one signer or policy.
-    NoSignersAndPolicies = 2004,
+    NoSignersAndPolicies = 3004,
     /// The valid_until timestamp is in the past.
-    PastValidUntil = 2005,
+    PastValidUntil = 3005,
     /// The specified signer was not found.
-    SignerNotFound = 2006,
+    SignerNotFound = 3006,
     /// The signer already exists in the context rule.
-    DuplicateSigner = 2007,
+    DuplicateSigner = 3007,
     /// The specified policy was not found.
-    PolicyNotFound = 2008,
+    PolicyNotFound = 3008,
     /// The policy already exists in the context rule.
-    DuplicatePolicy = 2009,
+    DuplicatePolicy = 3009,
     /// Too many signers in the context rule.
-    TooManySigners = 2010,
+    TooManySigners = 3010,
     /// Too many policies in the context rule.
-    TooManyPolicies = 2011,
+    TooManyPolicies = 3011,
     /// Too many context rules in the smart account.
-    TooManyContextRules = 2012,
+    TooManyContextRules = 3012,
 }
 
 // ################## EVENTS ##################
@@ -364,6 +376,7 @@ pub struct ContextRuleAdded {
 /// * topics - `["context_rule_added", context_rule_id: u32]`
 /// * data - `[name: String, context_type: ContextRuleType, valid_until:
 ///   Option<u32>, signers: Vec<Signer>, policies: Vec<Address>]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_context_rule_added(e: &Env, context_rule: &ContextRule) {
     ContextRuleAdded {
         context_rule_id: context_rule.id,
@@ -400,6 +413,7 @@ pub struct ContextRuleUpdated {
 /// * topics - `["context_rule_updated", context_rule_id: u32]`
 /// * data - `[name: String, context_type: ContextRuleType, valid_until:
 ///   Option<u32>]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_context_rule_updated(e: &Env, context_rule_id: u32, meta: &Meta) {
     ContextRuleUpdated {
         context_rule_id,
@@ -429,6 +443,7 @@ pub struct ContextRuleRemoved {
 ///
 /// * topics - `["context_rule_removed", context_rule_id: u32]`
 /// * data - `[]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_context_rule_removed(e: &Env, context_rule_id: u32) {
     ContextRuleRemoved { context_rule_id }.publish(e);
 }
@@ -454,6 +469,7 @@ pub struct SignerAdded {
 ///
 /// * topics - `["signer_added", context_rule_id: u32]`
 /// * data - `[signer: Signer]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_signer_added(e: &Env, context_rule_id: u32, signer: &Signer) {
     SignerAdded { context_rule_id, signer: signer.clone() }.publish(e);
 }
@@ -479,6 +495,7 @@ pub struct SignerRemoved {
 ///
 /// * topics - `["signer_removed", context_rule_id: u32]`
 /// * data - `[signer: Signer]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_signer_removed(e: &Env, context_rule_id: u32, signer: &Signer) {
     SignerRemoved { context_rule_id, signer: signer.clone() }.publish(e);
 }
@@ -506,6 +523,7 @@ pub struct PolicyAdded {
 ///
 /// * topics - `["policy_added", context_rule_id: u32]`
 /// * data - `[policy: Address, install_param: Val]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_policy_added(e: &Env, context_rule_id: u32, policy: &Address, install_param: Val) {
     PolicyAdded { context_rule_id, policy: policy.clone(), install_param }.publish(e);
 }
@@ -531,6 +549,9 @@ pub struct PolicyRemoved {
 ///
 /// * topics - `["policy_removed", context_rule_id: u32]`
 /// * data - `[policy: Address]`
+#[cfg(not(feature = "certora"))]
 pub fn emit_policy_removed(e: &Env, context_rule_id: u32, policy: &Address) {
     PolicyRemoved { context_rule_id, policy: policy.clone() }.publish(e);
 }
+
+

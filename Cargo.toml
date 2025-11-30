@@ -25,7 +25,7 @@ members = [
     "packages/contract-utils",
     "packages/macros",
     "packages/test-utils/*",
-    "packages/tokens",
+    "packages/tokens"
 ]
 exclude = ["examples/upgradeable/testdata"]
 
@@ -37,21 +37,24 @@ repository = "https://github.com/OpenZeppelin/stellar-contracts"
 documentation = "https://docs.openzeppelin.com/stellar-contracts/"
 keywords = ["stellar", "soroban", "smart-contracts", "standards"]
 categories = ["no-std", "wasm"]
-version = "0.4.1"
+version = "0.5.1"
 
 [workspace.dependencies]
-soroban-sdk = "23.0.2"
+# certora change
+soroban-sdk = {package = "soroban-sdk", version = "=22.0.8", default-features = false}
 proc-macro2 = "1.0"
 proptest = "1"
 quote = "1.0"
 syn = { version = "2.0", features = ["full"] }
 soroban-test-helpers = "0.2.3"
-hex-literal = "1.0.0"
+# certora change
+hex-literal = "0.4.0" # only used in tests, helps fix rust-analyzer issues
 ed25519-dalek = "2.1.1"
 k256 = "0.13.4"
 p256 = "0.13.2"
 serde = { version = "1", default-features = false }
 serde-json-core = { version = "0.6.0", default-features = false }
+base64ct = { version = "=1.6.0" }
 
 # members
 stellar-access = { path = "packages/access" }
@@ -81,13 +84,16 @@ version = "0.4.0"
 default-features = false
 
 [workspace.dependencies.cvlr-soroban]
-git = "https://github.com/Certora/cvlr-soroban.git"
+git = "https://github.com/chandrakananandi/cvlr-soroban.git"
+branch = "soroban-22.0.8"
 # path = "/Users/chandrakananandi/research/cvlr-soroban/cvlr-soroban"
 
 [workspace.dependencies.cvlr-soroban-macros]
-git = "https://github.com/Certora/cvlr-soroban.git"
+git = "https://github.com/chandrakananandi/cvlr-soroban.git"
+branch = "soroban-22.0.8"
 # path = "/Users/chandrakananandi/research/cvlr-soroban/cvlr-soroban-macros"
 
 [workspace.dependencies.cvlr-soroban-derive]
-git = "https://github.com/Certora/cvlr-soroban.git"
+git = "https://github.com/chandrakananandi/cvlr-soroban.git"
+branch = "soroban-22.0.8"
 # path = "/Users/chandrakananandi/research/cvlr-soroban/cvlr-soroban-derive"

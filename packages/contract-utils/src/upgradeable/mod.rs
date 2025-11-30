@@ -72,13 +72,14 @@
 //! you can also find a helper `Upgrader` contract that performs upgrade+migrate
 //! in a single transaction.
 
-#[cfg(feature = "certora")]
-pub mod spec;
 
 mod storage;
 
 #[cfg(test)]
 mod test;
+
+#[cfg(feature = "certora")]
+pub mod specs;
 
 use soroban_sdk::{contractclient, contracterror, Address, BytesN, Env, FromVal, Val};
 

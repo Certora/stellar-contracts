@@ -2,17 +2,24 @@ use soroban_sdk::{contracttype, panic_with_error, Address, Env, Vec};
 
 use crate::rwa::{
     compliance::{
-        emit_module_added, emit_module_removed, ComplianceError, ComplianceHook,
+        ComplianceError, ComplianceHook,
         ComplianceModuleClient, COMPLIANCE_EXTEND_AMOUNT, COMPLIANCE_TTL_THRESHOLD, MAX_MODULES,
     },
     utils::token_binder::is_token_bound,
 };
 
+#[cfg(not(feature = "certora"))]
+use crate::rwa::{
+    compliance::{
+        emit_module_added, emit_module_removed,
+    }
+};
+
 /// Storage keys for the modular compliance contract.
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub enum DataKey {
-    /// Maps ComplianceHook -> Vec<Address> for registered modules
+pub enum ComplianceDataKey {
+    /// Maps ComplianceHook -> `Vec<Address>` for registered modules
     HookModules(ComplianceHook),
 }
 
@@ -33,7 +40,7 @@ pub enum DataKey {
 /// A vector of module addresses registered for the specified hook.
 /// Returns an empty vector if no modules are registered.
 pub fn get_modules_for_hook(e: &Env, hook: ComplianceHook) -> Vec<Address> {
-    let key = DataKey::HookModules(hook);
+    let key = ComplianceDataKey::HookModules(hook);
     if let Some(existing_modules) = e.storage().persistent().get(&key) {
         e.storage().persistent().extend_ttl(
             &key,
@@ -110,11 +117,12 @@ pub fn add_module_to(e: &Env, hook: ComplianceHook, module: Address) {
     }
 
     // Add the module
-    let key = DataKey::HookModules(hook.clone());
+    let key = ComplianceDataKey::HookModules(hook.clone());
     modules.push_back(module.clone());
     e.storage().persistent().set(&key, &modules);
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_module_added(e, hook, module);
 }
 
@@ -159,10 +167,11 @@ pub fn remove_module_from(e: &Env, hook: ComplianceHook, module: Address) {
     modules.remove(index);
 
     // Update storage
-    let key = DataKey::HookModules(hook.clone());
+    let key = ComplianceDataKey::HookModules(hook.clone());
     e.storage().persistent().set(&key, &modules);
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_module_removed(e, hook, module);
 }
 
@@ -186,7 +195,7 @@ pub fn remove_module_from(e: &Env, hook: ComplianceHook, module: Address) {
 ///
 /// # Errors
 ///
-/// * refer to [`require_auth_from_bound_contract`]
+/// * refer to [`require_auth_from_bound_token`]
 ///
 /// # Cross-Contract Calls
 ///
@@ -216,7 +225,7 @@ pub fn transferred(e: &Env, from: Address, to: Address, amount: i128, token: Add
 ///
 /// # Errors
 ///
-/// * refer to [`require_auth_from_bound_contract`]
+/// * refer to [`require_auth_from_bound_token`]
 ///
 /// # Cross-Contract Calls
 ///
@@ -246,7 +255,7 @@ pub fn created(e: &Env, to: Address, amount: i128, token: Address) {
 ///
 /// # Errors
 ///
-/// * refer to [`require_auth_from_bound_contract`]
+/// * refer to [`require_auth_from_bound_token`]
 ///
 /// # Cross-Contract Calls
 ///

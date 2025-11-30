@@ -45,9 +45,16 @@
 //! **Failure to follow this process may result in permanent DoS or silent
 //! security degradation.**
 
+use cvlr::nondet::Nondet;
 use soroban_sdk::{
-    auth::Context, contracterror, contractevent, contracttype, panic_with_error, Address, Env, Vec,
+    auth::Context, contracterror, contracttype, panic_with_error, Address, Env, Vec,
 };
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
 
 use crate::smart_account::ContextRule;
 // re-export
@@ -72,17 +79,25 @@ pub struct SimpleThresholdAccountParams {
     pub threshold: u32,
 }
 
+impl Nondet for SimpleThresholdAccountParams {
+    fn nondet() -> Self {
+        SimpleThresholdAccountParams {
+            threshold: u32::nondet(),
+        }
+    }
+}
+
 /// Error codes for simple threshold policy operations.
 #[contracterror]
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u32)]
 pub enum SimpleThresholdError {
     /// The smart account does not have a simple threshold policy installed.
-    SmartAccountNotInstalled = 2200,
+    SmartAccountNotInstalled = 3200,
     /// When threshold is 0 or exceeds the number of available signers.
-    InvalidThreshold = 2201,
+    InvalidThreshold = 3201,
     /// The transaction is not allowed by this policy.
-    NotAllowed = 2202,
+    NotAllowed = 3202,
 }
 
 /// Storage keys for simple threshold policy data.
@@ -198,6 +213,7 @@ pub fn enforce(
 
     if authenticated_signers.len() >= threshold {
         // emit event
+        #[cfg(not(feature = "certora"))]
         SimplePolicyEnforced {
             smart_account: smart_account.clone(),
             context: context.clone(),

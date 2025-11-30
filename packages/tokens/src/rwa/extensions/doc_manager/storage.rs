@@ -28,8 +28,13 @@
 use soroban_sdk::{contracttype, panic_with_error, BytesN, Env, String, TryFromVal, Val, Vec};
 
 use super::{
-    emit_document_removed, emit_document_updated, DocumentError, BUCKET_SIZE,
-    DOCUMENT_EXTEND_AMOUNT, DOCUMENT_TTL_THRESHOLD, MAX_DOCUMENTS,
+    DocumentError, BUCKET_SIZE,
+    DOCUMENT_EXTEND_AMOUNT, DOCUMENT_TTL_THRESHOLD, MAX_DOCUMENTS, MAX_URI_LEN,
+};
+
+#[cfg(not(feature = "certora"))]
+use super::{
+    emit_document_removed, emit_document_updated,
 };
 
 /// Represents a document with its metadata.
@@ -112,30 +117,17 @@ pub fn get_document_by_index(e: &Env, index: u32) -> (BytesN<32>, Document) {
     bucket.get(offset_in_bucket).expect("document entry to be present in bucket")
 }
 
-/// Retrieves a full list of all documents.
+/// Retrieves documents from a specific bucket.
+///
+/// Returns an empty vector if the bucket is empty or doesn't exist.
 ///
 /// # Arguments
 ///
 /// * `e` - The Soroban environment.
-pub fn get_all_documents(e: &Env) -> Vec<(BytesN<32>, Document)> {
-    let count = get_document_count(e);
-    let mut documents = Vec::new(e);
-
-    if count == 0 {
-        return documents;
-    }
-
-    let last_bucket = (count - 1) / BUCKET_SIZE;
-
-    for bucket_idx in 0..=last_bucket {
-        let bucket_key = DocumentStorageKey::Bucket(bucket_idx);
-        let bucket: Vec<(BytesN<32>, Document)> =
-            e.storage().persistent().get(&bucket_key).unwrap_or_else(|| Vec::new(e));
-
-        documents.append(&bucket);
-    }
-
-    documents
+/// * `bucket_index` - The index of the bucket to retrieve documents from.
+pub fn get_documents(e: &Env, bucket_index: u32) -> Vec<(BytesN<32>, Document)> {
+    let bucket_key = DocumentStorageKey::Bucket(bucket_index);
+    get_persistent_entry(e, &bucket_key).unwrap_or_else(|| Vec::new(e))
 }
 
 // ################## UPDATE STATE ##################
@@ -153,6 +145,8 @@ pub fn get_all_documents(e: &Env) -> Vec<(BytesN<32>, Document)> {
 ///
 /// * [`DocumentError::MaxDocumentsReached`] - If the maximum number of
 ///   documents has been reached.
+/// * [`DocumentError::UriTooLong`] - If the URI exceeds the maximum allowed
+///   length of 200 characters.
 ///
 /// # Events
 ///
@@ -166,6 +160,11 @@ pub fn get_all_documents(e: &Env) -> Vec<(BytesN<32>, Document)> {
 /// - During contract initialization/construction
 /// - In functions that implement their own authorization logic
 pub fn set_document(e: &Env, name: &BytesN<32>, uri: &String, document_hash: &BytesN<32>) {
+    // Validate URI length
+    if uri.len() > MAX_URI_LEN {
+        panic_with_error!(e, DocumentError::UriTooLong)
+    }
+
     let timestamp = e.ledger().timestamp();
 
     let document = Document { uri: uri.clone(), document_hash: document_hash.clone(), timestamp };
@@ -209,7 +208,7 @@ pub fn set_document(e: &Env, name: &BytesN<32>, uri: &String, document_hash: &By
 
         e.storage().persistent().set(&DocumentStorageKey::Count, &(count + 1));
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_document_updated(e, name, uri, document_hash, timestamp);
 }
 
@@ -291,7 +290,7 @@ pub fn remove_document(e: &Env, name: &BytesN<32>) {
     e.storage().persistent().remove(&index_key);
 
     e.storage().persistent().set(&DocumentStorageKey::Count, &last_index);
-
+    #[cfg(not(feature = "certora"))]
     emit_document_removed(e, name);
 }
 

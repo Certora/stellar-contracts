@@ -13,11 +13,18 @@
 //!     period_ledgers: 17280,      // ~1 day in ledgers
 //! }
 //! ```
+use cvlr::nondet::Nondet;
 use soroban_sdk::{
     auth::{Context, ContractContext},
-    contracterror, contractevent, contracttype, panic_with_error, symbol_short, Address, Env,
+    contracterror, contracttype, panic_with_error, symbol_short, Address, Env,
     TryFromVal, Vec,
 };
+
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::{contractevent};
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::{contractevent};
 
 use crate::smart_account::{ContextRule, Signer};
 
@@ -42,6 +49,15 @@ pub struct SpendingLimitAccountParams {
     pub spending_limit: i128,
     /// The period in ledgers over which the spending limit applies.
     pub period_ledgers: u32,
+}
+
+impl Nondet for SpendingLimitAccountParams {
+    fn nondet() -> Self {
+        SpendingLimitAccountParams {
+            spending_limit: i128::nondet(),
+            period_ledgers: u32::nondet(),
+        }
+    }
 }
 
 /// Internal storage structure for spending limit tracking.
@@ -74,15 +90,15 @@ pub struct SpendingEntry {
 #[repr(u32)]
 pub enum SpendingLimitError {
     /// The smart account does not have a spending limit policy installed.
-    SmartAccountNotInstalled = 2220,
+    SmartAccountNotInstalled = 3220,
     /// The spending limit has been exceeded.
-    SpendingLimitExceeded = 2221,
+    SpendingLimitExceeded = 3221,
     /// The spending limit or period is invalid.
-    InvalidLimitOrPeriod = 2222,
+    InvalidLimitOrPeriod = 3222,
     /// The transaction is not allowed by this policy.
-    NotAllowed = 2223,
+    NotAllowed = 3223,
     /// The spending history has reached maximum capacity.
-    HistoryCapacityExceeded = 2224,
+    HistoryCapacityExceeded = 3224,
 }
 
 /// Storage keys for spending limit policy data.
@@ -289,6 +305,7 @@ pub fn enforce(
 
                         e.storage().persistent().set(&key, &data);
 
+                        #[cfg(not(feature = "certora"))]
                         SpendingLimitPolicyEnforced {
                             smart_account: smart_account.clone(),
                             context: context.clone(),

@@ -2,10 +2,16 @@ use soroban_sdk::{contracttype, panic_with_error, Address, Env};
 
 use crate::{
     ownable::{
-        emit_ownership_renounced, emit_ownership_transfer, emit_ownership_transfer_completed,
         OwnableError,
     },
     role_transfer::{accept_transfer, transfer_role},
+};
+
+#[cfg(not(feature = "certora"))]
+use crate::{
+    ownable::{
+        emit_ownership_renounced, emit_ownership_transfer, emit_ownership_transfer_completed
+    }
 };
 
 /// Storage keys for `Ownable` utility.
@@ -131,9 +137,14 @@ pub fn accept_ownership(e: &Env) {
 /// * Authorization for the current owner is required.
 pub fn renounce_ownership(e: &Env) {
     let owner = enforce_owner_auth(e);
+    #[cfg(not(feature = "certora"))]
     let key = OwnableStorageKey::PendingOwner;
-
+    #[cfg(not(feature = "certora"))]
     if e.storage().temporary().get::<_, Address>(&key).is_some() {
+        panic_with_error!(e, OwnableError::TransferInProgress);
+    }
+    #[cfg(feature = "certora")]
+    if e.storage().temporary().get::<_, Address>(&OwnableStorageKey::PendingOwner).is_some() {
         panic_with_error!(e, OwnableError::TransferInProgress);
     }
 
