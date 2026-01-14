@@ -1,0 +1,58 @@
+{
+  "property": {
+    "property": "P-03. Ownable-Non-Panics.",
+    "description": "Ownable functions do not under appropriate assumptions.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "transfer_ownership_non_panic",
+      "description": "requires storage setup owner exists owner auth if there is a pending owner they are the same live until ledger is appropriate",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "transfer_ownership_non_panic_sanity",
+      "description": "sanity",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "accept_ownership_non_panic",
+      "description": "requires storage setup pending_owner is some pending_owner auth",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "accept_ownership_non_panic_sanity",
+      "description": "sanity",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "renounce_ownership_non_panic",
+      "description": "requires storage setup pending_owner is none",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "renounce_ownership_non_panic_sanity",
+      "description": "sanity",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "owner_restricted_function_non_panic",
+      "description": "requires storage setup owner exists owner auth",
+      "status": "verified",
+      "link": ""
+    },
+    {
+      "name": "owner_restricted_function_non_panic_sanity",
+      "description": "sanity",
+      "status": "verified",
+      "link": ""
+    }
+  ],
+  "total_rules": 8
+}

@@ -1,0 +1,82 @@
+{
+  "property": {
+    "property": "P-02. Ownable-Panics.",
+    "description": "Ownable functions panic in all appropriate cases.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "transfer_ownership_panics_if_unauth_by_owner",
+      "description": "transfer_ownership panics if the not authorized by the owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "transfer_ownership_panics_if_owner_not_set",
+      "description": "transfer_ownership panics if the owner is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "transfer_ownership_panics_if_live_until_ledger_0_and_pending_owner_none",
+      "description": "transfer_ownership panics if live_until_ledger = 0 and PendingOwner = None",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "transfer_ownership_panics_if_live_until_ledger_0_and_diff_pending_owner",
+      "description": "transfer_ownership panics if live_until_ledger = 0 and PendingOwner != new_owner",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "transfer_ownership_panics_if_invalid_live_until_ledger",
+      "description": "transfer_ownership panics if the live_until_ledger is in the past.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "accept_ownership_panics_if_unauth_by_pending_owner",
+      "description": "accept_ownership panics if the not authorized by the pending owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "accept_ownership_panics_if_pending_owner_not_set",
+      "description": "accept_ownership panics if the pending owner is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "renounce_ownership_panics_if_unauth_by_owner",
+      "description": "renounce_ownership panics if not authorized by the owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "renounce_ownership_panics_if_owner_not_set",
+      "description": "renounce_ownership panics if the owner is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "renounce_ownership_panics_if_pending_ownership_transfer",
+      "description": "renounce_ownership panics if there is a pending ownership transfer.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "owner_restricted_function_panics_if_unauth_by_owner",
+      "description": "owner_restricted_function panics if not authorized by owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    },
+    {
+      "name": "owner_restricted_function_panics_if_owner_not_set",
+      "description": "owner_restricted_function panics if the owner is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088"
+    }
+  ],
+  "total_rules": 12
+}

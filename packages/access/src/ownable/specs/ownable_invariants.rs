@@ -8,6 +8,10 @@ use crate::ownable::{
     *,
 };
 
+// property: P-04. Ownable-Invariants.
+// description: Invariants: owner remains set and pending_owner implies owner.
+// status: verified
+
 // invariant: owner != None -> holds in all cases except for renounce_ownership
 
 // helpers

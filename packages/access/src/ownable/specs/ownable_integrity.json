@@ -1,0 +1,40 @@
+{
+  "property": {
+    "property": "P-01. Ownable-Integrity.",
+    "description": "Ownable functions change state as expected.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "ownable_constructor_integrity",
+      "description": "after the constructor the owner is set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5"
+    },
+    {
+      "name": "transfer_ownership_integrity",
+      "description": "transfer_ownership with live_until_ledger > current_ledger sets the pending owner to new_owner and does not change the owner",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5"
+    },
+    {
+      "name": "remove_transfer_ownership_integrity",
+      "description": "transfer_ownership with a live ledger 0 removes the pending owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5"
+    },
+    {
+      "name": "accept_ownership_integrity",
+      "description": "accept_ownership sets the owner to the pending owner and removes the pending owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5"
+    },
+    {
+      "name": "renounce_ownership_integrity",
+      "description": "renounce_ownership removes the owner.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5"
+    }
+  ],
+  "total_rules": 5
+}

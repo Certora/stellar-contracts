@@ -9,11 +9,16 @@ use crate::access_control::{
     AccessControl,
 };
 
+// property: P-06. Access-Control-Panics.
+// description: Access Control functions panic in all appropriate cases.
+// status: violated
+
 // package functions
 
 #[rule]
 // grant role panic if unauthorized by caller
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn grant_role_panics_if_caller_unauth(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -26,6 +31,7 @@ pub fn grant_role_panics_if_caller_unauth(e: Env) {
 #[rule]
 // grant role panics if caller is not admin and not admin_role
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn grant_role_panics_if_caller_not_admin_nor_admin_role(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -47,6 +53,7 @@ pub fn grant_role_panics_if_caller_not_admin_nor_admin_role(e: Env) {
 #[rule]
 // revoke_role panics if unauthorized by caller
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn revoke_role_panics_if_caller_unauth(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -59,6 +66,7 @@ pub fn revoke_role_panics_if_caller_unauth(e: Env) {
 #[rule]
 // revoke_role panics if caller is not admin and not admin_role
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn revoke_role_panics_if_caller_not_admin_nor_admin_role(e: Env) {
     let caller = nondet_address();
     clog!(cvlr_soroban::Addr(&caller));
@@ -84,6 +92,7 @@ pub fn revoke_role_panics_if_caller_not_admin_nor_admin_role(e: Env) {
 #[rule]
 // revoke_role panics if account does not have the role
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn revoke_role_panics_if_account_does_not_have_role(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -97,6 +106,7 @@ pub fn revoke_role_panics_if_account_does_not_have_role(e: Env) {
 #[rule]
 // revoke_role panics if role is empty
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn revoke_role_panics_if_role_is_empty(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -110,6 +120,7 @@ pub fn revoke_role_panics_if_role_is_empty(e: Env) {
 #[rule]
 // renounce_role panics if unauthorized by caller
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_role_panics_if_caller_unauth(e: Env) {
     let caller = nondet_address();
     let role = nondet_symbol();
@@ -121,6 +132,7 @@ pub fn renounce_role_panics_if_caller_unauth(e: Env) {
 #[rule]
 // renounce_role panics if caller does not have the role
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_role_panics_if_caller_does_not_have_role(e: Env) {
     let caller = nondet_address();
     clog!(cvlr_soroban::Addr(&caller));
@@ -135,6 +147,7 @@ pub fn renounce_role_panics_if_caller_does_not_have_role(e: Env) {
 #[rule]
 // renounce_role panics if role is empty
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_role_panics_if_role_is_empty(e: Env) {
     let caller = nondet_address();
     let role = nondet_symbol();
@@ -147,6 +160,7 @@ pub fn renounce_role_panics_if_role_is_empty(e: Env) {
 #[rule]
 // transfer_admin_role panics if the not authorized by the admin.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn transfer_admin_role_panics_if_unauth_by_admin(e: Env) {
     let new_admin = nondet_address();
     clog!(cvlr_soroban::Addr(&new_admin));
@@ -164,6 +178,7 @@ pub fn transfer_admin_role_panics_if_unauth_by_admin(e: Env) {
 #[rule]
 // transfer_admin_role panics if the admin is not set.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn transfer_admin_role_panics_if_admin_not_set(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = u32::nondet();
@@ -176,6 +191,7 @@ pub fn transfer_admin_role_panics_if_admin_not_set(e: Env) {
 #[rule]
 // transfer_admin_role panics if live_until_ledger = 0 and PendingAdmin = None
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn transfer_admin_role_panics_if_live_until_ledger_0_and_pending_admin_none(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = 0;
@@ -189,6 +205,7 @@ pub fn transfer_admin_role_panics_if_live_until_ledger_0_and_pending_admin_none(
 // transfer_admin_role panics if live_until_ledger = 0 and PendingAdmin !=
 // new_admin 
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn transfer_admin_role_panics_if_live_until_ledger_0_and_diff_pending_admin(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = 0;
@@ -203,6 +220,7 @@ pub fn transfer_admin_role_panics_if_live_until_ledger_0_and_diff_pending_admin(
 #[rule]
 // transfer_admin_role panics if the live_until_ledger is in the past.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn transfer_admin_role_panics_if_invalid_live_until_ledger(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = u32::nondet();
@@ -218,6 +236,7 @@ pub fn transfer_admin_role_panics_if_invalid_live_until_ledger(e: Env) {
 #[rule]
 // accept_admin_transfer panics if the not authorized by the pending admin.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn accept_admin_transfer_panics_if_unauth_by_pending_admin(e: Env) {
     let pending_admin = get_pending_admin(&e);
     if let Some(pending_admin_internal) = pending_admin.clone() {
@@ -230,6 +249,7 @@ pub fn accept_admin_transfer_panics_if_unauth_by_pending_admin(e: Env) {
 #[rule]
 // accept_admin_transfer panics if the pending admin is not set.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn accept_admin_transfer_panics_if_pending_admin_not_set(e: Env) {
     let pending_admin = get_pending_admin(&e);
     cvlr_assume!(pending_admin.is_none());
@@ -240,6 +260,7 @@ pub fn accept_admin_transfer_panics_if_pending_admin_not_set(e: Env) {
 #[rule]
 // set_role_admin panics if not authorized by the admin
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn set_role_admin_panics_if_unauth_by_admin(e: Env) {
     let role = nondet_symbol();
     let admin_role = nondet_symbol();
@@ -254,6 +275,7 @@ pub fn set_role_admin_panics_if_unauth_by_admin(e: Env) {
 #[rule]
 // set_role_admin panics if the admin is not set
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn set_role_admin_panics_if_admin_not_set(e: Env) {
     let role = nondet_symbol();
     let admin_role = nondet_symbol();
@@ -266,6 +288,7 @@ pub fn set_role_admin_panics_if_admin_not_set(e: Env) {
 #[rule]
 // renounce_admin panics if not authorized by the admin.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_admin_panics_if_unauth_by_admin(e: Env) {
     let admin = AccessControlContract::get_admin(&e);
     if let Some(admin_internal) = admin.clone() {
@@ -279,6 +302,7 @@ pub fn renounce_admin_panics_if_unauth_by_admin(e: Env) {
 #[rule]
 // renounce_admin panics if the admin is not set.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_admin_panics_if_admin_not_set(e: Env) {
     let admin = AccessControlContract::get_admin(&e);
     cvlr_assume!(admin.is_none());
@@ -288,7 +312,8 @@ pub fn renounce_admin_panics_if_admin_not_set(e: Env) {
 
 #[rule]
 // renounce_admin panics if there is a pending adminship transfer.
-// status: bug
+// status: violated
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn renounce_admin_panics_if_pending_adminship_transfer(e: Env) {
     let pending_admin = get_pending_admin(&e);
     cvlr_assume!(pending_admin.is_some());
@@ -301,6 +326,7 @@ pub fn renounce_admin_panics_if_pending_adminship_transfer(e: Env) {
 #[rule]
 // admin_function panics if not authorized by the admin.
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn admin_function_panics_if_unauth_by_admin(e: Env) {
     let admin = AccessControlContract::get_admin(&e);
     if let Some(admin_internal) = admin.clone() {
@@ -314,6 +340,7 @@ pub fn admin_function_panics_if_unauth_by_admin(e: Env) {
 #[rule]
 // admin_function panics if admin not set
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn admin_function_panics_if_admin_not_set(e: Env) {
     let admin = AccessControlContract::get_admin(&e);
     cvlr_assume!(admin.is_none());
@@ -324,6 +351,7 @@ pub fn admin_function_panics_if_admin_not_set(e: Env) {
 #[rule]
 // role1_auth_func panics if caller does not authorize
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn role1_auth_func_panics_if_caller_does_not_authorize(e: Env) {
     let caller = nondet_address();
     cvlr_assume!(!is_auth(caller.clone()));
@@ -334,6 +362,7 @@ pub fn role1_auth_func_panics_if_caller_does_not_authorize(e: Env) {
 #[rule]
 // role1_or_role2_auth_func panics if caller doesn't authorize
 // status: verified
+// link: https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc
 pub fn role1_or_role2_auth_func_panics_if_caller_does_not_authorize(e: Env) {
     let caller = nondet_address();
     cvlr_assume!(!is_auth(caller.clone()));

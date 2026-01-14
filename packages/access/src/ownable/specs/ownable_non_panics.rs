@@ -8,6 +8,10 @@ use crate::ownable::{
     OwnableStorageKey, *,
 };
 
+// property: P-03. Ownable-Non-Panics.
+// description: Ownable functions do not under appropriate assumptions.
+// status: verified
+
 // These rules require the prover arg "prover_args": ["-trapAsAssert true"] to
 // consider also panicking paths.
 
