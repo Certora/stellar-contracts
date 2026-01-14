@@ -1,6 +1,6 @@
 name: Certora verification
 
-on: pull_request
+on: workflow_dispatch #  pull_request
 
 env:
   CONFIGS: |

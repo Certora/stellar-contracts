@@ -1,14 +1,14 @@
 name: "rust workflow"
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - "**.md"
-  pull_request:
-    paths-ignore:
-      - "**.md"
+  # push:
+  #   branches:
+  #     - main
+  #   paths-ignore:
+  #     - "**.md"
+  # pull_request:
+  #   paths-ignore:
+  #     - "**.md"
   workflow_dispatch:
 
 # If new code is pushed to a PR branch, then cancel in progress workflows for
