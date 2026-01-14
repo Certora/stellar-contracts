@@ -7,52 +7,28 @@
   "rules": [
     {
       "name": "transfer_ownership_non_panic",
-      "description": "requires storage setup owner exists owner auth if there is a pending owner they are the same live until ledger is appropriate",
+      "description": "if: storage is setup, owner exists, owner auth, pending owner is some, pending owner auth, live until ledger is appropriate then transfer_ownership does not panic",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "transfer_ownership_non_panic_sanity",
-      "description": "sanity",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347"
     },
     {
       "name": "accept_ownership_non_panic",
-      "description": "requires storage setup pending_owner is some pending_owner auth",
+      "description": "if: storage is setup, pending owner is some, pending owner auth then accept_ownership does not panic",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "accept_ownership_non_panic_sanity",
-      "description": "sanity",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347"
     },
     {
       "name": "renounce_ownership_non_panic",
-      "description": "requires storage setup pending_owner is none",
+      "description": "if: storage is setup, pending owner is none then renounce_ownership does not panic",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "renounce_ownership_non_panic_sanity",
-      "description": "sanity",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347"
     },
     {
       "name": "owner_restricted_function_non_panic",
-      "description": "requires storage setup owner exists owner auth",
+      "description": "if: storage is setup, owner exists, owner auth then owner_restricted_function does not panic",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "owner_restricted_function_non_panic_sanity",
-      "description": "sanity",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347"
     }
   ],
-  "total_rules": 8
+  "total_rules": 4
 }

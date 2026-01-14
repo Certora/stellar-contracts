@@ -1,118 +1,64 @@
 {
   "property": {
     "property": "P-04. Ownable-Invariants.",
-    "description": "Invariants: owner remains set and pending_owner implies owner.",
+    "description": "Invariants: 1. owner != None (except for when renounce_ownership is called) and 2. pending_owner != none implies owner != none.",
     "status": "verified"
   },
   "rules": [
     {
       "name": "after_constructor_owner_is_set",
-      "description": "",
+      "description": "invariant: owner != None, case: constructor",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_constructor_owner_is_set_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_transfer_ownership_pending_owner_is_set",
-      "description": "",
+      "description": "invariant: owner != None, case: transfer_ownership",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_transfer_ownership_pending_owner_is_set_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_accept_ownership_owner_is_set",
-      "description": "",
+      "description": "invariant: owner != None, case: accept_ownership",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_accept_ownership_owner_is_set_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_owner_restricted_function_owner_is_set",
-      "description": "",
+      "description": "invariant: owner != None, case: owner_restricted_function",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_owner_restricted_function_owner_is_set_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_constructor_pending_owner_implies_owner",
-      "description": "",
+      "description": "invariant: pending_owner != none implies owner != none, case: constructor",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_constructor_pending_owner_implies_owner_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_transfer_ownership_pending_owner_implies_owner",
-      "description": "",
+      "description": "invariant: pending_owner != none implies owner != none, case: transfer_ownership",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_transfer_ownership_pending_owner_implies_owner_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_accept_ownership_pending_owner_implies_owner",
-      "description": "",
+      "description": "invariant: pending_owner != none implies owner != none, case: accept_ownership",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_accept_ownership_pending_owner_implies_owner_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_renounce_ownership_pending_owner_implies_owner",
-      "description": "",
+      "description": "invariant: pending_owner != none implies owner != none, case: renounce_ownership",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_renounce_ownership_pending_owner_implies_owner_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     },
     {
       "name": "after_owner_restricted_function_pending_owner_implies_owner",
-      "description": "",
+      "description": "invariant: pending_owner != none implies owner != none, case: owner_restricted_function",
       "status": "verified",
-      "link": ""
-    },
-    {
-      "name": "after_owner_restricted_function_pending_owner_implies_owner_sanity",
-      "description": "",
-      "status": "verified",
-      "link": ""
+      "link": "https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741"
     }
   ],
-  "total_rules": 18
+  "total_rules": 9
 }

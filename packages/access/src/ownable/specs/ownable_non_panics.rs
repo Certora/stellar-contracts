@@ -16,13 +16,9 @@ use crate::ownable::{
 // consider also panicking paths.
 
 #[rule]
-// requires
-// storage setup
-// owner exists
-// owner auth
-// if there is a pending owner they are the same
-// live until ledger is appropriate
+// if: storage is setup, owner exists, owner auth, pending owner is some, pending owner auth, live until ledger is appropriate then transfer_ownership does not panic
 // status: verified
+// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn transfer_ownership_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
@@ -56,46 +52,9 @@ pub fn transfer_ownership_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, pending owner is some, pending owner auth then accept_ownership does not panic
 // status: verified
-pub fn transfer_ownership_non_panic_sanity(e: Env) {
-    let address1 = nondet_address();
-    e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
-
-    let address2 = nondet_address();
-    e.storage().instance().set(&OwnableStorageKey::Owner, &address2);
-
-    let new_owner = nondet_address().clone();
-    let live_until_ledger = u32::nondet();
-
-    let owner = OwnableContract::get_owner(&e);
-    cvlr_assume!(owner.is_some());
-    if let Some(owner_internal) = owner.clone() {
-        cvlr_assume!(is_auth(owner_internal));
-    }
-
-    let pending_owner = get_pending_owner(&e);
-    if let Some(pending_owner_internal) = pending_owner.clone() {
-        cvlr_assume!(pending_owner_internal == new_owner);
-    }
-
-    if live_until_ledger == 0 {
-        cvlr_assume!(pending_owner.is_some());
-    } else {
-        cvlr_assume!(live_until_ledger >= e.ledger().sequence());
-        cvlr_assume!(live_until_ledger <= e.ledger().max_live_until_ledger());
-    }
-
-    OwnableContract::transfer_ownership(&e, new_owner, live_until_ledger);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// pending_owner is some
-// pending_owner auth
-// status: verified
+// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn accept_ownership_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
@@ -110,29 +69,9 @@ pub fn accept_ownership_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, pending owner is none then renounce_ownership does not panic
 // status: verified
-pub fn accept_ownership_non_panic_sanity(e: Env) {
-    let address1 = nondet_address();
-    e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
-
-    let address2 = nondet_address();
-    e.storage().instance().set(&OwnableStorageKey::Owner, &address2);
-
-    let pending_owner = get_pending_owner(&e);
-    cvlr_assume!(pending_owner.is_some());
-    if let Some(pending_owner_internal) = pending_owner.clone() {
-        cvlr_assume!(is_auth(pending_owner_internal));
-    }
-    OwnableContract::accept_ownership(&e);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// pending_owner is none
-// status: verified
+// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn renounce_ownership_non_panic(e: Env) {
     // // setup storage: needed for now.
     // // WIP: will have this macro for setting storage up automatically.
@@ -151,28 +90,9 @@ pub fn renounce_ownership_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, owner exists, owner auth then owner_restricted_function does not panic
 // status: verified
-pub fn renounce_ownership_non_panic_sanity(e: Env) {
-    let key = OwnableStorageKey::PendingOwner;
-    e.storage().temporary().set(&key, &nondet_address());
-    e.storage().temporary().remove(&key);
-
-    let owner = OwnableContract::get_owner(&e);
-    cvlr_assume!(owner.is_some());
-    if let Some(owner_internal) = owner.clone() {
-        cvlr_assume!(is_auth(owner_internal));
-    }
-    OwnableContract::renounce_ownership(&e);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// owner exists
-// owner auth
-// status: verified
+// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn owner_restricted_function_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
@@ -187,23 +107,4 @@ pub fn owner_restricted_function_non_panic(e: Env) {
     }
     OwnableContract::owner_restricted_function(&e);
     cvlr_assert!(true);
-}
-
-#[rule]
-// sanity
-// status: verified
-pub fn owner_restricted_function_non_panic_sanity(e: Env) {
-    let address1 = nondet_address();
-    e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
-
-    let address2 = nondet_address();
-    e.storage().instance().set(&OwnableStorageKey::Owner, &address2);
-
-    let owner = OwnableContract::get_owner(&e);
-    cvlr_assume!(owner.is_some());
-    if let Some(owner_internal) = owner.clone() {
-        cvlr_assume!(is_auth(owner_internal));
-    }
-    OwnableContract::owner_restricted_function(&e);
-    cvlr_satisfy!(true);
 }
