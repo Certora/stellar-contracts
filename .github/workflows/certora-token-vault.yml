@@ -1,0 +1,42 @@
+name: Certora verification - Vault
+
+on: pull_request
+
+env:
+  CONFIGS: |
+    vault_conversions.conf
+    vault_integrity.conf
+    vault_panics.conf
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install just
+        uses: extractions/setup-just@v3
+      - name: Install soroban
+        run: |
+          cargo update -p cvlr-soroban
+          rustup target add wasm32-unknown-unknown
+      - name: run configs
+        uses: Certora/certora-run-action@v2
+        with:
+          ecosystem: soroban
+          configurations: ${{ env.CONFIGS }}
+          job-name: "Verified Soroban Rules - Vault"
+          certora-key: ${{ secrets.CERTORAKEY }}
+          working-directory: packages/tokens/confs
+          cli-release: stable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
