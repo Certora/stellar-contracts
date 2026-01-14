@@ -17,10 +17,22 @@ env:
     token_binder_integrity.conf
     vault_conversions.conf
     vault_integrity.conf
+    allowlist.conf
+    blocklist.conf
+    burnable.conf
+    capped.conf
+    claim_topics_and_issuers.conf
+    compliance_integrity.conf
+    consecutive.conf
+    doc_manager.conf
+    fungible_integrity.conf
+    fungible_invariants.conf
+    fungible_panics.conf
+    identity_claims.conf
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     permissions:
       contents: read
       statuses: write
