@@ -9,6 +9,7 @@ env:
     pausable_integrity.conf
     pausable_non_panics.conf
     pausable_panics.conf
+    upgradeable_panics.conf
 
 jobs:
   check:
