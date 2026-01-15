@@ -193,7 +193,7 @@ where
     ///
     /// * `e` - Access to Soroban environment.
     /// * `leaf` - The leaf data containing an index field.
-    fn get_verification_args<N: ToXdr + IndexableLeaf>(
+    pub fn get_verification_args<N: ToXdr + IndexableLeaf>(
         e: &Env,
         leaf: N,
     ) -> (H::Output, H::Output, u32) {
