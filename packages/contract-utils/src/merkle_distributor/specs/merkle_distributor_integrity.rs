@@ -12,7 +12,9 @@ use crate::{
 };
 
 #[rule]
+// merkle_distributor_constructor sets the root hash
 // status: verified
+// link: https://prover.certora.com/output/5771024/1cb8aecd9ad743fd9805756388fe38f8?anonymousKey=55b67f8fcce609df69e3e45021f345718da714ad
 pub fn merkle_distributor_constructor_integrity(e: Env) {
     let root_hash = nondet_bytes_n();
     let owner = nondet_address();
@@ -23,7 +25,9 @@ pub fn merkle_distributor_constructor_integrity(e: Env) {
 }
 
 #[rule]
+// set_claimed sets the claimed status of an index
 // status: verified
+// link: https://prover.certora.com/output/5771024/1cb8aecd9ad743fd9805756388fe38f8?anonymousKey=55b67f8fcce609df69e3e45021f345718da714ad
 pub fn set_claimed_integrity(e: Env) {
     let index: u32 = nondet();
     clog!(index);
@@ -34,7 +38,9 @@ pub fn set_claimed_integrity(e: Env) {
 }
 
 #[rule]
-// status: verified but needed optimistic loop: check why
+// claim sets the claimed status of an index
+// status: verified
+// link: https://prover.certora.com/output/5771024/1cb8aecd9ad743fd9805756388fe38f8?anonymousKey=55b67f8fcce609df69e3e45021f345718da714ad
 pub fn claim_integrity(e: Env) {
     let leaf = Leaf::nondet();
     let proof = nondet_vec();

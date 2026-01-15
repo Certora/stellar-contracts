@@ -9,8 +9,8 @@ use crate::upgradeable::UpgradeableMigratable;
 
 #[rule]
 // after enable_migration can_complete_migration returns true
-// status: spurious violation 
-// storage just does not behave as expected - quite silly.
+// status: verified 
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
 pub fn enable_migration_integrity(e: Env) {
     let can_complete_migration_pre = can_complete_migration(&e);
     clog!(can_complete_migration_pre);
@@ -22,8 +22,8 @@ pub fn enable_migration_integrity(e: Env) {
 
 #[rule]
 // after complete_migration can_complete_migration returns false
-// status: spurious violation 
-// same as above.
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
 pub fn complete_migration_integrity(e: Env) {
     let can_complete_migration_pre = can_complete_migration(&e);
     clog!(can_complete_migration_pre);
@@ -37,8 +37,9 @@ pub fn complete_migration_integrity(e: Env) {
 
 #[rule]
 // after upgrade can_complete_migration is true
-// status: spurious violation - as above
-pub fn upgrade_integrity_1(e: Env) {
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn upgrade_integrity(e: Env) {
     let wasm_hash: soroban_sdk::BytesN<32> = nondet_bytes_n();
     clog!(cvlr_soroban::BN(&wasm_hash));
     let operator = nondet_address();
@@ -54,8 +55,9 @@ pub fn upgrade_integrity_1(e: Env) {
 
 #[rule]
 // after migrate can_complete_migration is false
-// status: spurious violation - as above
-pub fn migrate_integrity_1(e: Env) {
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn migrate_integrity(e: Env) {
     let migrate_data: u32 = nondet();
     let operator = nondet_address();
     UpgradeableMigratableContract::migrate(&e, migrate_data, operator);
