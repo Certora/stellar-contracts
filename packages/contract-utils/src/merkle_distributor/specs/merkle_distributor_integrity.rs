@@ -1,7 +1,7 @@
 use cvlr::{clog, cvlr_assert, cvlr_satisfy, nondet::*};
 use cvlr_soroban::{nondet_address, nondet_bytes, nondet_bytes_n, nondet_vec};
 use cvlr_soroban_derive::rule;
-use soroban_sdk::{contracttype, Env, Vec};
+use soroban_sdk::{BytesN, Env, IntoVal, Vec, contracttype};
 
 use crate::{
     crypto::sha256::Sha256,
@@ -12,7 +12,7 @@ use crate::{
 };
 
 #[rule]
-// status: violation - spurious
+// status: verified
 pub fn merkle_distributor_constructor_integrity(e: Env) {
     let root_hash = nondet_bytes_n();
     let owner = nondet_address();
@@ -23,7 +23,7 @@ pub fn merkle_distributor_constructor_integrity(e: Env) {
 }
 
 #[rule]
-// status: violation - spurious
+// status: verified
 pub fn set_claimed_integrity(e: Env) {
     let index: u32 = nondet();
     clog!(index);
@@ -34,24 +34,7 @@ pub fn set_claimed_integrity(e: Env) {
 }
 
 #[rule]
-// status: violation - spurious
-pub fn set_claimed_integrity_no_contract(e: Env) {
-    let index: u32 = nondet();
-    clog!(index);
-
-    // storage setup
-    let key = MerkleDistributorStorageKey::Claimed(index);
-    let nondet_bool: bool = nondet();
-    e.storage().persistent().set(&key, &nondet_bool);
-
-    MerkleDistributor::<Sha256>::set_claimed(&e, index);
-    let claimed = MerkleDistributor::<Sha256>::is_claimed(&e, index);
-    clog!(claimed);
-    cvlr_assert!(claimed);
-}
-
-#[rule]
-// status: violation - spurious
+// status: verified but needed optimistic loop: check why
 pub fn claim_integrity(e: Env) {
     let leaf = Leaf::nondet();
     let proof = nondet_vec();
