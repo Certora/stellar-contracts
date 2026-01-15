@@ -159,9 +159,9 @@ pub fn after_redeem_solvency(e: Env) {
 // we can check also for the operations on the underlying token, so long as the current contract doesn't send tokens.
 
 #[rule]
-// status: violation - underflow - investigate
-// but also spurious because shares and assets are the same.
-// https://prover.certora.com/output/5771024/27efa3519e8f4a66a957fee0f9ed792d/
+// status: verified
+// note: there was the same issue with checked_add so i changed our impl of effective_total_assets and effective_total_supply.
+// link: https://prover.certora.com/output/5771024/e0072df06e9346e2891cc4fae5bb38ca/?anonymousKey=0ef9cbfdd0d92be68bac76cf41be2213e71dad89
 pub fn after_token_transfer_solvency(e: Env) {
     safe_assumptions(&e);
     assume_pre_solvency(&e);

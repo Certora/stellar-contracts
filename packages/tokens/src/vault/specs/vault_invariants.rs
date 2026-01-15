@@ -80,7 +80,7 @@ pub fn after_approve_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
-// status: timeout
+// status: verified
 pub fn after_deposit_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let assets: i128 = nondet();

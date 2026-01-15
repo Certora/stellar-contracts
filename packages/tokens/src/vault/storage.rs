@@ -659,9 +659,21 @@ impl Vault {
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
         clog!(y);
         // Effective total assets = totalAssets + 1 (prevents division by zero)
+        
+        #[cfg(not(feature = "certora"))]
         let denominator = Self::total_assets(e)
             .checked_add(1_i128)
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+        
+        #[cfg(feature = "certora")]
+        let foo = Self::total_assets(e);
+        let denominator = {
+            if foo == i128::MAX {
+                panic_with_error!(e, VaultTokenError::MathOverflow);
+            }
+            foo + 1
+        };
+
         clog!(denominator);
         // (assets × (totalSupply + 10^offset)) / (totalAssets + 1)
         muldiv(e, x, y, denominator, rounding)
@@ -697,9 +709,21 @@ impl Vault {
         let x = shares;
 
         // Effective total assets = totalAssets + 1 (prevents division by zero)
+        #[cfg(not(feature = "certora"))]
         let y = Self::total_assets(e)
             .checked_add(1_i128)
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+        
+        #[cfg(feature = "certora")]
+        let foo = Self::total_assets(e);
+        let y = {
+            if foo == i128::MAX {
+                panic_with_error!(e, VaultTokenError::MathOverflow);
+            }
+            else {
+                foo + 1
+            }
+        };
 
         // Virtual offset = 10^offset
         #[cfg(not(feature = "certora"))]
