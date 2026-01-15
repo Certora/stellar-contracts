@@ -190,7 +190,7 @@ pub fn update_issuer_claim_topics_integrity_1(e: Env) {
 
 #[rule]
 // after update_issuer_claim_topics the issuer's topics are exactly those given
-// status:
+// status: timeout
 pub fn update_issuer_claim_topics_integrity_2(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
