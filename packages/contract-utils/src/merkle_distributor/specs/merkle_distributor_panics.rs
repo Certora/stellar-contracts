@@ -32,7 +32,8 @@ pub fn verify_and_set_claimed_panics_if_already_claimed(e: Env) {
 
 #[rule]
 // verify_and_set_claimed panics if invalid proof
-// status: violation - investigate
+// status: violation - requires better modeling of the hashing, but it is quite complicated
+// because you call the hasher many times, so you need a better ghost than what we have.
 pub fn verify_and_set_claimed_panics_if_invalid_proof(e: Env) {
     let leaf = Leaf::nondet();
     let proof = nondet_vec();
