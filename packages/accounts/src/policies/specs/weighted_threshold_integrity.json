@@ -1,0 +1,40 @@
+{
+  "property": {
+    "property": "P-XX. Weighted-Threshold-Integrity.",
+    "description": "Weighted threshold functions change state as expected.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "wt_can_enforce_integrity",
+      "description": "can_enforce returns the expected result: total_weight >= threshold_pre where total_weight is the sum of the weights of the authenticated signers",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1"
+    },
+    {
+      "name": "wt_set_threshold_integrity",
+      "description": "set_threshold sets the threshold",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1"
+    },
+    {
+      "name": "wt_set_signer_weight_integrity",
+      "description": "set_signer_weight sets the weight for a signer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1"
+    },
+    {
+      "name": "wt_install_integrity",
+      "description": "install sets the signer weights and threshold",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1"
+    },
+    {
+      "name": "wt_uninstall_integrity",
+      "description": "after uninstall the account ctx is removed",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1"
+    }
+  ],
+  "total_rules": 5
+}
