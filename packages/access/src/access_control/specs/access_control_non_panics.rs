@@ -12,12 +12,16 @@ use crate::access_control::{
     AccessControl,
 };
 
+// property: P-07. Access-Control-Non-Panics.
+// description: Access Control functions do not panic under appropriate assumptions.
+// status: verified
+
 // These rules require the prover arg "prover_args": ["-trapAsAssert true"] to
 // consider also panicking paths.
 
-// storage setup
+// storage is setup
 
-// im a bit unsure about storage setup in cases where there are options,
+// im a bit unsure about storage is setup in cases where there are options,
 // is the case of None ignored the way we do this?
 
 pub fn storage_setup_admin(e: Env) {
@@ -78,11 +82,9 @@ pub fn storage_setup_last_account(e: Env, role: Symbol) {
 // package functions
 
 #[rule]
-// requires
-// storage setup
-// caller auth
-// caller is admin or has admin role
-// status: verified (13 minutes)
+// if: storage is setup, caller auth and caller is admin or has admin role then grant_role does not panic
+// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn grant_role_non_panic(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -111,45 +113,9 @@ pub fn grant_role_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, caller auth, caller is admin or has admin role, and role is not empty then revoke_role does not panic
 // status: verified
-pub fn grant_role_non_panic_sanity(e: Env) {
-    let caller = nondet_address();
-    let account = nondet_address();
-    let role = nondet_symbol();
-
-    storage_setup_admin(e.clone());
-    storage_setup_role_admin(e.clone(), role.clone());
-    storage_setup_role_counts(e.clone(), role.clone());
-    storage_setup_account_has_role(e.clone(), account.clone(), role.clone());
-    storage_setup_caller_has_role_admin(e.clone(), caller.clone(), role.clone());
-
-    cvlr_assume!(is_auth(caller.clone()));
-    let admin = AccessControlContract::get_admin(&e);
-    let mut caller_equals_admin = false;
-    if let Some(admin_internal) = admin {
-        caller_equals_admin = caller.clone() == admin_internal;
-    }
-    let mut caller_has_role_admin = false;
-    let role_admin = AccessControlContract::get_role_admin(&e, role.clone());
-    if let Some(role_admin_internal) = role_admin {
-        caller_has_role_admin =
-            AccessControlContract::has_role(&e, caller.clone(), role_admin_internal).is_some();
-    }
-    cvlr_assume!(caller_equals_admin || caller_has_role_admin);
-    AccessControlContract::grant_role(&e, caller, account, role);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// auth by caller
-// caller is admin or has admin_role
-// account has the role
-// role is not empty
-// status: verified
-// when using -split false
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn revoke_role_non_panic(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -184,48 +150,9 @@ pub fn revoke_role_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, caller auth, caller has the role, and role is not empty then renounce_role does not panic
 // status: verified
-pub fn revoke_role_non_panic_sanity(e: Env) {
-    let caller = nondet_address();
-    let account = nondet_address();
-    let role = nondet_symbol();
-
-    storage_setup_admin(e.clone());
-    storage_setup_role_admin(e.clone(), role.clone());
-    storage_setup_role_counts(e.clone(), role.clone());
-    storage_setup_account_has_role(e.clone(), account.clone(), role.clone());
-    storage_setup_caller_has_role_admin(e.clone(), caller.clone(), role.clone());
-    storage_setup_last_account(e.clone(), role.clone());
-
-    cvlr_assume!(is_auth(caller.clone()));
-    let admin = AccessControlContract::get_admin(&e);
-    let mut caller_equals_admin = false;
-    if let Some(admin_internal) = admin {
-        caller_equals_admin = caller.clone() == admin_internal;
-    }
-    let mut caller_has_role_admin = false;
-    let role_admin = AccessControlContract::get_role_admin(&e, role.clone());
-    if let Some(role_admin_internal) = role_admin {
-        caller_has_role_admin =
-            AccessControlContract::has_role(&e, caller.clone(), role_admin_internal).is_some();
-    }
-    cvlr_assume!(caller_equals_admin || caller_has_role_admin);
-    let account_has_role = AccessControlContract::has_role(&e, account.clone(), role.clone());
-    cvlr_assume!(account_has_role.is_some());
-    let role_member_count = AccessControlContract::get_role_member_count(&e, role.clone());
-    cvlr_assume!(role_member_count > 0);
-    AccessControlContract::revoke_role(&e, caller, account, role);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// auth by caller
-// caller has the role
-// role is not empty
-// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn renounce_role_non_panic(e: Env) {
     let caller = nondet_address();
     let role = nondet_symbol();
@@ -244,33 +171,9 @@ pub fn renounce_role_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if storage is setup, admin exists, admin auth, pending owner can only be the same as new_admin, and live until ledger is appropriate then transfer_admin_role does not panic
 // status: verified
-pub fn renounce_role_non_panic_sanity(e: Env) {
-    let caller = nondet_address();
-    let role = nondet_symbol();
-
-    storage_setup_role_counts(e.clone(), role.clone());
-    storage_setup_account_has_role(e.clone(), caller.clone(), role.clone());
-    storage_setup_last_account(e.clone(), role.clone());
-
-    cvlr_assume!(is_auth(caller.clone()));
-    let caller_has_role = AccessControlContract::has_role(&e, caller.clone(), role.clone());
-    cvlr_assume!(caller_has_role.is_some());
-    let role_member_count = AccessControlContract::get_role_member_count(&e, role.clone());
-    cvlr_assume!(role_member_count > 0);
-    AccessControlContract::renounce_role(&e, caller, role);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// admin exists
-// admin auth
-// if there is a pending owner they are the same
-// live until ledger is appropriate
-// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn transfer_admin_role_non_panic(e: Env) {
     let new_admin = nondet_address().clone();
     let live_until_ledger = u32::nondet();
@@ -301,43 +204,9 @@ pub fn transfer_admin_role_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, pending admin exists and pending admin auth then accept_admin_transfer does not panic
 // status: verified
-pub fn transfer_admin_role_non_panic_sanity(e: Env) {
-    let new_admin = nondet_address().clone();
-    let live_until_ledger = u32::nondet();
-
-    storage_setup_pending_admin(e.clone());
-    storage_setup_admin(e.clone());
-
-    let admin = AccessControlContract::get_admin(&e);
-    cvlr_assume!(admin.is_some());
-    if let Some(admin_internal) = admin.clone() {
-        cvlr_assume!(is_auth(admin_internal));
-    }
-
-    let pending_admin = get_pending_admin(&e);
-    if let Some(pending_admin_internal) = pending_admin.clone() {
-        cvlr_assume!(pending_admin_internal == new_admin);
-    }
-
-    if live_until_ledger == 0 {
-        cvlr_assume!(pending_admin.is_some());
-    } else {
-        cvlr_assume!(live_until_ledger >= e.ledger().sequence());
-        cvlr_assume!(live_until_ledger <= e.ledger().max_live_until_ledger());
-    }
-
-    AccessControlContract::transfer_admin_role(&e, new_admin, live_until_ledger);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// pending admin exists
-// pending admin auth
-// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn accept_admin_transfer_non_panic(e: Env) {
     storage_setup_pending_admin(e.clone());
     storage_setup_admin(e.clone());
@@ -352,27 +221,9 @@ pub fn accept_admin_transfer_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, admin exists and admin auth then set_role_admin does not panic
 // status: verified
-pub fn accept_admin_transfer_non_panic_sanity(e: Env) {
-    storage_setup_pending_admin(e.clone());
-    storage_setup_admin(e.clone());
-
-    let pending_admin = get_pending_admin(&e);
-    cvlr_assume!(pending_admin.is_some());
-    if let Some(pending_admin_internal) = pending_admin.clone() {
-        cvlr_assume!(is_auth(pending_admin_internal));
-    }
-    AccessControlContract::accept_admin_transfer(&e);
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// admin exists
-// admin auth
-// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn set_role_admin_non_panic(e: Env) {
     let role = nondet_symbol();
     let admin_role = nondet_symbol();
@@ -388,29 +239,9 @@ pub fn set_role_admin_non_panic(e: Env) {
 }
 
 #[rule]
-// sanity
+// if: storage is setup, admin exists and admin auth, and no pending admin, then renounce_admin does not panic
 // status: verified
-pub fn set_role_admin_non_panic_sanity(e: Env) {
-    let role = nondet_symbol();
-    let admin_role = nondet_symbol();
-    storage_setup_admin(e.clone());
-    storage_setup_role_admin(e.clone(), role.clone());
-    let admin = AccessControlContract::get_admin(&e);
-    cvlr_assume!(admin.is_some());
-    if let Some(admin_internal) = admin.clone() {
-        cvlr_assume!(is_auth(admin_internal));
-    }
-    AccessControlContract::set_role_admin(&e, role.clone(), admin_role.clone());
-    cvlr_satisfy!(true);
-}
-
-#[rule]
-// requires
-// storage setup
-// admin exists
-// admin auth
-// no pending admin
-// status: verified
+// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn renounce_admin_non_panic(e: Env) {
     storage_setup_admin(e.clone());
     storage_setup_pending_admin_none(e.clone());
@@ -421,19 +252,4 @@ pub fn renounce_admin_non_panic(e: Env) {
     }
     AccessControlContract::renounce_admin(&e);
     cvlr_assert!(true);
-}
-
-#[rule]
-// sanity
-// status: verified
-pub fn renounce_admin_non_panic_sanity(e: Env) {
-    storage_setup_admin(e.clone());
-    storage_setup_pending_admin_none(e.clone());
-    let admin = AccessControlContract::get_admin(&e);
-    cvlr_assume!(admin.is_some());
-    if let Some(admin_internal) = admin.clone() {
-        cvlr_assume!(is_auth(admin_internal));
-    }
-    AccessControlContract::renounce_admin(&e);
-    cvlr_satisfy!(true);
 }

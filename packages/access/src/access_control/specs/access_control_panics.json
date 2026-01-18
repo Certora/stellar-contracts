@@ -1,0 +1,160 @@
+{
+  "property": {
+    "property": "P-06. Access-Control-Panics.",
+    "description": "Access Control functions panic in all appropriate cases.",
+    "status": "violated"
+  },
+  "rules": [
+    {
+      "name": "grant_role_panics_if_caller_unauth",
+      "description": "grant role panic if unauthorized by caller",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "grant_role_panics_if_caller_not_admin_nor_admin_role",
+      "description": "grant role panics if caller is not admin and not admin_role",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "revoke_role_panics_if_caller_unauth",
+      "description": "revoke_role panics if unauthorized by caller",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "revoke_role_panics_if_caller_not_admin_nor_admin_role",
+      "description": "revoke_role panics if caller is not admin and not admin_role",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "revoke_role_panics_if_account_does_not_have_role",
+      "description": "revoke_role panics if account does not have the role",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "revoke_role_panics_if_role_is_empty",
+      "description": "revoke_role panics if role is empty",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_role_panics_if_caller_unauth",
+      "description": "renounce_role panics if unauthorized by caller",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_role_panics_if_caller_does_not_have_role",
+      "description": "renounce_role panics if caller does not have the role",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_role_panics_if_role_is_empty",
+      "description": "renounce_role panics if role is empty",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "transfer_admin_role_panics_if_unauth_by_admin",
+      "description": "transfer_admin_role panics if the not authorized by the admin.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "transfer_admin_role_panics_if_admin_not_set",
+      "description": "transfer_admin_role panics if the admin is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "transfer_admin_role_panics_if_live_until_ledger_0_and_pending_admin_none",
+      "description": "transfer_admin_role panics if live_until_ledger = 0 and PendingAdmin = None",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "transfer_admin_role_panics_if_live_until_ledger_0_and_diff_pending_admin",
+      "description": "transfer_admin_role panics if live_until_ledger = 0 and PendingAdmin != new_admin",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "transfer_admin_role_panics_if_invalid_live_until_ledger",
+      "description": "transfer_admin_role panics if the live_until_ledger is in the past.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "accept_admin_transfer_panics_if_unauth_by_pending_admin",
+      "description": "accept_admin_transfer panics if the not authorized by the pending admin.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "accept_admin_transfer_panics_if_pending_admin_not_set",
+      "description": "accept_admin_transfer panics if the pending admin is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "set_role_admin_panics_if_unauth_by_admin",
+      "description": "set_role_admin panics if not authorized by the admin",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "set_role_admin_panics_if_admin_not_set",
+      "description": "set_role_admin panics if the admin is not set",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_admin_panics_if_unauth_by_admin",
+      "description": "renounce_admin panics if not authorized by the admin.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_admin_panics_if_admin_not_set",
+      "description": "renounce_admin panics if the admin is not set.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "renounce_admin_panics_if_pending_adminship_transfer",
+      "description": "renounce_admin panics if there is a pending adminship transfer.",
+      "status": "violated",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "admin_function_panics_if_unauth_by_admin",
+      "description": "admin_function panics if not authorized by the admin.",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "admin_function_panics_if_admin_not_set",
+      "description": "admin_function panics if admin not set",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "role1_auth_func_panics_if_caller_does_not_authorize",
+      "description": "role1_auth_func panics if caller does not authorize",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    },
+    {
+      "name": "role1_or_role2_auth_func_panics_if_caller_does_not_authorize",
+      "description": "role1_or_role2_auth_func panics if caller doesn't authorize",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/c49f1d2acab347e8b5671797216ccb9b/?anonymousKey=9b33833e57c27d3620d8b9a49824bba467aee1bc"
+    }
+  ],
+  "total_rules": 25
+}
