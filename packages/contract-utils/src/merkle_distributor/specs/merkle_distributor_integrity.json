@@ -1,0 +1,34 @@
+{
+  "property": {
+    "property": "P-XX. MerkleDistributor-Integrity.",
+    "description": "MerkleDistributor functions set and verify the integrity of the Merkle tree.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "set_root_integrity",
+      "description": "set root sets the root hash in storage",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0"
+    },
+    {
+      "name": "set_claimed_integrity",
+      "description": "set_claimed set the claimed status of an index to true",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0"
+    },
+    {
+      "name": "verify_and_set_claimed_integrity",
+      "description": "verify_and_set_claimed sets the claimed status of an index to true",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0"
+    },
+    {
+      "name": "verify_with_index_and_set_claimed_integrity",
+      "description": "verify_with_index_and_set_claimed sets the claimed status of an index to true",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0"
+    }
+  ],
+  "total_rules": 4
+}
