@@ -35,6 +35,8 @@ pub fn assert_post_total_supply_geq_zero(e: &Env) {
 
 #[rule]
 // status: verified
+// link: https://prover.certora.com/output/5771024/e3a269ef5d2547dfbadfdfadad55f238/
+// should be for all - waiting
 pub fn after_transfer_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let from = nondet_address();
@@ -96,7 +98,7 @@ pub fn after_deposit_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
-// status: timeout
+// status: verified
 pub fn after_mint_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let shares: i128 = nondet();
@@ -290,7 +292,7 @@ pub fn after_deposit_total_assets_geq_zero(e: Env) {
 }
 
 #[rule]
-// status: timeout
+// status: verified
 pub fn after_mint_total_assets_geq_zero(e: Env) {
     assume_pre_total_assets_geq_zero(&e);
     let shares: i128 = nondet();
@@ -306,7 +308,7 @@ pub fn after_mint_total_assets_geq_zero(e: Env) {
 }   
 
 #[rule]
-// status: timeout
+// status: verified
 pub fn after_withdraw_total_assets_geq_zero(e: Env) {
     assume_pre_total_assets_geq_zero(&e);
     let shares: i128 = nondet();
@@ -323,7 +325,7 @@ pub fn after_withdraw_total_assets_geq_zero(e: Env) {
 
 
 #[rule]
-// status: timeout
+// status: verified
 pub fn after_redeem_total_assets_geq_zero(e: Env) {
     assume_pre_total_assets_geq_zero(&e);
     let shares: i128 = nondet();
