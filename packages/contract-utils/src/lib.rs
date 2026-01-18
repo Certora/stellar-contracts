@@ -4,6 +4,7 @@
 
 pub mod crypto;
 pub mod math;
+pub mod math_munged;
 pub mod merkle_distributor;
 pub mod pausable;
 pub mod upgradeable;
