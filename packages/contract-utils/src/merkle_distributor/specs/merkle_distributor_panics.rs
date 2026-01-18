@@ -8,7 +8,7 @@ use crate::merkle_distributor::specs::merkle_distributor_sha256::VerifierSha256;
 
 #[rule]
 // set_claimed panics if already claimed
-// status: violation - bug?
+// status: bug
 pub fn set_claimed_panics_if_already_claimed(e: Env) {
     let index: u32 = nondet();
     let is_claimed_pre = MerkleDistributorSha256::is_claimed(&e, index);
