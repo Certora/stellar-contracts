@@ -1,0 +1,46 @@
+{
+  "property": {
+    "property": "P-XX. SimpleThreshold-Non-Panics.",
+    "description": "SimpleThreshold functions do not panic under appropriate assumptions.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "set_threshold_non_panic",
+      "description": "if storage is setup, setting a valid threshold and account_id is auth, then set_threshold does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    },
+    {
+      "name": "get_threshold_non_panic",
+      "description": "if storage is setup, threshold exists, then get_threshold does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    },
+    {
+      "name": "can_enforce_non_panic",
+      "description": "if storage is setup can_enforce does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    },
+    {
+      "name": "enforce_non_panic",
+      "description": "if storage_is_setup, can_enforce returns true, and account_id is auth, then enforce does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    },
+    {
+      "name": "install_non_panic",
+      "description": "if storage is setup, account_id is auth, setting a valid threshold, then install does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    },
+    {
+      "name": "uninstall_non_panic",
+      "description": "if storage is setup, account_id is auth, then uninstall does not panic",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db"
+    }
+  ],
+  "total_rules": 6
+}

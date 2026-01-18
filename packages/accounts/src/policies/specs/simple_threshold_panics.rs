@@ -18,9 +18,14 @@ use crate::{
     smart_account::{specs::nondet::nondet_signers_vec, ContextRule, Signer},
 };
 
+// property: P-XX. SimpleThreshold-Panics.
+// description: SimpleThreshold functions panic in all appropriate cases.
+// status: verified
+
 #[rule]
 // set_threshold_panics if invalid threshold
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn set_threshold_panics_if_invalid_threshold(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -33,6 +38,7 @@ pub fn set_threshold_panics_if_invalid_threshold(e: Env) {
 #[rule]
 // set_threshold_panics if unauth
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn set_threshold_panics_if_unauth(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -45,6 +51,7 @@ pub fn set_threshold_panics_if_unauth(e: Env) {
 #[rule]
 // get_threshold_panics if no threshold
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn get_threshold_panics_if_no_threshold(e: Env) {
     let ctx_rule_id: u32 = u32::nondet();
     let account_id = nondet_address();
@@ -60,6 +67,7 @@ pub fn get_threshold_panics_if_no_threshold(e: Env) {
 #[rule]
 // enforce panics if can_enforce returns false
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn enforce_panics_if_can_enforce_returns_false(e: Env, context: soroban_sdk::auth::Context) {
     let authenticated_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -79,6 +87,7 @@ pub fn enforce_panics_if_can_enforce_returns_false(e: Env, context: soroban_sdk:
 #[rule]
 // install panics if invalid threshold
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn install_panics_if_invalid_threshold(e: Env) {
     let params: SimpleThresholdAccountParams = SimpleThresholdAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -92,6 +101,7 @@ pub fn install_panics_if_invalid_threshold(e: Env) {
 #[rule]
 // install panics if unauth
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn install_panics_if_unauth(e: Env) {
     let params: SimpleThresholdAccountParams = SimpleThresholdAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -104,6 +114,7 @@ pub fn install_panics_if_unauth(e: Env) {
 #[rule]
 // uninstall panics if unauth
 // status: verified
+// link: https://prover.certora.com/output/40748/50878c697b6340cf984a89367b25cd73/?anonymousKey=6dc6fdee827e6dae66aa75376c736029ee3b16cb
 pub fn uninstall_panics_if_unauth(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();

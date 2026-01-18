@@ -18,9 +18,14 @@ use crate::{
     smart_account::{specs::nondet::nondet_signers_vec, ContextRule, Signer},
 };
 
+// property: P-XX. SimpleThreshold-Integrity.
+// description: SimpleThreshold functions modify and enforce the threshold as expected.
+// status: verified
+
 #[rule]
 // after set_threshold the threshold is set to input
 // status: verified
+// link: https://prover.certora.com/output/40748/d0373c1631064348bfe93c29f7b83d8d/?anonymousKey=a0f44a18cf32305ff3b989989420afc7fffeda44
 pub fn st_set_threshold_integrity(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -32,8 +37,8 @@ pub fn st_set_threshold_integrity(e: Env) {
 
 #[rule]
 // can_enforce returns the expected auth_signers.len() >= threshold_pre;
-// not really an intgerity rule because this is a view function
 // status: verified
+// link: https://prover.certora.com/output/40748/d0373c1631064348bfe93c29f7b83d8d/?anonymousKey=a0f44a18cf32305ff3b989989420afc7fffeda44
 pub fn st_can_enforce_integrity(e: Env, context: soroban_sdk::auth::Context) {
     let auth_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -56,6 +61,7 @@ pub fn st_can_enforce_integrity(e: Env, context: soroban_sdk::auth::Context) {
 #[rule]
 // after install the threshold is set to input
 // status: verified
+// link: https://prover.certora.com/output/40748/d0373c1631064348bfe93c29f7b83d8d/?anonymousKey=a0f44a18cf32305ff3b989989420afc7fffeda44
 pub fn st_install_integrity(e: Env) {
     let params: SimpleThresholdAccountParams = SimpleThresholdAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -68,6 +74,7 @@ pub fn st_install_integrity(e: Env) {
 #[rule]
 // after uninstall the account ctx is removed
 // status: verified
+// link: https://prover.certora.com/output/40748/d0373c1631064348bfe93c29f7b83d8d/?anonymousKey=a0f44a18cf32305ff3b989989420afc7fffeda44
 pub fn st_uninstall_integrity(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();

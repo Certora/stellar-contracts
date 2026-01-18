@@ -1,0 +1,70 @@
+{
+  "property": {
+    "property": "P-XX. SimpleThreshold-Invariants.",
+    "description": "1. threshold != 0 and 2. threshold <= ctx_rule.signers.len(), note: the second invariant may be violated by the smart_account by removing signers.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "after_install_threshold_non_zero",
+      "description": "invariant: threshold != 0, case: install",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_uninstall_threshold_non_zero",
+      "description": "invariant: threshold != 0, case: uninstall sanity fails but that is expected",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_set_threshold_threshold_non_zero",
+      "description": "invariant: threshold != 0, case: set_threshold",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_can_enforce_threshold_non_zero",
+      "description": "invariant: threshold != 0, case: can_enforce",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_enforce_threshold_non_zero",
+      "description": "invariant: threshold != 0, case: enforce",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_set_threshold_threshold_leq_signers_length",
+      "description": "invariant: threshold <= ctx_rule.signers.len(), case: set_threshold",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_install_threshold_leq_signers_length",
+      "description": "invariant: threshold <= ctx_rule.signers.len(), case: install",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_uninstall_threshold_leq_signers_length",
+      "description": "invariant: threshold <= ctx_rule.signers.len(), case: uninstall sanity fails but that is expected",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_can_enforce_threshold_leq_signers_length",
+      "description": "invariant: threshold <= ctx_rule.signers.len(), case: can_enforce",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    },
+    {
+      "name": "after_enforce_threshold_leq_signers_length",
+      "description": "invariant: threshold <= ctx_rule.signers.len(), case: enforce",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b"
+    }
+  ],
+  "total_rules": 10
+}

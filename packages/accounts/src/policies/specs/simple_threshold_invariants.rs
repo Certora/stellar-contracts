@@ -18,6 +18,10 @@ use crate::{
     smart_account::{specs::nondet::nondet_signers_vec, ContextRule, Signer},
 };
 
+// property: P-XX. SimpleThreshold-Invariants.
+// description: 1. threshold != 0 and 2. threshold <= ctx_rule.signers.len(), note: the second invariant may be violated by the smart_account by removing signers.
+// status: verified
+
 // threshold != 0 
 
 // helpers
@@ -35,8 +39,9 @@ pub fn assert_post_threshold_non_zero(e: Env, ctx_rule: ContextRule, account_id:
 }
 
 #[rule]
-// this is the "constructor"
+// invariant: threshold != 0, case: install
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_install_threshold_non_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -45,8 +50,9 @@ pub fn after_install_threshold_non_zero(e: Env) {
 }
 
 #[rule]
-// this is trivial but it guarantees nothing is left in storage.
+// invariant: threshold != 0, case: uninstall
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 // sanity fails but that is expected    
 pub fn after_uninstall_threshold_non_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -57,7 +63,9 @@ pub fn after_uninstall_threshold_non_zero(e: Env) {
 }
 
 #[rule]
+// invariant: threshold != 0, case: set_threshold
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_set_threshold_threshold_non_zero(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -68,7 +76,9 @@ pub fn after_set_threshold_threshold_non_zero(e: Env) {
 }
 
 #[rule]
+// invariant: threshold != 0, case: can_enforce
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_can_enforce_threshold_non_zero(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -79,7 +89,9 @@ pub fn after_can_enforce_threshold_non_zero(e: Env, context: soroban_sdk::auth::
 }
 
 #[rule]
+// invariant: threshold != 0, case: enforce
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_enforce_threshold_non_zero(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -114,7 +126,9 @@ pub fn assert_post_threshold_less_than_signers(e: Env, ctx_rule: ContextRule, ac
 }
 
 #[rule]
+// invariant: threshold <= ctx_rule.signers.len(), case: set_threshold
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_set_threshold_threshold_leq_signers_length(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -125,7 +139,9 @@ pub fn after_set_threshold_threshold_leq_signers_length(e: Env) {
 }
 
 #[rule]
+// invariant: threshold <= ctx_rule.signers.len(), case: install
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_install_threshold_leq_signers_length(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -136,8 +152,10 @@ pub fn after_install_threshold_leq_signers_length(e: Env) {
 }
 
 #[rule]
+// invariant: threshold <= ctx_rule.signers.len(), case: uninstall
 // status: verified
 // sanity fails but that is expected
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_uninstall_threshold_leq_signers_length(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -147,7 +165,9 @@ pub fn after_uninstall_threshold_leq_signers_length(e: Env) {
 }
 
 #[rule]
+// invariant: threshold <= ctx_rule.signers.len(), case: can_enforce
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_can_enforce_threshold_leq_signers_length(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -158,7 +178,9 @@ pub fn after_can_enforce_threshold_leq_signers_length(e: Env, context: soroban_s
 }
 
 #[rule]
+// invariant: threshold <= ctx_rule.signers.len(), case: enforce
 // status: verified
+// link: https://prover.certora.com/output/40748/36c2ab2557ec4a9093951eff15a98a5e/?anonymousKey=bc025bc0e1fbc00d926d4bc3097de16b8854a35b
 pub fn after_enforce_threshold_leq_signers_length(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
