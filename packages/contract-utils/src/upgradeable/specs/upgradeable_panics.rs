@@ -7,9 +7,14 @@ use crate::upgradeable::{enable_migration, can_complete_migration, complete_migr
 use crate::upgradeable::specs::upgradeable_migratable_contract::UpgradeableMigratableContract;
 use crate::upgradeable::UpgradeableMigratable;
 
+// property: P-13. Upgradeable-Panics.
+// description: Upgradeable functions panic in all appropriate cases.
+// status: verified
+
 #[rule]
 // upgrade panics if not auth by owner
 // status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
 pub fn upgrade_panics_if_not_auth_by_owner(e: Env) {
     let operator = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));
@@ -25,6 +30,7 @@ pub fn upgrade_panics_if_not_auth_by_owner(e: Env) {
 #[rule]
 // upgrade panics if operator != owner
 // status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
 pub fn upgrade_panics_if_operator_not_owner(e: Env) {
     let operator = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));
@@ -40,6 +46,7 @@ pub fn upgrade_panics_if_operator_not_owner(e: Env) {
 #[rule]
 // migrate panics if not auth by owner
 // status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
 pub fn migrate_panics_if_not_auth_by_owner(e: Env) {
     let operator = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));
@@ -55,6 +62,7 @@ pub fn migrate_panics_if_not_auth_by_owner(e: Env) {
 #[rule]
 // migrate panics if migration has completed
 // status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
 pub fn migrate_panics_if_migration_has_completed(e: Env) {
     let operator = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));

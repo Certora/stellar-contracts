@@ -13,10 +13,6 @@ pub enum StorageKey {
     OwnerDataKey,   
 }
 
-// Not sure what the desired behavior should be. Fill as needed.
-// NOTE: Unclear what `MigrationData` should be so change as needed.
-// NOTE: fill out `_migrate` and `_require_auth` before using!
-
 #[derive(UpgradeableMigratable)]
 #[contract]
 pub struct UpgradeableMigratableContract;

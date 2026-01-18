@@ -1,0 +1,34 @@
+{
+  "property": {
+    "property": "P-13. Upgradeable-Panics.",
+    "description": "Upgradeable functions panic in all appropriate cases.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "upgrade_panics_if_not_auth_by_owner",
+      "description": "upgrade panics if not auth by owner",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75"
+    },
+    {
+      "name": "upgrade_panics_if_operator_not_owner",
+      "description": "upgrade panics if operator != owner",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75"
+    },
+    {
+      "name": "migrate_panics_if_not_auth_by_owner",
+      "description": "migrate panics if not auth by owner",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75"
+    },
+    {
+      "name": "migrate_panics_if_migration_has_completed",
+      "description": "migrate panics if migration has completed",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75"
+    }
+  ],
+  "total_rules": 4
+}
