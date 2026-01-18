@@ -83,6 +83,7 @@ pub fn after_approve_total_supply_geq_zero(e: Env) {
 
 #[rule]
 // status: verified
+// link: https://prover.certora.com/output/5771024/2097ed8ce7a8405199aa81729736e93f/?anonymousKey=16053cdcc7877f820a29d40c3d8952b3398297a2
 pub fn after_deposit_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let assets: i128 = nondet();
