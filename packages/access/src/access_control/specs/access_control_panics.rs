@@ -326,7 +326,9 @@ pub fn admin_function_panics_if_admin_not_set(e: Env) {
 // status: violation - symbol issue
 pub fn role1_func_panics_if_caller_does_not_have_role(e: Env) {
     let caller = nondet_address();
+    clog!(cvlr_soroban::Addr(&caller));
     let role1 = soroban_sdk::Symbol::new(&e, "role1");
+    clog!(cvlr_soroban::Sym(&role1));
     let caller_has_role = AccessControlContract::has_role(&e, caller.clone(), role1);
     cvlr_assume!(caller_has_role.is_none());
     AccessControlContract::role1_func(&e, caller);
@@ -338,8 +340,13 @@ pub fn role1_func_panics_if_caller_does_not_have_role(e: Env) {
 // status: violation - symbol issue
 pub fn role1_auth_func_panics_if_caller_does_not_have_role(e: Env) {
     let caller = nondet_address();
+    clog!(cvlr_soroban::Addr(&caller));
     let role1 = soroban_sdk::Symbol::new(&e, "role1");
+    clog!(cvlr_soroban::Sym(&role1));
     let caller_has_role = AccessControlContract::has_role(&e, caller.clone(), role1.clone());
+    if let Some(caller_has_role_internal) = caller_has_role {
+        clog!(caller_has_role_internal);
+    }
     cvlr_assume!(caller_has_role.is_none());
     AccessControlContract::role1_auth_func(&e, caller.clone());
     cvlr_assert!(false);

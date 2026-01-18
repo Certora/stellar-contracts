@@ -603,6 +603,9 @@ pub fn ensure_if_admin_or_admin_role(e: &Env, caller: &Address, role: &Symbol) {
 /// * [`AccessControlError::Unauthorized`] - If the caller does not have the
 ///   specified role.
 pub fn ensure_role(e: &Env, caller: &Address, role: &Symbol) {
+    use cvlr::clog;
+    clog!(cvlr_soroban::Addr(&caller));
+    clog!(cvlr_soroban::Sym(&role));
     if has_role(e, caller, role).is_none() {
         panic_with_error!(e, AccessControlError::Unauthorized);
     }
