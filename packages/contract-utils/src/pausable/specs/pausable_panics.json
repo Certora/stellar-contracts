@@ -1,0 +1,34 @@
+{
+  "property": {
+    "property": "P-10. Pausable-Panics.",
+    "description": "Pausable functions panic in all appropriate cases.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "pause_panics_if_paused",
+      "description": "pause panics if the contract is already paused",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5"
+    },
+    {
+      "name": "unpause_panics_if_not_paused",
+      "description": "unpause panics if the contract is not paused",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5"
+    },
+    {
+      "name": "when_not_paused_panics_if_paused",
+      "description": "when_not_paused_func panics if paused",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5"
+    },
+    {
+      "name": "when_paused_panics_if_not_paused",
+      "description": "when_paused_func panics if not paused",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5"
+    }
+  ],
+  "total_rules": 4
+}
