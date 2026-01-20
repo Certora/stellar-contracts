@@ -1,5 +1,3 @@
-// use core::task::Context;
-
 use cvlr::{
     clog, cvlr_assert, cvlr_assume, cvlr_satisfy,
     nondet::{self, Nondet},
@@ -13,12 +11,15 @@ use soroban_sdk::{
 
 use crate::{
     policies::{
-        specs::spending_limit_contract::SpendingLimitPolicy,
-        spending_limit::{SpendingLimitAccountParams, SpendingLimitData, SpendingLimitStorageKey},
+        spending_limit::{can_enforce, enforce, get_spending_limit_data, install, set_spending_limit, uninstall, SpendingLimitAccountParams, SpendingLimitData, SpendingLimitStorageKey},
         Policy,
     },
     smart_account::{specs::nondet::nondet_signers_vec, ContextRule, Signer},
 };
+
+// property: P-XX. SpendingLimit-Integrity.
+// description: SpendingLimit functions modify spending limit as expected.
+// status: verified
 
 // note we verify the rules in this file with:
 // "loop_iter": 1 or 2
@@ -32,20 +33,56 @@ pub fn sl_set_spending_limit_integrity(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
-    SpendingLimitPolicy::set_spending_limit(
+    set_spending_limit(
         &e,
         spending_limit,
-        ctx_rule.clone(),
-        account_id.clone(),
+        &ctx_rule.clone(),
+        &account_id.clone(),
     );
     let spending_limit_data_post =
-        SpendingLimitPolicy::get_spending_limit_data(&e, ctx_rule.id, account_id);
+        get_spending_limit_data(&e, ctx_rule.id, &account_id);
     let spending_limit_post = spending_limit_data_post.spending_limit;
     cvlr_assert!(spending_limit_post == spending_limit);
 }
 
-// can't write an integrity rule for enforce because it panics if can_enforce
-// returns false.
+#[rule]
+// can_enforce returns false if there is no spending limit data associated with the smart account and context
+// status: verified 
+pub fn sl_can_enforce_returns_false_if_no_spending_limit_data(e: Env, context: Context) {
+    let auth_signers: Vec<Signer> = nondet_signers_vec();
+    let ctx_rule: ContextRule = ContextRule::nondet();
+    let account_id = nondet_address();
+    let key = SpendingLimitStorageKey::AccountContext(account_id.clone(), ctx_rule.id);
+    cvlr_assume!(e.storage().persistent().get::<_, SpendingLimitData>(&key).is_none());
+    let result = can_enforce(&e, &context.clone(), &auth_signers.clone(), &ctx_rule.clone(), &account_id.clone());
+    cvlr_assert!(!result);
+}
+
+// can_enforce returns false for a context that is not a contract call
+// status: verified
+pub fn sl_can_enforce_returns_false_if_not_contract_call(e: Env, context: Context) {
+    let auth_signers: Vec<Signer> = nondet_signers_vec();
+    let ctx_rule: ContextRule = ContextRule::nondet();
+    let account_id = nondet_address();
+    let context_is_contract_call = matches!(context, Context::Contract(_));
+    cvlr_assume!(!context_is_contract_call);
+    let result = can_enforce(&e, &context.clone(), &auth_signers.clone(), &ctx_rule.clone(), &account_id.clone());
+    cvlr_assert!(!result);
+}
+
+#[rule]
+// can_enforce returns false for a transaction that is not a transfer
+// status: verified
+pub fn sl_can_enforce_returns_false_if_not_transfer(e: Env, context: Context) {
+    let auth_signers: Vec<Signer> = nondet_signers_vec();
+    let ctx_rule: ContextRule = ContextRule::nondet();
+    let account_id = nondet_address();
+    let context_is_transfer = matches!(context.clone(), Context::Contract(ContractContext { fn_name, .. }) if fn_name == symbol_short!("transfer"));
+    cvlr_assume!(!context_is_transfer);
+    let result = can_enforce(&e, &context.clone(), &auth_signers.clone(), &ctx_rule.clone(), &account_id.clone());
+    cvlr_assert!(!result);
+}
+
 
 #[rule]
 // after install the spending_limit_data is set to the input
@@ -56,9 +93,9 @@ pub fn sl_install_integrity(e: Env) {
     let params_period_ledgers = params.period_ledgers;
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
-    SpendingLimitPolicy::install(&e, params.clone(), ctx_rule.clone(), account_id.clone());
+    install(&e, &params.clone(), &ctx_rule.clone(), &account_id.clone());
     let spending_limit_data_post =
-        SpendingLimitPolicy::get_spending_limit_data(&e, ctx_rule.id, account_id);
+        get_spending_limit_data(&e, ctx_rule.id, &account_id.clone());
     let spending_limit_data_post_spending_limit = spending_limit_data_post.spending_limit;
     let spending_limit_data_post_period_ledgers = spending_limit_data_post.period_ledgers;
     cvlr_assert!(spending_limit_data_post_spending_limit == params_spending_limit);
@@ -71,7 +108,7 @@ pub fn sl_install_integrity(e: Env) {
 pub fn sl_uninstall_integrity(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
-    SpendingLimitPolicy::uninstall(&e, ctx_rule.clone(), account_id.clone());
+    uninstall(&e, &ctx_rule.clone(), &account_id.clone());
     let key: SpendingLimitStorageKey =
         SpendingLimitStorageKey::AccountContext(account_id.clone(), ctx_rule.id);
     let account_ctx_opt: Option<SpendingLimitData> = e.storage().persistent().get(&key);
