@@ -1,0 +1,52 @@
+{
+  "property": {
+    "property": "P-XX. SpendingLimit-Panics.",
+    "description": "SpendingLimit functions panic in all appropriate cases.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "sl_set_spending_limit_panics_if_invalid_limit",
+      "description": "set_spending_limit panics if spending limit is not positive",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_set_spending_limit_panics_if_unauth",
+      "description": "set_spending_limit panics if unauth by smart_account",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_set_spending_limit_panics_if_not_installed",
+      "description": "set_spending_limit panics if not installed",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_install_panics_if_invalid_limit",
+      "description": "install panics if spending limit is not positive",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_install_panics_if_unauth",
+      "description": "install panics if unauth by smart_account",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_install_panics_if_period_ledgers_is_zero",
+      "description": "install panics if period_ledgers is zero",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    },
+    {
+      "name": "sl_uninstall_panics_if_unauth",
+      "description": "uninstall panics if unauth by smart_account",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce"
+    }
+  ],
+  "total_rules": 7
+}

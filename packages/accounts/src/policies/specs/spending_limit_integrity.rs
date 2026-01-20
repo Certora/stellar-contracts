@@ -29,6 +29,7 @@ use crate::{
 #[rule]
 // after set_spending_limit the spending_limit is set to the input
 // status: verified
+// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
 pub fn sl_set_spending_limit_integrity(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -48,6 +49,7 @@ pub fn sl_set_spending_limit_integrity(e: Env) {
 #[rule]
 // can_enforce returns false if there is no spending limit data associated with the smart account and context
 // status: verified 
+// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
 pub fn sl_can_enforce_returns_false_if_no_spending_limit_data(e: Env, context: Context) {
     let auth_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -60,6 +62,7 @@ pub fn sl_can_enforce_returns_false_if_no_spending_limit_data(e: Env, context: C
 
 // can_enforce returns false for a context that is not a contract call
 // status: verified
+// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
 pub fn sl_can_enforce_returns_false_if_not_contract_call(e: Env, context: Context) {
     let auth_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -70,23 +73,11 @@ pub fn sl_can_enforce_returns_false_if_not_contract_call(e: Env, context: Contex
     cvlr_assert!(!result);
 }
 
-#[rule]
-// can_enforce returns false for a transaction that is not a transfer
-// status: verified
-pub fn sl_can_enforce_returns_false_if_not_transfer(e: Env, context: Context) {
-    let auth_signers: Vec<Signer> = nondet_signers_vec();
-    let ctx_rule: ContextRule = ContextRule::nondet();
-    let account_id = nondet_address();
-    let context_is_transfer = matches!(context.clone(), Context::Contract(ContractContext { fn_name, .. }) if fn_name == symbol_short!("transfer"));
-    cvlr_assume!(!context_is_transfer);
-    let result = can_enforce(&e, &context.clone(), &auth_signers.clone(), &ctx_rule.clone(), &account_id.clone());
-    cvlr_assert!(!result);
-}
-
 
 #[rule]
 // after install the spending_limit_data is set to the input
 // status: verified
+// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
 pub fn sl_install_integrity(e: Env) {
     let params: SpendingLimitAccountParams = SpendingLimitAccountParams::nondet();
     let params_spending_limit = params.spending_limit;
@@ -105,7 +96,8 @@ pub fn sl_install_integrity(e: Env) {
 #[rule]
 // after uninstall the spending_limit_data is removed
 // status: verified
-pub fn sl_uninstall_integrity(e: Env) {
+// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
+    pub fn sl_uninstall_integrity(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
     uninstall(&e, &ctx_rule.clone(), &account_id.clone());

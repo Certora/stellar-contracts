@@ -24,6 +24,7 @@ use crate::{
 #[rule]
 // set_spending_limit panics if spending limit is not positive
 // status: verified 
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_set_spending_limit_panics_if_invalid_limit(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -36,6 +37,7 @@ pub fn sl_set_spending_limit_panics_if_invalid_limit(e: Env) {
 #[rule]
 // set_spending_limit panics if unauth by smart_account
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_set_spending_limit_panics_if_unauth(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -48,6 +50,7 @@ pub fn sl_set_spending_limit_panics_if_unauth(e: Env) {
 #[rule]
 // set_spending_limit panics if not installed
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_set_spending_limit_panics_if_not_installed(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -62,6 +65,7 @@ pub fn sl_set_spending_limit_panics_if_not_installed(e: Env) {
 #[rule]
 // install panics if spending limit is not positive
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_install_panics_if_invalid_limit(e: Env) {
     let params: SpendingLimitAccountParams = SpendingLimitAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -74,6 +78,7 @@ pub fn sl_install_panics_if_invalid_limit(e: Env) {
 #[rule]
 // install panics if unauth by smart_account
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_install_panics_if_unauth(e: Env) {
     let params: SpendingLimitAccountParams = SpendingLimitAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -86,6 +91,7 @@ pub fn sl_install_panics_if_unauth(e: Env) {
 #[rule]
 // install panics if period_ledgers is zero
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_install_panics_if_period_ledgers_is_zero(e: Env) {
     let params: SpendingLimitAccountParams = SpendingLimitAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -98,6 +104,7 @@ pub fn sl_install_panics_if_period_ledgers_is_zero(e: Env) {
 #[rule]
 // uninstall panics if unauth by smart_account
 // status: verified
+// link: https://prover.certora.com/output/5771024/d46894c0ea344addb72292c922856cd9/?anonymousKey=76e8f6140438c484099f743bbb4473b89b8413ce
 pub fn sl_uninstall_panics_if_unauth(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();

@@ -1,0 +1,34 @@
+{
+  "property": {
+    "property": "P-XX. SpendingLimit-Integrity.",
+    "description": "SpendingLimit functions modify spending limit as expected.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "sl_set_spending_limit_integrity",
+      "description": "after set_spending_limit the spending_limit is set to the input",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77"
+    },
+    {
+      "name": "sl_can_enforce_returns_false_if_no_spending_limit_data",
+      "description": "can_enforce returns false if there is no spending limit data associated with the smart account and context",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77"
+    },
+    {
+      "name": "sl_install_integrity",
+      "description": "after install the spending_limit_data is set to the input",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77"
+    },
+    {
+      "name": "sl_uninstall_integrity",
+      "description": "after uninstall the spending_limit_data is removed",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77"
+    }
+  ],
+  "total_rules": 4
+}
