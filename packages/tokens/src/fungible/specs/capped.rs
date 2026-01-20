@@ -1,7 +1,3 @@
-// invariant total supply less than cap
-// need to implement a mint function for this.
-// and constructor.
-
 use cvlr::{cvlr_assert, cvlr_satisfy, nondet::*};
 use cvlr_soroban::nondet_address;
 use cvlr_soroban_derive::rule;
@@ -9,10 +5,14 @@ use soroban_sdk::Env;
 
 use crate::fungible::{specs::capped_contract::CappedTokenContract, FungibleToken};
 
-#[rule]
-// after mint the account's balance increases by amount
-// total supply increases by amount
+// property: P-XX. Capped-Integrity.
+// description: Capped mint increases the balance and total supply by the amount minted and does not exceed the cap.
 // status: verified
+
+#[rule]
+// after mint the account's balance and total supply increase by amount
+// status: verified
+// link: https://prover.certora.com/output/40748/77feac7184e54260ab75f292702b8634/?anonymousKey=bcfb9359cc1c6e8cbafba8abc9ec0f50ee80a84c
 pub fn mint_integrity(e: Env) {
     let account = nondet_address();
     let amount = nondet();
@@ -28,7 +28,7 @@ pub fn mint_integrity(e: Env) {
 #[rule]
 // after a mint the total supply doesn't surpass the cap
 // status: verified
-// note: 18 minutes
+// link: https://prover.certora.com/output/40748/77feac7184e54260ab75f292702b8634/?anonymousKey=bcfb9359cc1c6e8cbafba8abc9ec0f50ee80a84c
 pub fn mint_preserves_cap(e: Env) {
     let amount = nondet();
     let account = nondet_address();
@@ -41,6 +41,7 @@ pub fn mint_preserves_cap(e: Env) {
 #[rule]
 // after constructor the cap is set
 // status: verified
+// link: https://prover.certora.com/output/40748/77feac7184e54260ab75f292702b8634/?anonymousKey=bcfb9359cc1c6e8cbafba8abc9ec0f50ee80a84c
 pub fn constructor_integrity(e: Env) {
     let cap = nondet();
     CappedTokenContract::__constructor(&e, cap);

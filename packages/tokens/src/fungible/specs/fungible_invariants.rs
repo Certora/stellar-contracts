@@ -5,6 +5,10 @@ use soroban_sdk::{Address, Env};
 
 use crate::fungible::{Base, FungibleToken};
 
+// property: P-XX. Fungible-Invariants.
+// description: Fungible token invariants: 1. total_supply >= 0 and 2. balance >= 0.
+// status: verified
+
 // helper assumption -- this is an invariant that we cannot
 // prove without ghosts and hooks
 pub fn assume_balance_leq_total_supply(e: &Env, account: &Address) {
@@ -33,7 +37,9 @@ pub fn assert_post_total_supply_geq_zero(e: &Env) {
 // rules 
 
 #[rule]
+// invariant: total_supply >= 0, case: transfer
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_transfer_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let from = nondet_address();
@@ -47,7 +53,9 @@ pub fn fungible_after_transfer_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: total_supply >= 0, case: transfer_from
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_transfer_from_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let spender = nondet_address();
@@ -63,7 +71,9 @@ pub fn fungible_after_transfer_from_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: total_supply >= 0, case: approve
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_approve_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let owner = nondet_address();
@@ -79,7 +89,9 @@ pub fn fungible_after_approve_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: total_supply >= 0, case: mint
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_mint_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let amount = nondet();
@@ -91,7 +103,9 @@ pub fn fungible_after_mint_total_supply_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: total_supply >= 0, case: burn
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_burn_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
     let amount = nondet();
@@ -120,7 +134,9 @@ pub fn assert_post_balance_geq_zero(e: &Env, account: &Address) {
 // rules
 
 #[rule]
+// invariant: balance >= 0, case: transfer
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_transfer_balance_geq_zero(e: Env) {
     let account = nondet_address();
     assume_pre_balance_geq_zero(&e, &account);
@@ -135,7 +151,9 @@ pub fn fungible_after_transfer_balance_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: balance >= 0, case: transfer_from
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_transfer_from_balance_geq_zero(e: Env) {
     let account = nondet_address();
     assume_pre_balance_geq_zero(&e, &account);
@@ -152,7 +170,9 @@ pub fn fungible_after_transfer_from_balance_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: balance >= 0, case: approve
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_approve_balance_geq_zero(e: Env) {
     let account = nondet_address();
     assume_pre_balance_geq_zero(&e, &account);
@@ -167,7 +187,9 @@ pub fn fungible_after_approve_balance_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: balance >= 0, case: mint
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_mint_balance_geq_zero(e: Env) {
     let account = nondet_address();
     assume_pre_balance_geq_zero(&e, &account);
@@ -178,7 +200,9 @@ pub fn fungible_after_mint_balance_geq_zero(e: Env) {
 }
 
 #[rule]
+// invariant: balance >= 0, case: burn
 // status: verified
+// link: https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589
 pub fn fungible_after_burn_balance_geq_zero(e: Env) {
     let account = nondet_address();
     assume_pre_balance_geq_zero(&e, &account);

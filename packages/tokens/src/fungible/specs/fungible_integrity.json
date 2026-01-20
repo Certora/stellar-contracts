@@ -1,0 +1,46 @@
+{
+  "property": {
+    "property": "P-XX. Fungible-Integrity.",
+    "description": "Fungible token functions change state as expected.",
+    "status": "violated"
+  },
+  "rules": [
+    {
+      "name": "transfer_integrity",
+      "description": "transfer changes balances accordingly",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    },
+    {
+      "name": "transfer_from_integrity_1",
+      "description": "transfer_from does not change total supply",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    },
+    {
+      "name": "transfer_from_integrity_2",
+      "description": "transfer_from changes the balance of from accordingly",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    },
+    {
+      "name": "transfer_from_integrity_3",
+      "description": "transfer_from changes the balance of to accordingly",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    },
+    {
+      "name": "transfer_from_integrity_4",
+      "description": "transfer_from changes allowance accordingly (bug: allowance expiry issue)",
+      "status": "violated",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    },
+    {
+      "name": "approve_integrity",
+      "description": "approve changes allowance accordingly",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957"
+    }
+  ],
+  "total_rules": 6
+}

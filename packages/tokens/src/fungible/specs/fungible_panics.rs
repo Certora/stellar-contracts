@@ -5,9 +5,14 @@ use soroban_sdk::{Address, Env};
 
 use crate::fungible::{Base, FungibleToken};
 
+// property: P-XX. Fungible-Panics.
+// description: Fungible token functions panic in all appropriate cases.
+// status: violated
+
 #[rule]
 // transfer panics if from does not auth
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_panics_if_unauthorized(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -23,6 +28,7 @@ pub fn transfer_panics_if_unauthorized(e: Env) {
 #[rule]
 // transfer panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_panics_if_not_enough_balance(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -40,6 +46,7 @@ pub fn transfer_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // transfer panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_panics_if_amount_less_than_zero(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -55,6 +62,7 @@ pub fn transfer_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // transfer_from panics if spender does not auth
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_from_panics_if_spender_unauthorized(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -72,6 +80,7 @@ pub fn transfer_from_panics_if_spender_unauthorized(e: Env) {
 #[rule]
 // transfer_from panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_from_panics_if_not_enough_balance(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -90,7 +99,8 @@ pub fn transfer_from_panics_if_not_enough_balance(e: Env) {
 
 #[rule]
 // transfer_from panics if not enough allowance and spender != from
-// status: bug
+// status: violated
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_from_panics_if_not_enough_allowance(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -111,6 +121,7 @@ pub fn transfer_from_panics_if_not_enough_allowance(e: Env) {
 #[rule]
 // transfer_from panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn transfer_from_panics_if_amount_less_than_zero(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -128,6 +139,7 @@ pub fn transfer_from_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // approve panics if owner does not auth
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn approve_panics_if_unauthorized(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -145,6 +157,7 @@ pub fn approve_panics_if_unauthorized(e: Env) {
 #[rule]
 // approve panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn approve_panics_if_amount_less_than_zero(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -162,6 +175,7 @@ pub fn approve_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // approve panics if live_until_ledger > max_ledger
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn approve_panics_if_live_until_ledger_greater_than_max_ledger(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -179,6 +193,7 @@ pub fn approve_panics_if_live_until_ledger_greater_than_max_ledger(e: Env) {
 #[rule]
 // approve panics if live_until_ledger < current_ledger & amount > 0
 // status: verified
+// link: https://prover.certora.com/output/40748/84984e41965845c4a46bd263cb3e76c7/?anonymousKey=c0c3ad8f328e7b6355c2d8ea54b6103817563f6c
 pub fn approve_panics_if_live_until_ledger_less_than_current_ledger(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));

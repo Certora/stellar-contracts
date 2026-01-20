@@ -5,11 +5,16 @@ use soroban_sdk::{Address, Env};
 
 use crate::fungible::{blocklist::BlockList, Base, FungibleToken};
 
+// property: P-XX. Blocklist-Integrity.
+// description: Blocklist behaves correctly
+// status: verified
+
 // ################## INTEGRITY RULES ##################
 
 #[rule]
 // block_user sets blocked to true
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn block_user_integrity(e: Env) {
     let account = nondet_address();
     BlockList::block_user(&e, &account);
@@ -20,6 +25,7 @@ pub fn block_user_integrity(e: Env) {
 #[rule]
 // unblock_user sets blocked to false
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn unblock_user_integrity(e: Env) {
     let account = nondet_address();
     BlockList::unblock_user(&e, &account);
@@ -32,6 +38,7 @@ pub fn unblock_user_integrity(e: Env) {
 #[rule]
 // transfer panics if from is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn transfer_panics_if_from_blocked(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -47,6 +54,7 @@ pub fn transfer_panics_if_from_blocked(e: Env) {
 #[rule]
 // transfer panics if to is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn transfer_panics_if_to_blocked(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -62,6 +70,7 @@ pub fn transfer_panics_if_to_blocked(e: Env) {
 #[rule]
 // transfer_from panics if from is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn transfer_from_panics_if_from_blocked(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -79,6 +88,7 @@ pub fn transfer_from_panics_if_from_blocked(e: Env) {
 #[rule]
 // transfer_from panics if to is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn transfer_from_panics_if_to_blocked(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -98,6 +108,7 @@ pub fn transfer_from_panics_if_to_blocked(e: Env) {
 #[rule]
 // approve panics if owner is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn approve_panics_if_owner_blocked(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -115,6 +126,7 @@ pub fn approve_panics_if_owner_blocked(e: Env) {
 #[rule]
 // burn panics if from is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn burn_panics_if_from_blocked(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -128,6 +140,7 @@ pub fn burn_panics_if_from_blocked(e: Env) {
 #[rule]
 // burn_from panics if from is blocked
 // status: verified
+// link: https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f
 pub fn burn_from_panics_if_from_blocked(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));

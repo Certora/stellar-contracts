@@ -1,0 +1,70 @@
+{
+  "property": {
+    "property": "P-XX. Fungible-Invariants.",
+    "description": "Fungible token invariants: 1. total_supply >= 0 and 2. balance >= 0.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "fungible_after_transfer_total_supply_geq_zero",
+      "description": "invariant: total_supply >= 0, case: transfer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_transfer_from_total_supply_geq_zero",
+      "description": "invariant: total_supply >= 0, case: transfer_from",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_approve_total_supply_geq_zero",
+      "description": "invariant: total_supply >= 0, case: approve",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_mint_total_supply_geq_zero",
+      "description": "invariant: total_supply >= 0, case: mint",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_burn_total_supply_geq_zero",
+      "description": "invariant: total_supply >= 0, case: burn",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_transfer_balance_geq_zero",
+      "description": "invariant: balance >= 0, case: transfer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_transfer_from_balance_geq_zero",
+      "description": "invariant: balance >= 0, case: transfer_from",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_approve_balance_geq_zero",
+      "description": "invariant: balance >= 0, case: approve",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_mint_balance_geq_zero",
+      "description": "invariant: balance >= 0, case: mint",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    },
+    {
+      "name": "fungible_after_burn_balance_geq_zero",
+      "description": "invariant: balance >= 0, case: burn",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/47cbf87c5d344750bab2fbae657d1048/?anonymousKey=3ce73cd01c024f849e0a7277c31901bc0094c589"
+    }
+  ],
+  "total_rules": 10
+}

@@ -5,11 +5,16 @@ use soroban_sdk::{Address, Env};
 
 use crate::fungible::{allowlist::AllowList, Base, FungibleToken};
 
+// property: P-XX. Allowlist-Integrity.
+// description: Allowlist behaves correctly
+// status: verified
+
 // ################## INTEGRITY RULES ##################
 
 #[rule]
 // allow_user sets allowed to true
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn allow_user_integrity(e: Env) {
     let account = nondet_address();
     AllowList::allow_user(&e, &account);
@@ -20,6 +25,7 @@ pub fn allow_user_integrity(e: Env) {
 #[rule]
 // disallow_user sets allowed to false
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn disallow_user_integrity(e: Env) {
     let account = nondet_address();
     AllowList::disallow_user(&e, &account);
@@ -32,6 +38,7 @@ pub fn disallow_user_integrity(e: Env) {
 #[rule]
 // transfer panics if from is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn transfer_panics_if_from_not_allowed(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -47,6 +54,7 @@ pub fn transfer_panics_if_from_not_allowed(e: Env) {
 #[rule]
 // transfer panics if to is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn transfer_panics_if_to_not_allowed(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -62,6 +70,7 @@ pub fn transfer_panics_if_to_not_allowed(e: Env) {
 #[rule]
 // transfer_from panics if from is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn transfer_from_panics_if_from_not_allowed(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -79,6 +88,7 @@ pub fn transfer_from_panics_if_from_not_allowed(e: Env) {
 #[rule]
 // transfer_from panics if to is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn transfer_from_panics_if_to_not_allowed(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -98,6 +108,7 @@ pub fn transfer_from_panics_if_to_not_allowed(e: Env) {
 #[rule]
 // approve panics if owner is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn approve_panics_if_owner_not_allowed(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -115,6 +126,7 @@ pub fn approve_panics_if_owner_not_allowed(e: Env) {
 #[rule]
 // burn panics if from is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn burn_panics_if_from_not_allowed(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -128,6 +140,7 @@ pub fn burn_panics_if_from_not_allowed(e: Env) {
 #[rule]
 // burn_from panics if from is not allowed
 // status: verified
+// link: https://prover.certora.com/output/40748/c9c4705d27874f1782063add958117f1/?anonymousKey=4f15bce402270b9f4e9db374e84d3451a097fd45
 pub fn burn_from_panics_if_from_not_allowed(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));

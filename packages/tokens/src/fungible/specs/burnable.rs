@@ -4,12 +4,16 @@ use cvlr_soroban_derive::rule;
 use soroban_sdk::{Address, Env};
 use crate::fungible::{Base};
 
+// property: P-XX. Burnable-Integrity.
+// description: Burnable functions change state as expected and panic in appropriate cases.
+// status: violated
+
 // ################## INTEGRITY RULES ##################
 
 #[rule]
 // after burn the account's balance and total supply decrease by amount
 // status: verified
-// note: 20 minutes
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_integrity(e: Env) {
     let account = nondet_address();
     let amount = nondet();
@@ -23,9 +27,9 @@ pub fn burn_integrity(e: Env) {
 }
 
 #[rule]
-// after burn_from the total supply decrease by amount
+// after burn_from the total supply decreases by amount
 // status: verified
-// note: 21 min
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_integrity_1(e: Env) {
     let account = nondet_address();
     let amount = nondet();
@@ -36,9 +40,9 @@ pub fn burn_from_integrity_1(e: Env) {
 }
 
 #[rule]
-// after burn_from the account's balance decrease by amount
+// after burn_from the account's balance decreases by amount
 // status: verified
-// note: 15 min
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_integrity_2(e: Env) {
     let account = nondet_address();
     let amount = nondet();
@@ -53,6 +57,7 @@ pub fn burn_from_integrity_2(e: Env) {
 #[rule]
 // burn panics if not auth by from
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_panics_if_unauthorized(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -66,6 +71,7 @@ pub fn burn_panics_if_unauthorized(e: Env) {
 #[rule]
 // burn panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_panics_if_not_enough_balance(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -81,6 +87,7 @@ pub fn burn_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // burn panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_panics_if_amount_less_than_zero(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -94,6 +101,7 @@ pub fn burn_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // burn_from panics if not auth by spender
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_panics_if_spender_unauthorized(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -109,6 +117,7 @@ pub fn burn_from_panics_if_spender_unauthorized(e: Env) {
 #[rule]
 // burn_from panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_panics_if_not_enough_balance(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -124,9 +133,9 @@ pub fn burn_from_panics_if_not_enough_balance(e: Env) {
 }
 
 #[rule]
-// burn_from panics if not enough allowance
-// status: bug
-// same bug as in transfer_from
+// burn_from panics if not enough allowance (bug: same as transfer_from)
+// status: violated
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_panics_if_not_enough_allowance(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -144,6 +153,7 @@ pub fn burn_from_panics_if_not_enough_allowance(e: Env) {
 #[rule]
 // burn_from panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/ce0170c976c54b8b9ceef7f78ca7091a/?anonymousKey=f05fcbddd167e3eaf75f0f17e16b371af3c7602b
 pub fn burn_from_panics_if_amount_less_than_zero(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));

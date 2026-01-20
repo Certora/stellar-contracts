@@ -5,9 +5,14 @@ use soroban_sdk::{Address, Env};
 
 use crate::fungible::{Base, FungibleToken};
 
+// property: P-XX. Fungible-Integrity.
+// description: Fungible token functions change state as expected.
+// status: violated
+
 #[rule]
 // transfer changes balances accordingly
 // status: verified
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn transfer_integrity(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -40,6 +45,7 @@ pub fn transfer_integrity(e: Env) {
 #[rule]
 // transfer_from does not change total supply
 // status: verified
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn transfer_from_integrity_1(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
@@ -55,6 +61,7 @@ pub fn transfer_from_integrity_1(e: Env) {
 #[rule]
 // transfer_from changes the balance of from accordingly
 // status: verified
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn transfer_from_integrity_2(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
@@ -75,6 +82,7 @@ pub fn transfer_from_integrity_2(e: Env) {
 #[rule]
 // transfer_from changes the balance of to accordingly
 // status: verified
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn transfer_from_integrity_3(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
@@ -93,15 +101,9 @@ pub fn transfer_from_integrity_3(e: Env) {
 }
 
 #[rule]
-// transfer_from changes allowance accordingly
-// status: bug 
-// same bug in transfer_from as observed in transfer_from_panics_if_not_enough_allowance
-// as we saw if allowance.amount = amount and live_until_ledger < current_ledger
-// you can still transfer_from then:
-// allowance_pre = 0 (because allowance expired)
-// allowance_post = 0 
-// but no panic
-// amount > 0 => violation.
+// transfer_from changes allowance accordingly (bug: allowance expiry issue)
+// status: violated
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn transfer_from_integrity_4(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
@@ -122,6 +124,7 @@ pub fn transfer_from_integrity_4(e: Env) {
 #[rule]
 // approve changes allowance accordingly
 // status: verified
+// link: https://prover.certora.com/output/40748/db11471423cc4d998bc2d55ad1f320c8/?anonymousKey=c1ab4c1c996f93a56dd7fdf2b1f89e3ab4aaa957
 pub fn approve_integrity(e: Env) {
     // note - the allowance and approve are all in the same env.
     let owner = nondet_address();

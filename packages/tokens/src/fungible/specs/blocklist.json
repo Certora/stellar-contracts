@@ -1,0 +1,64 @@
+{
+  "property": {
+    "property": "P-XX. Blocklist-Integrity.",
+    "description": "Blocklist behaves correctly",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "block_user_integrity",
+      "description": "block_user sets blocked to true",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "unblock_user_integrity",
+      "description": "unblock_user sets blocked to false",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "transfer_panics_if_from_blocked",
+      "description": "transfer panics if from is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "transfer_panics_if_to_blocked",
+      "description": "transfer panics if to is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "transfer_from_panics_if_from_blocked",
+      "description": "transfer_from panics if from is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "transfer_from_panics_if_to_blocked",
+      "description": "transfer_from panics if to is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "approve_panics_if_owner_blocked",
+      "description": "approve panics if owner is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "burn_panics_if_from_blocked",
+      "description": "burn panics if from is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    },
+    {
+      "name": "burn_from_panics_if_from_blocked",
+      "description": "burn_from panics if from is blocked",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/4f8692af357847a6ad46b3ef72c9e5c9/?anonymousKey=b8bdc52c00e38e292f56267cfd72220e41b7166f"
+    }
+  ],
+  "total_rules": 9
+}
