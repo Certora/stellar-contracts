@@ -158,6 +158,7 @@ pub fn get_spending_limit_data(
 /// * `authenticated_signers` - The list of authenticated signers.
 /// * `context_rule` - The context rule for this policy.
 /// * `smart_account` - The address of the smart account.
+use cvlr::clog;
 pub fn can_enforce(
     e: &Env,
     context: &Context,
@@ -188,13 +189,19 @@ pub fn can_enforce(
                     if let Some(amount_val) = args.get(2) {
                         if let Ok(amount) = i128::try_from_val(e, &amount_val) {
                             let current_ledger = e.ledger().sequence();
+                            clog!(current_ledger);
                             let cutoff_ledger = current_ledger.saturating_sub(data.period_ledgers);
-
+                            clog!(cutoff_ledger);
+                            clog!(data.spending_history.len());
                             // Calculate how much would be removed by cleanup
                             let mut expired_total = 0i128;
+                            clog!(expired_total);
                             for (index, entry) in data.spending_history.iter().enumerate() {
+                                clog!(index);
                                 if entry.ledger_sequence < cutoff_ledger {
                                     expired_total += entry.amount;
+                                    clog!(entry.amount);
+                                    clog!(expired_total);
                                 } else {
                                     // Check if adding this transaction would exceed history
                                     // capacity
@@ -208,8 +215,11 @@ pub fn can_enforce(
                             }
 
                             let total_spent = data.cached_total_spent - expired_total;
-
+                            clog!(total_spent);
+                            clog!(amount);
+                            clog!(data.spending_limit);
                             return total_spent + amount <= data.spending_limit;
+
                         }
                     }
                 }
@@ -274,14 +284,16 @@ pub fn enforce(
             if fn_name == &symbol_short!("transfer") {
                 if let Some(amount_val) = args.get(2) {
                     if let Ok(amount) = i128::try_from_val(e, &amount_val) {
+                        clog!(amount);
                         // Clean up old entries outside the rolling window BEFORE checking limit
                         let removed_amount = cleanup_old_entries(
                             &mut data.spending_history,
                             current_ledger,
                             data.period_ledgers,
                         );
+                        clog!(removed_amount);
                         data.cached_total_spent -= removed_amount;
-
+                        clog!(data.cached_total_spent);
                         // Now check if the transaction exceeds the spending limit using updated
                         // cached total
                         if data.cached_total_spent + amount > data.spending_limit {
@@ -296,7 +308,8 @@ pub fn enforce(
                         let new_entry = SpendingEntry { amount, ledger_sequence: current_ledger };
                         data.spending_history.push_back(new_entry);
                         data.cached_total_spent += amount;
-
+                        clog!(data.cached_total_spent);
+                        clog!(data.spending_history.len());
                         e.storage().persistent().set(&key, &data);
 
                         #[cfg(not(feature = "certora"))]
