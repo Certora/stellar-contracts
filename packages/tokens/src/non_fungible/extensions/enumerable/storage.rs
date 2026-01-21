@@ -587,5 +587,7 @@ impl Enumerable {
         e.storage()
             .persistent()
             .remove(&NFTEnumerableStorageKey::GlobalTokensIndex(to_be_removed_id));
-    }
+        let get_result_global_tokens_last_token_index = e.storage().persistent().get::<_, u32>(&NFTEnumerableStorageKey::GlobalTokens(last_token_index));
+        clog!(get_result_global_tokens_last_token_index);
+   }
 }
