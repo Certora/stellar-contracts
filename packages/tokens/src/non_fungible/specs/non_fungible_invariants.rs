@@ -5,7 +5,9 @@ use soroban_sdk::{Address, Env};
 
 use crate::non_fungible::{storage::NFTStorageKey, Base};
 
-// invariant: token owner exists after a mint forever
+// property: P-XX. Non-Fungible-Invariants.
+// description: Invariants: 1. Token owner exists after a mint forever.
+// status: verified
 
 // helpers
 
@@ -30,7 +32,9 @@ pub fn assert_post_token_owner_exists(e: Env, token_id: u32) {
 }
 
 #[rule]
+// invariant: token owner exists after a transfer, case: transfer.
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn after_transfer_token_owner_exists(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -46,7 +50,9 @@ pub fn after_transfer_token_owner_exists(e: Env) {
 }
 
 #[rule]
+// invariant: token owner exists after a transfer_from, case: transfer_from.
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn after_transfer_from_token_owner_exists(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -65,6 +71,7 @@ pub fn after_transfer_from_token_owner_exists(e: Env) {
 
 #[rule]
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn after_approve_token_owner_exists(e: Env) {
     let approved = nondet_address();
     clog!(cvlr_soroban::Addr(&approved));
@@ -83,6 +90,7 @@ pub fn after_approve_token_owner_exists(e: Env) {
 
 #[rule]
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn after_approve_for_all_token_owner_exists(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -100,6 +108,7 @@ pub fn after_approve_for_all_token_owner_exists(e: Env) {
 #[rule]
 // this is "init" for this invariant.
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn after_mint_token_owner_exists(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -108,6 +117,3 @@ pub fn after_mint_token_owner_exists(e: Env) {
     Base::mint(&e, &to, token_id);
     assert_post_token_owner_exists(e, token_id);
 }
-
-// we would like to do owner(of) = account => balance(account) >= 1 
-// but this doesnt work without ghosts and hooks -- similar issue to fungible.

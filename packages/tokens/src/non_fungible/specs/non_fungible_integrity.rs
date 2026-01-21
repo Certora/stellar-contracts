@@ -5,9 +5,12 @@ use soroban_sdk::{Address, Env};
 
 use crate::non_fungible::{sequential, specs::helper::is_approved_for_token, Base};
 
+// property: P-XX. Non-Fungible-Integrity.
+// description: Non-Fungible Token functions change state as expected.
+// status: verified
+
 #[rule]
-// after transfer the token owner is set to the to address
-// updates balances correctly
+// after transfer the token owner is set to the to address and balances are updated correctly
 // status: verified
 pub fn nft_transfer_integrity(e: Env) {
     let to = nondet_address();
@@ -40,10 +43,10 @@ pub fn nft_transfer_integrity(e: Env) {
 }
 
 #[rule]
-// after transfer_from the token owner is to
-// updates balances correctly
-// removes approval
+// after transfer_from the token owner is set to the to address, balances are updated correctly
+// and approval is removed
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn nft_transfer_from_integrity(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -81,6 +84,7 @@ pub fn nft_transfer_from_integrity(e: Env) {
 #[rule]
 // after approve the token owner is approved
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn nft_approve_integrity(e: Env) {
     let approver = nondet_address();
     clog!(cvlr_soroban::Addr(&approver));
@@ -102,6 +106,7 @@ pub fn nft_approve_integrity(e: Env) {
 #[rule]
 // after approve_for_all the token owner is approved
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn nft_approve_for_all_integrity(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));
@@ -120,8 +125,9 @@ pub fn nft_approve_for_all_integrity(e: Env) {
 
 #[rule]
 // after mint the token owner is set to the to address
-// updates balances correctly
+// and balances are updated correctly
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn nft_mint_integrity(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -142,8 +148,9 @@ pub fn nft_mint_integrity(e: Env) {
 
 #[rule]
 // after sequential mint the token owner is set to the to address
-// updates balances correctly
+// and balances are updated correctly
 // status: verified
+// link: https://prover.certora.com/output/40748/bd0f71cbb7f6470fbb8ebdcb59fcb4f7/?anonymousKey=36d50f2add98d34fabc4e1244721735efc97c26d
 pub fn nft_sequential_mint_integrity(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));

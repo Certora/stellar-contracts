@@ -8,12 +8,17 @@ use crate::non_fungible::{
     Base,
 };
 
+// property: P-XX. Non-Fungible-Burnable.
+// description: Non-Fungible Token functions burn tokens correctly.
+// status: verified
+
 // ################## INTEGRITY RULES ##################
 
 #[rule]
 // after burn the account's balance decreases by 1
 // and the token has no owner
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_integrity(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -36,6 +41,7 @@ pub fn nft_burn_integrity(e: Env) {
 // after burn_from the account's balance decreases by 1
 // and the token has no owner
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_from_integrity(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -61,6 +67,7 @@ pub fn nft_burn_from_integrity(e: Env) {
 #[rule]
 // burn panics if not auth by from
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_panics_if_unauthorized(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -74,6 +81,7 @@ pub fn nft_burn_panics_if_unauthorized(e: Env) {
 #[rule]
 // burn panics if from is not the token owner
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_panics_wrong_owner(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -89,6 +97,7 @@ pub fn nft_burn_panics_wrong_owner(e: Env) {
 #[rule]
 // burn panics if token is not owned
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_panics_if_not_owned(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -102,6 +111,7 @@ pub fn nft_burn_panics_if_not_owned(e: Env) {
 #[rule]
 // burn_from panics if not auth by spender
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_from_panics_if_unauthorized(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -117,6 +127,7 @@ pub fn nft_burn_from_panics_if_unauthorized(e: Env) {
 #[rule]
 // burn_from panics if from is not the token owner
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_from_panics_wrong_owner(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -134,6 +145,7 @@ pub fn nft_burn_from_panics_wrong_owner(e: Env) {
 #[rule]
 // burn_from panics if token is not owned
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_from_panics_if_not_owned(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -149,6 +161,7 @@ pub fn nft_burn_from_panics_if_not_owned(e: Env) {
 #[rule]
 // burn_from panics if not approved
 // status: verified
+// link: https://prover.certora.com/output/40748/b9da78c3b315438eb19db91801b3be79/?anonymousKey=1e58a9ca59a1c29f7a838e71ead6ec802f00dcb2
 pub fn nft_burn_from_panics_if_not_approved(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));

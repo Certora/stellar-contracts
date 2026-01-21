@@ -11,6 +11,10 @@ use crate::non_fungible::{
     Base,
 };
 
+// property: P-XX. Non-Fungible-Non-Panics.
+// description: Non-Fungible Token functions do not panic under appropriate assumptions.
+// status: verified
+
 // These rules require the prover arg "prover_args": ["-trapAsAssert true"] to
 // consider also panicking paths.
 
@@ -56,7 +60,7 @@ pub fn reasonable_balance(e: Env, account: Address) {
 // return to this after doing invariants.
 
 #[rule]
-// requires:
+// if the following conditions are met, then transfer does not panic:
 // - from is authenticated
 // - owner == from (token owner matches from address)
 // - to balance is reasonable (won't overflow)
@@ -66,6 +70,7 @@ pub fn reasonable_balance(e: Env, account: Address) {
 // - balance for from
 // - balance for to
 // status: verified
+// link: https://prover.certora.com/output/40748/ec6f6d91cefb4d9ca30269f588c02ed5/?anonymousKey=9ef72d63b10d3e4d9cd9826d8c8f785fbaec1630
 pub fn nft_transfer_non_panic(e: Env) {
     let to: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -87,7 +92,7 @@ pub fn nft_transfer_non_panic(e: Env) {
 }
 
 #[rule]
-// requires:
+// if the following conditions are met, then transfer_from does not panic:
 // - owner == from (token owner matches from address)
 // - spender is authenticated
 // - spender is approved for token (via explicit approval, approval for all or
@@ -101,6 +106,7 @@ pub fn nft_transfer_non_panic(e: Env) {
 // - approval for token_id with spender
 // - approval for all for from and spender
 // status: verified
+// link: https://prover.certora.com/output/40748/ec6f6d91cefb4d9ca30269f588c02ed5/?anonymousKey=9ef72d63b10d3e4d9cd9826d8c8f785fbaec1630
 pub fn nft_transfer_from_non_panic(e: Env) {
     let to: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -127,7 +133,7 @@ pub fn nft_transfer_from_non_panic(e: Env) {
 }
 
 #[rule]
-// requires:
+// if the following conditions are met, then approve does not panic:
 // - approver is authenticated
 // - approver is owner OR approver is approved for all by owner
 // - live_until_ledger is 0 OR (live_until_ledger <= max_live_until_ledger AND
@@ -136,6 +142,7 @@ pub fn nft_transfer_from_non_panic(e: Env) {
 // - owner for token_id
 // - approval_for_all for owner and approver
 // status: verified
+// link: https://prover.certora.com/output/40748/ec6f6d91cefb4d9ca30269f588c02ed5/?anonymousKey=9ef72d63b10d3e4d9cd9826d8c8f785fbaec1630
 pub fn nft_approve_non_panic(e: Env) {
     let approver = nondet_address();
     clog!(cvlr_soroban::Addr(&approver));
@@ -163,11 +170,12 @@ pub fn nft_approve_non_panic(e: Env) {
 }
 
 #[rule]
-// requires:
+// if the following conditions are met, then approve_for_all does not panic:
 // - owner is authenticated
 // - live_until_ledger is 0 OR (live_until_ledger <= max_live_until_ledger AND
 //   live_until_ledger > current_ledger)
 // status: verified
+// link: https://prover.certora.com/output/40748/ec6f6d91cefb4d9ca30269f588c02ed5/?anonymousKey=9ef72d63b10d3e4d9cd9826d8c8f785fbaec1630
 pub fn nft_approve_for_all_non_panic(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));

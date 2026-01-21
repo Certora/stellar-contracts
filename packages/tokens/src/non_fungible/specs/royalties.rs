@@ -9,6 +9,10 @@ use crate::non_fungible::{
     Base,
 };
 
+// property: P-XX. Non-Fungible-Royalties.
+// description: Non-Fungible Token functions set and get royalties correctly.
+// status: verified
+
 // helpers
 
 pub fn get_default_royalty(e: &Env) -> Option<RoyaltyInfo> {
@@ -28,6 +32,7 @@ pub fn get_token_royalty(e: &Env, token_id: u32) -> Option<RoyaltyInfo> {
 #[rule]
 // after set_default_royalty the default royalty is set
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn set_default_royalty_integrity(e: Env) {
     let receiver = nondet_address();
     clog!(cvlr_soroban::Addr(&receiver));
@@ -49,6 +54,7 @@ pub fn set_default_royalty_integrity(e: Env) {
 #[rule]
 // after set_token_royalty the token royalty is set
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn set_token_royalty_integrity(e: Env) {
     let token_id = u32::nondet();
     clog!(token_id);
@@ -72,6 +78,7 @@ pub fn set_token_royalty_integrity(e: Env) {
 #[rule]
 // after remove_token_royalty the token royalty is the default
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn remove_token_royalty_integrity(e: Env) {
     let token_id = u32::nondet();
     clog!(token_id);
@@ -85,6 +92,7 @@ pub fn remove_token_royalty_integrity(e: Env) {
 #[rule]
 // if there is a specific token_royalty - that is used
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn royalty_info_token_royalty_is_some(e: Env) {
     let token_id = u32::nondet();
     clog!(token_id);
@@ -106,6 +114,7 @@ pub fn royalty_info_token_royalty_is_some(e: Env) {
 // if there is no specific token royalty, but there is a default, the royalty is
 // the default 
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn royalty_info_token_royalty_is_none_and_default_is_some(e: Env) {
     let token_id = u32::nondet();
     clog!(token_id);
@@ -129,6 +138,7 @@ pub fn royalty_info_token_royalty_is_none_and_default_is_some(e: Env) {
 // if there is no specific token royalty, and no default, the royalty is 0 and
 // receiver is the contract address 
 // status: verified
+// link: https://prover.certora.com/output/40748/3ce433844766479396e7a3fd2a142ce1/?anonymousKey=f809bcfe27375ab824f71acc90df91be3159e395
 pub fn royalty_info_token_royalty_is_none_and_default_is_none(e: Env) {
     let token_id = u32::nondet();
     clog!(token_id);
