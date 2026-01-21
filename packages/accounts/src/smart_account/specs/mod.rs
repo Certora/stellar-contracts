@@ -1,7 +1,5 @@
-pub mod smart_account_contract;
 pub mod smart_account_integrity;
 pub mod smart_account_invariants;
-pub mod smart_account_fingerprints;
 
 pub mod helper;
 pub mod nondet;

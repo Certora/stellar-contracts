@@ -1,0 +1,106 @@
+{
+  "property": {
+    "property": "P-XX. Smart-Account-Invariants.",
+    "description": "Invariants: 1. Any context rule has at least one signer or policy, 2. Number of rules is at most MAX_CONTEXT_RULES.",
+    "status": "verified"
+  },
+  "rules": [
+    {
+      "name": "after_add_context_rule_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: add_context_rule",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_update_context_rule_name_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: update_context_rule_name",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_update_context_rule_valid_until_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: update_context_rule_valid_until",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_remove_context_rule_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: remove_context_rule",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_add_signer_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: add_signer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_remove_signer_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: remove_signer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_add_policy_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: add_policy",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_remove_policy_valid_signers_and_policies",
+      "description": "invariant: signers and policies remain valid, case: remove_policy",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f"
+    },
+    {
+      "name": "after_add_context_rule_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: add_context_rule",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_update_context_rule_name_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: update_context_rule_name",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_update_context_rule_valid_until_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: update_context_rule_valid_until",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_remove_context_rule_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: remove_context_rule",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_add_signer_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: add_signer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_remove_signer_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: remove_signer",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_add_policy_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: add_policy",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    },
+    {
+      "name": "after_remove_policy_number_of_rules_at_most_max",
+      "description": "invariant: number of rules is at most max, case: remove_policy",
+      "status": "verified",
+      "link": "https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba"
+    }
+  ],
+  "total_rules": 16
+}

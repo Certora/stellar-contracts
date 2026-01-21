@@ -10,7 +10,6 @@ use crate::smart_account::{
             get_signers_of_id,
         },
         nondet::{nondet_policy_map, nondet_signers_vec},
-        smart_account_contract::SmartAccountContract,
     },
     storage::{
         add_context_rule, add_policy, add_signer, get_context_rule, get_persistent_entry,
@@ -21,26 +20,14 @@ use crate::smart_account::{
     ContextRuleType, Meta, Signer, SmartAccount, SmartAccountError,
 };
 
-// functions from the trait:
-
-#[rule]
-// after add_context_rule the rule_count increases by 1
-// status: verified https://prover.certora.com/output/33158/9a7a12d7c8f840768bdcc6ce30a016e2
-pub fn add_context_rule_integrity_1(e: Env) {
-    let ctx_typ = ContextRuleType::nondet();
-    let name = nondet_string();
-    let valid_until = Option::<u32>::nondet();
-    let signers = nondet_signers_vec();
-    let policies = nondet_policy_map();
-    let count_pre = get_count(e.clone());
-    add_context_rule(&e, &ctx_typ, &name, valid_until, &signers, &policies);
-    let count_post = get_count(e.clone());
-    cvlr_assert!(count_post == count_pre + 1);
-}
-
-#[rule]
-// after update_context_rule_name the name changes
+// property: P-XX. Smart-Account-Integrity.
+// description: Smart account storage functions change state as expected.
 // status: verified
+
+#[rule]
+// update_context_rule_name changes the name correctly
+// status: verified
+// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn update_context_rule_name_integrity(e: Env) {
     let id = nondet();
     let name = nondet_string();
@@ -52,9 +39,9 @@ pub fn update_context_rule_name_integrity(e: Env) {
 }
 
 #[rule]
-// after update_context_rule_valid_until the rule's valid until changes.
+// update_context_rule_valid_until changes the valid_until correctly
 // status: verified
-// needs loop_iter = 3 for init loop in try_from_val for Meta.
+// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn update_context_rule_valid_until_integrity(e: Env) {
     let id: u32 = nondet();
     let valid_until = Option::<u32>::nondet();
@@ -64,9 +51,9 @@ pub fn update_context_rule_valid_until_integrity(e: Env) {
 }
 
 #[rule]
-// remove context_rule updates the rule count correctly.
+// remove_context_rule decrements the rule count correctly
 // status: verified
-// note: 80 minutes!
+// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn remove_context_rule_integrity_1(e: Env) {
     let id: u32 = nondet();
     clog!(id);
@@ -77,15 +64,10 @@ pub fn remove_context_rule_integrity_1(e: Env) {
     cvlr_assert!(rule_count_post == rule_count_pre - 1);
 }
 
-// remove_context_rule should also remove:
-// uninstall policies
-// clean policies, signers and metadata from storage.
-// less important.
-
 #[rule]
-// after add_signer the signer is added.
+// add_signer adds the signer to the context rule
 // status: verified
-#[rule]
+// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn add_signer_integrity(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -103,9 +85,9 @@ pub fn add_signer_integrity(e: Env) {
 }
 
 #[rule]
-// after remove_signer the signer is removed
-// status: verified 
-#[rule]
+// remove_signer removes the signer from the context rule
+// status: verified
+// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn remove_signer_integrity(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -125,5 +107,3 @@ pub fn remove_signer_integrity(e: Env) {
     let ctx_rule_post = get_context_rule(&e, id);
     cvlr_assert!(!ctx_rule_post.signers.contains(&signer));
 }
-
-

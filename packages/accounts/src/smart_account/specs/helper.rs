@@ -4,6 +4,7 @@ use crate::smart_account::{Signer, Meta};
 use crate::smart_account::specs::policy1::Policy1;
 use crate::smart_account::specs::policy2::Policy2;
 use crate::policies::Policy;
+use cvlr::clog;
 
 pub fn get_next_id(e: Env) -> u32 {
     e.storage().instance().get(&SmartAccountStorageKey::NextId).unwrap_or(0u32)
@@ -41,6 +42,8 @@ pub fn validate_signers_and_policies_non_panicking(
     signers: &Vec<Signer>,
     policies: &Vec<Address>,
 ) -> bool {
+    clog!(signers.len());
+    clog!(policies.len());
     if signers.len() > MAX_SIGNERS {
         return false
     }

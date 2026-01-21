@@ -14,10 +14,11 @@ use crate::smart_account::{
     }
 };
 
+// property: P-XX. Smart-Account-Invariants.
+// description: Invariants: 1. Any context rule has at least one signer or policy, 2. Number of rules is at most MAX_CONTEXT_RULES.
+// status: verified
 
-// invariant: 
-// any ctx rule has at least one signer or a policy <->
-// validate_signers_and_policies_non_panicking always returns true
+// Invariant 1: any ctx rule has at least one signer or a policy
 
 // helpers
 
@@ -36,7 +37,9 @@ pub fn assert_post_valid_signers_and_policies(e: Env, rule: ContextRule) {
 }
 
 #[rule]
-// status: verified (except for sanity)
+// invariant: signers and policies remain valid, case: add_context_rule
+// status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_add_context_rule_valid_signers_and_policies(e: Env) {
     let ctx_typ = ContextRuleType::nondet();
     let name = nondet_string();
@@ -48,7 +51,9 @@ pub fn after_add_context_rule_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
+// invariant: signers and policies remain valid, case: update_context_rule_name
 // status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_update_context_rule_name_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let name = nondet_string();
@@ -60,7 +65,9 @@ pub fn after_update_context_rule_name_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
+// invariant: signers and policies remain valid, case: update_context_rule_valid_until
 // status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_update_context_rule_valid_until_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let valid_until = Option::<u32>::nondet();
@@ -72,7 +79,9 @@ pub fn after_update_context_rule_valid_until_valid_signers_and_policies(e: Env) 
 }
 
 #[rule]
+// invariant: signers and policies remain valid, case: remove_context_rule
 // status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_remove_context_rule_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let rule_pre = get_context_rule(&e, id);
@@ -84,7 +93,9 @@ pub fn after_remove_context_rule_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
+// invariant: signers and policies remain valid, case: add_signer
 // status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_add_signer_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -97,7 +108,9 @@ pub fn after_add_signer_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
-// status: verified 
+// invariant: signers and policies remain valid, case: remove_signer
+// status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_remove_signer_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -110,7 +123,9 @@ pub fn after_remove_signer_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
-// status: verified 
+// invariant: signers and policies remain valid, case: add_policy
+// status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f
 pub fn after_add_policy_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let policy = nondet_address();
@@ -124,7 +139,9 @@ pub fn after_add_policy_valid_signers_and_policies(e: Env) {
 }
 
 #[rule]
+// invariant: signers and policies remain valid, case: remove_policy
 // status: verified
+// link: https://prover.certora.com/output/5771024/ac086a3e7d1a45a7abfbf504e901493f/?anonymousKey=b66d173bd2004c78a60ea7f282e2808984076f6f  
 pub fn after_remove_policy_valid_signers_and_policies(e: Env) {
     let id: u32 = nondet();
     let policy = nondet_address();
@@ -136,7 +153,7 @@ pub fn after_remove_policy_valid_signers_and_policies(e: Env) {
     assert_post_valid_signers_and_policies(e.clone(), rule_post);
 }
 
-// invariant: number of rules is at most 15
+// Invariant 2: number of rules is at most MAX_CONTEXT_RULES (15)
 
 // helpers
 
@@ -153,7 +170,9 @@ pub fn assert_post_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: add_context_rule
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_add_context_rule_number_of_rules_at_most_max(e: Env) {
     let ctx_typ = ContextRuleType::nondet();
     let name = nondet_string();
@@ -166,7 +185,9 @@ pub fn after_add_context_rule_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: update_context_rule_name
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_update_context_rule_name_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let name = nondet_string();
@@ -176,7 +197,9 @@ pub fn after_update_context_rule_name_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: update_context_rule_valid_until
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_update_context_rule_valid_until_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let valid_until = Option::<u32>::nondet();
@@ -186,7 +209,9 @@ pub fn after_update_context_rule_valid_until_number_of_rules_at_most_max(e: Env)
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: remove_context_rule
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_remove_context_rule_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     assume_pre_number_of_rules_at_most_max(e.clone());
@@ -195,7 +220,9 @@ pub fn after_remove_context_rule_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: add_signer
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_add_signer_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -205,7 +232,9 @@ pub fn after_add_signer_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: remove_signer
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_remove_signer_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -215,7 +244,9 @@ pub fn after_remove_signer_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: add_policy
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_add_policy_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let policy = nondet_address();
@@ -226,7 +257,9 @@ pub fn after_add_policy_number_of_rules_at_most_max(e: Env) {
 }
 
 #[rule]
+// invariant: number of rules is at most max, case: remove_policy
 // status: verified
+// link: https://prover.certora.com/output/40748/e41eef4c454b43c49bda99a50be13a5a/?anonymousKey=c2136d8ece9fb24d8546f5dc303fc4dba5243cba
 pub fn after_remove_policy_number_of_rules_at_most_max(e: Env) {
     let id: u32 = nondet();
     let policy = nondet_address();
