@@ -5,6 +5,8 @@ on: pull_request
 env:
   CONFIGS: |
     consecutive.conf
+    enumerable_mint_burn_integrity.conf
+    enumerable_transfer_integrity.conf
     non_fungible_burnable.conf
     non_fungible_integrity.conf
     non_fungible_invariants.conf
