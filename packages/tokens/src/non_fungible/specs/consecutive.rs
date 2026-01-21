@@ -18,6 +18,7 @@ use crate::non_fungible::{
 #[rule]
 // updates balance from correctly
 // status: verified
+// link: https://prover.certora.com/output/33158/cbbe33a98d264b0fbd4ac7ec19cffd9b/
 pub fn nft_consecutive_transfer_integrity_1(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
@@ -37,6 +38,7 @@ pub fn nft_consecutive_transfer_integrity_1(e: Env) {
 #[rule]
 // updates balances to correctly
 // status: verified
+// link: https://prover.certora.com/output/33158/cbbe33a98d264b0fbd4ac7ec19cffd9b/
 pub fn nft_consecutive_transfer_integrity_2(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
@@ -56,6 +58,7 @@ pub fn nft_consecutive_transfer_integrity_2(e: Env) {
 #[rule]
 // after transfer the token owner is set to the to address
 // status: verified
+// link: https://prover.certora.com/output/33158/08b3797b32494c0291626077382c405d
 pub fn nft_consecutive_transfer_integrity_3(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
@@ -65,20 +68,6 @@ pub fn nft_consecutive_transfer_integrity_3(e: Env) {
 
     let owner_post = Consecutive::owner_of(&e, token_id);
     cvlr_assert!(owner_post == to);
-}
-
-// #[rule]
-// simplies the above by getting from storage instead of using owner_of function - unclear if this is a good approx.
-// status: verified
-// https://prover.certora.com/output/33158/08b3797b32494c0291626077382c405d
-pub fn nft_consecutive_transfer_integrity_3_siplfied(e: Env) {
-    let to = nondet_address();
-    let from = nondet_address();
-    let token_id = u32::nondet();
-
-    Consecutive::transfer(&e, &from, &to, token_id);
-    let owner_post: Option<Address> = e.storage().persistent().get(&NFTConsecutiveStorageKey::Owner(token_id));
-    cvlr_assert!(owner_post.is_some() && owner_post.unwrap() == to);
 }
 
 
