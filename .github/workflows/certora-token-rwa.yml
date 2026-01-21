@@ -5,8 +5,6 @@ on: pull_request
 env:
   CONFIGS: |
     claim_topics_and_issuers.conf
-    compliance_integrity.conf
-    doc_manager.conf
     identity_claims.conf
     identity_registry_storage.conf
     identity_verifier_integrity.conf

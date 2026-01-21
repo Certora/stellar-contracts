@@ -10,6 +10,10 @@ use cvlr_soroban::{nondet_address, nondet_bytes, nondet_bytes_n, nondet_string};
 use crate::rwa::specs::mocks::claim_issuer_trivial::try_is_claim_valid;
 use crate::rwa::specs::helpers::clogs::clog_vec_bytes_n;
 
+// P-XX. Identity Claims-Integrity.
+// description: Identity Claims functions change state as expected.
+// status: verified
+
 // helpers
 
 pub fn get_claim_non_pancicking(e: Env, claim_id: BytesN<32>) -> Option<Claim> {
@@ -25,6 +29,7 @@ pub fn get_claim_ids_by_topic_non_pancicking(e: Env, topic: u32) -> Option<Vec<B
 #[rule]
 // after add_claim get_claim does not panic
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_1(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -41,6 +46,7 @@ pub fn add_claim_integrity_1(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same topic
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_2(e: Env) {
     let topic: u32 = nondet();
     clog!(topic);
@@ -60,6 +66,7 @@ pub fn add_claim_integrity_2(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same scheme
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_3(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -79,6 +86,7 @@ pub fn add_claim_integrity_3(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same issuer
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_4(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -98,6 +106,7 @@ pub fn add_claim_integrity_4(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same signature
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_5(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -117,6 +126,7 @@ pub fn add_claim_integrity_5(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same data
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_6(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -136,6 +146,7 @@ pub fn add_claim_integrity_6(e: Env) {
 #[rule]
 // after add_claim get_claim returns a claim with the same uri
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn add_claim_integrity_7(e: Env) {
     let topic: u32 = nondet();
     let scheme: u32 = nondet();
@@ -153,6 +164,7 @@ pub fn add_claim_integrity_7(e: Env) {
 #[rule]
 // after remove_claim, getting the claim returns None
 // status: verified
+// link: https://prover.certora.com/output/40748/6fc1764720034f2f99b9e5e89d4e5d79/?anonymousKey=a26fc54d8edce081e43aff4e4ed3379f74b75443
 pub fn remove_claim_integrity_1(e: Env) {
     let claim_id = nondet_bytes_n();
     remove_claim(&e, &claim_id);

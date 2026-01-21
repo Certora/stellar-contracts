@@ -12,6 +12,10 @@ use crate::rwa::identity_registry_storage::storage::IdentityType;
 use crate::rwa::identity_registry_storage::storage::IRSStorageKey;
 use crate::rwa::identity_registry_storage::storage::IdentityProfile;
 
+// P-XX. Identity Registry Storage-Integrity.
+// description: Identity Registry Storage functions change state as expected.
+// status: verified
+
 // helpers
 
 pub fn get_stored_identity_non_pancicking(e: Env, account: Address) -> Option<Address> {
@@ -34,6 +38,7 @@ pub fn get_recovered_to_non_pancicking(e: Env, account: Address) -> Option<Addre
 #[rule]
 // after add_identity the stored identity is some
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn add_identity_integrity_1(e: Env) {
     let account: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&account));
@@ -55,6 +60,7 @@ pub fn add_identity_integrity_1(e: Env) {
 #[rule]
 // after add_identity the stored_identity is the given identity
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn add_identity_integrity_2(e: Env) {
     let account: Address = nondet_address();
     let identity = nondet_address();
@@ -68,7 +74,7 @@ pub fn add_identity_integrity_2(e: Env) {
 #[rule]
 // after add_identity the identity_profile has the same identity_type
 // status: verified
-// 33 minutes
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn add_identity_integrity_3(e: Env) {
     let account: Address = nondet_address();
     let identity = nondet_address();
@@ -83,6 +89,7 @@ pub fn add_identity_integrity_3(e: Env) {
 #[rule]
 // after remove_identity the stored identity is none
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn remove_identity_integrity_1(e: Env) {
     let account: Address = nondet_address();
     remove_identity(&e, &account);
@@ -93,6 +100,7 @@ pub fn remove_identity_integrity_1(e: Env) {
 #[rule]
 // after remove_identity the identity_profile is none
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn remove_identity_integrity_2(e: Env) {
     let account: Address = nondet_address();
     remove_identity(&e, &account);
@@ -103,6 +111,7 @@ pub fn remove_identity_integrity_2(e: Env) {
 #[rule]
 // after modify_identity the identity changes
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn modify_identity_integrity_1(e: Env) {
     let account: Address = nondet_address();
     let new_identity = nondet_address();
@@ -114,6 +123,7 @@ pub fn modify_identity_integrity_1(e: Env) {
 #[rule]
 // after recover_identity the identity moves from old_account to new_account
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn recover_identity_integrity_1(e: Env) {
     let old_account: Address = nondet_address();
     let new_account: Address = nondet_address();
@@ -126,6 +136,7 @@ pub fn recover_identity_integrity_1(e: Env) {
 #[rule]
 // after recover_identity the recovered_to is set to new_account
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn recover_identity_integrity_3(e: Env) {
     let old_account: Address = nondet_address();
     let new_account: Address = nondet_address();
@@ -137,6 +148,7 @@ pub fn recover_identity_integrity_3(e: Env) {
 #[rule]
 // after recover_identity the stored_identity of the old account is none
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn recover_identity_integrity_4(e: Env) {
     let old_account: Address = nondet_address();
     let new_account: Address = nondet_address();
@@ -148,6 +160,7 @@ pub fn recover_identity_integrity_4(e: Env) {
 #[rule]
 // after recover_identity the identity_profile of the old account is none
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn recover_identity_integrity_5(e: Env) {
     let old_account: Address = nondet_address();
     let new_account: Address = nondet_address();
@@ -160,6 +173,7 @@ pub fn recover_identity_integrity_5(e: Env) {
 #[rule]
 // after modify_country_data the country_data in given index is some
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn modify_country_data_integrity_1(e: Env) {
     let account: Address = nondet_address();
     let index: u32 = nondet();
@@ -173,6 +187,7 @@ pub fn modify_country_data_integrity_1(e: Env) {
 #[rule]
 // after modify_country_data the length is unchanged
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn modify_country_data_integrity_3(e: Env) {
     let account: Address = nondet_address();
     let index: u32 = nondet();
@@ -189,6 +204,7 @@ pub fn modify_country_data_integrity_3(e: Env) {
 #[rule]
 // after_delete_country_data the length is decreased by 1
 // status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
 pub fn delete_country_data_integrity_2(e: Env) {
     let account: Address = nondet_address();
     let index: u32 = nondet();

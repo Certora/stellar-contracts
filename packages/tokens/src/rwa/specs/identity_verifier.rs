@@ -6,9 +6,14 @@ use crate::rwa::identity_verifier::storage;
 use crate::rwa::identity_verifier::IdentityVerifier;
 use crate::rwa::identity_registry_storage;
 
+// P-XX. Identity Verifier-Integrity.
+// description: Identity Verifier functions change state as expected.
+// status: verified
+
 #[rule]
 // after set_claim_topics_and_issuers the claim_topics_and_issuers address is the given input
 // status: verified
+// link: https://prover.certora.com/output/40748/00a0589f4e8e49599adfbf11fc847902/?anonymousKey=49b5171583876c1951302138a172f6d3efc0a80b
 pub fn set_claim_topics_and_issuers_integrity(e: Env) {
     let claim_topics_and_issuers = nondet_address();
     storage::set_claim_topics_and_issuers(&e, &claim_topics_and_issuers);
@@ -19,6 +24,7 @@ pub fn set_claim_topics_and_issuers_integrity(e: Env) {
 #[rule]
 // after set_identity_registry_storage the identity_registry_storage address is the given input
 // status: verified
+// link: https://prover.certora.com/output/40748/00a0589f4e8e49599adfbf11fc847902/?anonymousKey=49b5171583876c1951302138a172f6d3efc0a80b
 pub fn set_identity_registry_storage_integrity(e: Env) {
     let identity_registry_storage = nondet_address();
     storage::set_identity_registry_storage(&e, &identity_registry_storage);
@@ -31,6 +37,7 @@ pub fn set_identity_registry_storage_integrity(e: Env) {
 #[rule]
 // after recovery_target the recovery target is the same as the recovery target in the identity_registry_storage
 // status: verified
+// link: https://prover.certora.com/output/40748/00a0589f4e8e49599adfbf11fc847902/?anonymousKey=49b5171583876c1951302138a172f6d3efc0a80b
 pub fn recovery_target_matches_identity_registry_storage(e: Env) {
     let old_account = nondet_address();
     let recovery_target = storage::recovery_target(&e, &old_account);
@@ -38,13 +45,3 @@ pub fn recovery_target_matches_identity_registry_storage(e: Env) {
     cvlr_assert!(recovery_target == recovery_address_from_identity_registry_storage);
 }
 
-// todo: verify_identity function 
-// only panics/non-panics - doesn't return anything.
-
-// todo
-// maybe make a non-panicking version of verify_identity
-
-// if there is some invalidity it should panic.
-
-// conjungtive over claims
-// disjunctive over issuers

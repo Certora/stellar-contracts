@@ -11,6 +11,10 @@ use crate::rwa::compliance::Compliance;
 use crate::rwa::specs::mocks::compliance_trivial::ComplianceTrivial;
 use crate::rwa::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial;
 
+// P-XX. RWA Panics-Integrity.
+// description: RWA token functions panic as expected.
+// status: violated
+
 // due to the discrepency between trait function and storage functions
 // we cannot verify the fact that authorization of the operator is required
 // and other properties on the operator
@@ -29,6 +33,7 @@ use crate::rwa::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial
 #[rule]
 // forced_transfer panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_forced_transfer_panics_if_not_enough_balance(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -46,6 +51,7 @@ pub fn rwa_forced_transfer_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // forced_transfer panics if amount < 0
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_forced_transfer_panics_if_amount_less_than_zero(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -88,6 +94,7 @@ pub fn clog_verify_identity_result_map() {
 #[rule]
 // mint panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_mint_panics_if_amount_less_than_zero(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -110,6 +117,7 @@ pub fn rwa_mint_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // burn panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_burn_panics_if_amount_less_than_zero(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -124,6 +132,7 @@ pub fn rwa_burn_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // burn panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_burn_panics_if_not_enough_balance(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -143,6 +152,7 @@ pub fn rwa_burn_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // freeze_partial_tokens panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_freeze_partial_tokens_panics_if_amount_less_than_zero(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -160,6 +170,7 @@ pub fn rwa_freeze_partial_tokens_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // unfreeze_partial_tokens panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_unfreeze_partial_tokens_panics_if_amount_less_than_zero(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -173,6 +184,7 @@ pub fn rwa_unfreeze_partial_tokens_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // unfreeze_partial_tokens panics if not enough frozen tokens
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_unfreeze_partial_tokens_panics_if_not_enough_frozen_tokens(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -193,6 +205,7 @@ pub fn rwa_unfreeze_partial_tokens_panics_if_not_enough_frozen_tokens(e: Env) {
 #[rule]
 // transfer panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_amount_less_than_zero(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -208,6 +221,7 @@ pub fn rwa_transfer_panics_if_amount_less_than_zero(e: Env) {
 #[rule]
 // transfer panics if from does not auth
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_from_does_not_auth(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -224,6 +238,7 @@ pub fn rwa_transfer_panics_if_from_does_not_auth(e: Env) {
 #[rule]
 // transfer panics if contract is paused
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_contract_paused(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -241,6 +256,7 @@ pub fn rwa_transfer_panics_if_contract_paused(e: Env) {
 #[rule]
 // transfer panics if the sender address is frozen
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_sender_address_frozen(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -258,6 +274,7 @@ pub fn rwa_transfer_panics_if_sender_address_frozen(e: Env) {
 #[rule]
 // transfer panics if the recipient address is frozen
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_recipient_address_frozen(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -275,6 +292,7 @@ pub fn rwa_transfer_panics_if_recipient_address_frozen(e: Env) {
 #[rule]
 // transfer panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_not_enough_balance(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -292,6 +310,7 @@ pub fn rwa_transfer_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // transfer panics if not enough unfrozen balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_panics_if_not_enough_unfrozen_balance(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -315,6 +334,7 @@ pub fn rwa_transfer_panics_if_not_enough_unfrozen_balance(e: Env) {
 #[rule]
 // transfer_from panics if amount < 0 
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_amount_less_than_zero(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -331,7 +351,8 @@ pub fn rwa_transfer_from_panics_if_amount_less_than_zero(e: Env) {
 
 #[rule]
 // transfer_from panics if spender does not auth
-// status: bug - transfer_from does not work properly.s
+// status: violated
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_spender_does_not_auth(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -349,6 +370,7 @@ pub fn rwa_transfer_from_panics_if_spender_does_not_auth(e: Env) {
 #[rule]
 // transfer_from panics if contract is paused
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_contract_paused(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -368,6 +390,7 @@ pub fn rwa_transfer_from_panics_if_contract_paused(e: Env) {
 #[rule]
 // transfer_from panics if the sender address is frozen
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_sender_address_frozen(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -387,6 +410,7 @@ pub fn rwa_transfer_from_panics_if_sender_address_frozen(e: Env) {
 #[rule]
 // transfer_from panics if the recipient address is frozen
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_recipient_address_frozen(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -406,6 +430,7 @@ pub fn rwa_transfer_from_panics_if_recipient_address_frozen(e: Env) {
 #[rule]
 // transfer_from panics if not enough balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_not_enough_balance(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -425,6 +450,7 @@ pub fn rwa_transfer_from_panics_if_not_enough_balance(e: Env) {
 #[rule]
 // transfer_from panics if not enough unfrozen balance
 // status: verified
+// link: https://prover.certora.com/output/40748/f61de1e39f554e31b8e19481236d00f4/?anonymousKey=51de88041892897c04860a0dd4bf1498f141eecd
 pub fn rwa_transfer_from_panics_if_not_enough_unfrozen_balance(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));

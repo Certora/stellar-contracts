@@ -7,18 +7,16 @@ use crate::non_fungible::{
     consecutive::storage::NFTConsecutiveStorageKey, extensions::consecutive::Consecutive, overrides::ContractOverrides, sequential, specs::helper::is_approved_for_token
 };
 
+// P-XX. Consecutive-Integrity.
+// description: Consecutive NFT functions change state as expected.
+// status: verified
+
 // ################## INTEGRITY RULES ##################
 
-// same integrity rules from non_fungible_integrity.rs
-// but the underlying functions are different.
-// the code is very challenging for the prover
-// need to think how we can simplify
-// perhaps we can only analyze the internal functions such as update.
-
 #[rule]
-// updates balance from correctly
+// transfer decreases balance from correctly
 // status: verified
-pub fn nft_consecutive_transfer_integrity_1(e: Env) {
+pub fn nft_consecutive_transfer_decreases_balance_from(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
     let token_id = u32::nondet();
@@ -35,9 +33,9 @@ pub fn nft_consecutive_transfer_integrity_1(e: Env) {
 }
 
 #[rule]
-// updates balances to correctly
+// transfer increases balance to correctly
 // status: verified
-pub fn nft_consecutive_transfer_integrity_2(e: Env) {
+pub fn nft_consecutive_transfer_increases_balance_to(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
     let token_id = u32::nondet();
@@ -56,7 +54,7 @@ pub fn nft_consecutive_transfer_integrity_2(e: Env) {
 #[rule]
 // after transfer the token owner is set to the to address
 // status: verified
-pub fn nft_consecutive_transfer_integrity_3(e: Env) {
+pub fn nft_consecutive_transfer_sets_owner(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
     let token_id = u32::nondet();
@@ -67,11 +65,11 @@ pub fn nft_consecutive_transfer_integrity_3(e: Env) {
     cvlr_assert!(owner_post == to);
 }
 
-// #[rule]
-// simplies the above by getting from storage instead of using owner_of function - unclear if this is a good approx.
+#[rule]
+// transfer sets owner in storage
 // status: verified
 // https://prover.certora.com/output/33158/08b3797b32494c0291626077382c405d
-pub fn nft_consecutive_transfer_integrity_3_siplfied(e: Env) {
+pub fn nft_consecutive_transfer_sets_owner_simplified(e: Env) {
     let to = nondet_address();
     let from = nondet_address();
     let token_id = u32::nondet();
@@ -81,12 +79,11 @@ pub fn nft_consecutive_transfer_integrity_3_siplfied(e: Env) {
     cvlr_assert!(owner_post.is_some() && owner_post.unwrap() == to);
 }
 
-
 #[rule]
-// updates balances correctly
-// status: verified https://prover.certora.com/output/33158/176c79a419624672a0fadb5d4023106a
-// sanity: https://prover.certora.com/output/33158/733987d707ac43fea16f3d8b4f0f972c
-pub fn nft_consecutive_transfer_from_integrity_1(e: Env) {
+// updates balance of from correctly
+// status: verified
+// link: https://prover.certora.com/output/33158/176c79a419624672a0fadb5d4023106a
+pub fn nft_consecutive_transfer_from_decreases_balance_from(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
     let to = nondet_address();
@@ -106,10 +103,10 @@ pub fn nft_consecutive_transfer_from_integrity_1(e: Env) {
 }
 
 #[rule]
-// updates balances correctly
-// status: verified https://prover.certora.com/output/33158/fecc4e01acdc4ef69510a81fa7f9d748
-// sanity: https://prover.certora.com/output/33158/cc5dabd82a5a44e08463900b8a83bf09
-pub fn nft_consecutive_transfer_from_integrity_2(e: Env) {
+// transfer_from increases balance of to correctly
+// status: verified 
+// link: https://prover.certora.com/output/33158/fecc4e01acdc4ef69510a81fa7f9d748
+pub fn nft_consecutive_transfer_from_increases_balance_to(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
     let to = nondet_address();
@@ -129,10 +126,10 @@ pub fn nft_consecutive_transfer_from_integrity_2(e: Env) {
 }
 
 #[rule]
-// removes approval
-// status: verified https://prover.certora.com/output/33158/0cc2e71922e94a90987fa09bd5afa9b0
-// sanity: https://prover.certora.com/output/33158/f8c67f75d3f44d199703beea9db8bbff
-pub fn nft_consecutive_transfer_from_integrity_3(e: Env) {
+// transfer_from removes approval
+// status: verified
+// link: https://prover.certora.com/output/33158/0cc2e71922e94a90987fa09bd5afa9b0
+pub fn nft_consecutive_transfer_from_removes_approval(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
     let to = nondet_address();
@@ -147,13 +144,10 @@ pub fn nft_consecutive_transfer_from_integrity_3(e: Env) {
 }
 
 #[rule]
-// after transfer_from the token owner is to
-// status: verified https://prover.certora.com/output/33158/be586547df9a40fa92ee93dd56dee3ea
-// sanity: https://prover.certora.com/output/33158/186bf39e78554aa1bea92331cc3bf1fc
-// Note: previously this was doing `let owner_post = Consecutive::owner_of(&e, token_id);`
-// which may not be necessary for finding the owner based on the change to owner in `update`.
-// WIP - review
-pub fn nft_consecutive_transfer_from_integrity_4(e: Env) {
+// after transfer_from the token owner is set to to address in storage
+// status: verified
+// link: https://prover.certora.com/output/33158/be586547df9a40fa92ee93dd56dee3ea
+pub fn nft_consecutive_transfer_from_sets_owner_simplified(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
     let to = nondet_address();
@@ -169,7 +163,7 @@ pub fn nft_consecutive_transfer_from_integrity_4(e: Env) {
 // after approve the token owner is approved
 // status: verified
 // note: ±30 min and sanity unclear.
-pub fn nft_consecutive_approve_integrity(e: Env) {
+pub fn nft_consecutive_approve_sets_approval(e: Env) {
     let approver = nondet_address();
     clog!(cvlr_soroban::Addr(&approver));
     let approved = nondet_address();
@@ -188,3 +182,23 @@ pub fn nft_consecutive_approve_integrity(e: Env) {
 }
 
 // there is no approve_for_all function
+
+#[rule]
+// batch_mint changes balance correctly
+// the owner_of the first_token id is "to"
+// status: verified
+// link: https://prover.certora.com/output/5771024/6113335efa884403b8fcf3f7cd989216?
+pub fn nft_batch_mint_increases_balance(e: Env) {
+    let to = nondet_address();
+    clog!(cvlr_soroban::Addr(&to));
+    let amount = u32::nondet();
+    clog!(amount);
+    let balance_pre = Consecutive::balance(&e, &to);
+    clog!(balance_pre);
+    let current_token_id = sequential::next_token_id(&e);
+    clog!(current_token_id);
+    Consecutive::batch_mint(&e, &to, amount);
+    let balance_post = Consecutive::balance(&e, &to);
+    clog!(balance_post);
+    cvlr_assert!(balance_post == balance_pre + amount);
+}

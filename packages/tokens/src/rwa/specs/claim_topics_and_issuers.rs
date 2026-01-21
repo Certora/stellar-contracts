@@ -12,11 +12,14 @@ use crate::rwa::claim_topics_and_issuers::ClaimTopicsAndIssuers;
 use crate::rwa::specs::helpers::nondet::nondet_vec_u32;
 use crate::rwa::specs::helpers::clogs::{clog_vec, clog_vec_addresses};
 
-// probably need invariants in pre-state
+// P-XX. Claim Topics and Issuers-Integrity.
+// description: Claim Topics and Issuers functions change state as expected.
+// status: verified
 
 #[rule]
 // after add_claim_topic the claim_topic is in claim_topics
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_claim_topic_integrity_1(e: Env) {
     let claim_topic: u32 = nondet();
     add_claim_topic(&e, claim_topic);
@@ -28,6 +31,7 @@ pub fn add_claim_topic_integrity_1(e: Env) {
 #[rule]
 // after add_claim_topic the claim_topic is not in get_trusted_issuer_claim_topics(issuer) for any issuer
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_claim_topic_integrity_2(e: Env) {
     let claim_topic: u32 = nondet();
     clog!(claim_topic);
@@ -49,6 +53,7 @@ pub fn add_claim_topic_integrity_2(e: Env) {
 #[rule]
 // after add_claim_topic has_claim_topic returns false for any issuer
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_claim_topic_integrity_3(e: Env) {
     let claim_topic: u32 = nondet();
     clog!(claim_topic);
@@ -64,6 +69,7 @@ pub fn add_claim_topic_integrity_3(e: Env) {
 #[rule]
 // after remove_claim_topic the claim_topic is not in claim_topics
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn remove_claim_topic_integrity_1(e: Env) {
     let claim_topic: u32 = nondet();
     clog!(claim_topic);
@@ -80,6 +86,7 @@ pub fn remove_claim_topic_integrity_1(e: Env) {
 #[rule]
 // after add_trusted_issuer the issuer exists
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_trusted_issuer_integrity_1(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
@@ -92,6 +99,7 @@ pub fn add_trusted_issuer_integrity_1(e: Env) {
 #[rule]
 // after add_trusted_issuer the claim_topics are in the trusted issuer's topics
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_trusted_issuer_integrity_2(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
@@ -106,6 +114,7 @@ pub fn add_trusted_issuer_integrity_2(e: Env) {
 #[rule]
 // after add_trusted_issuer the issuer has_claim_topic for any of the topics
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn add_trusted_issuer_integrity_3(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
@@ -120,6 +129,7 @@ pub fn add_trusted_issuer_integrity_3(e: Env) {
 #[rule]
 // after remove_trusted_issuer the issuer does not has_claim for any
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn remove_trusted_issuer_integrity_2(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
@@ -133,6 +143,7 @@ pub fn remove_trusted_issuer_integrity_2(e: Env) {
 #[rule]
 // after update_issuer_claim_topics the issuer exists
 // status: verified
+// link: https://prover.certora.com/output/40748/e0f0023111e04c8db537e334c01c2681/?anonymousKey=546ecea00c3ed444cec4507fb7ea36bc65170b31
 pub fn update_issuer_claim_topics_integrity_1(e: Env) {
     let issuer = nondet_address();
     let claim_topics = nondet_vec_u32();
