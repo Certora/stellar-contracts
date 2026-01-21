@@ -29,7 +29,7 @@ use crate::{
 #[rule]
 // after set_spending_limit the spending_limit is set to the input
 // status: verified
-// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
+// link: https://prover.certora.com/output/5771024/2fd32432b37d48bcbc6e6b576daf767a/?anonymousKey=9dfb4cbd687f866b82725e8cf4348d7fdca22ff9
 pub fn sl_set_spending_limit_integrity(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -49,7 +49,7 @@ pub fn sl_set_spending_limit_integrity(e: Env) {
 #[rule]
 // can_enforce returns false if there is no spending limit data associated with the smart account and context
 // status: verified 
-// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
+// link: https://prover.certora.com/output/5771024/2fd32432b37d48bcbc6e6b576daf767a/?anonymousKey=9dfb4cbd687f866b82725e8cf4348d7fdca22ff9
 pub fn sl_can_enforce_returns_false_if_no_spending_limit_data(e: Env, context: Context) {
     let auth_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -64,7 +64,7 @@ pub fn sl_can_enforce_returns_false_if_no_spending_limit_data(e: Env, context: C
 #[rule]
 // after install the spending_limit_data is set to the input
 // status: verified
-// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
+// link: https://prover.certora.com/output/5771024/2fd32432b37d48bcbc6e6b576daf767a/?anonymousKey=9dfb4cbd687f866b82725e8cf4348d7fdca22ff9
 pub fn sl_install_integrity(e: Env) {
     let params: SpendingLimitAccountParams = SpendingLimitAccountParams::nondet();
     let params_spending_limit = params.spending_limit;
@@ -83,7 +83,7 @@ pub fn sl_install_integrity(e: Env) {
 #[rule]
 // after uninstall the spending_limit_data is removed
 // status: verified
-// link: https://prover.certora.com/output/5771024/cf3808aeb9fa4fcdb6556b66fa8b6148/?anonymousKey=e8172789fdfdec7beebc631a60f153fa667d8c77
+// link: https://prover.certora.com/output/5771024/2fd32432b37d48bcbc6e6b576daf767a/?anonymousKey=9dfb4cbd687f866b82725e8cf4348d7fdca22ff9
     pub fn sl_uninstall_integrity(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
