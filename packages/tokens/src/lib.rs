@@ -17,3 +17,6 @@ pub mod fungible;
 pub mod non_fungible;
 pub mod rwa;
 pub mod vault;
+
+#[cfg(feature = "certora")]
+pub mod vault_64_for_solvency;
