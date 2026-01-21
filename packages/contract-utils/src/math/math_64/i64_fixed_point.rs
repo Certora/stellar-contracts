@@ -26,10 +26,13 @@ SOFTWARE.
 
 use soroban_sdk::{panic_with_error, Env};
 
-use crate::math_munged::soroban_fixed_point::{SorobanFixedPoint, SorobanFixedPointError};
+use crate::math::math_64::soroban_fixed_point::{SorobanFixedPoint, SorobanFixedPointError};
+use crate::math::math_64::i128_fixed_point::{self, mul_div_ceil, mul_div_floor};
+
+// For formal verification purposes
 
 /// Performs floor(r / z)
-pub fn div_floor(r: i32, z: i32) -> Option<i32> {
+pub fn div_floor(r: i64, z: i64) -> Option<i64> {
     if r < 0 || (r > 0 && z < 0) {
         // ceiling is taken by default for a negative result
         let remainder = r.checked_rem_euclid(z)?;
@@ -41,7 +44,7 @@ pub fn div_floor(r: i32, z: i32) -> Option<i32> {
 }
 
 /// Performs ceil(r / z)
-pub fn div_ceil(r: i32, z: i32) -> Option<i32> {
+pub fn div_ceil(r: i64, z: i64) -> Option<i64> {
     if r <= 0 || z < 0 {
         // ceiling is taken by default for a negative or zero result
         r.checked_div(z)
@@ -52,50 +55,50 @@ pub fn div_ceil(r: i32, z: i32) -> Option<i32> {
     }
 }
 
-impl SorobanFixedPoint for i32 {
-    fn fixed_mul_floor(&self, env: &Env, y: &i32, denominator: &i32) -> i32 {
+impl SorobanFixedPoint for i64 {
+    fn fixed_mul_floor(&self, env: &Env, y: &i64, denominator: &i64) -> i64 {
         scaled_mul_div_floor(self, env, y, denominator)
     }
 
-    fn fixed_mul_ceil(&self, env: &Env, y: &i32, denominator: &i32) -> i32 {
+    fn fixed_mul_ceil(&self, env: &Env, y: &i64, denominator: &i64) -> i64 {
         scaled_mul_div_ceil(self, env, y, denominator)
     }
 }
 
 /// Performs floor(x * y / z)
-pub fn scaled_mul_div_floor(x: &i32, env: &Env, y: &i32, z: &i32) -> i32 {
+pub fn scaled_mul_div_floor(x: &i64, env: &Env, y: &i64, z: &i64) -> i64 {
     match x.checked_mul(*y) {
         Some(r) => div_floor(r, *z)
             .unwrap_or_else(|| panic_with_error!(env, SorobanFixedPointError::ZeroDenominator)),
         
         None => {
             // scale to i256 and retry
-            let res = crate::math_munged::i256_fixed_point::mul_div_floor(
+            let res = mul_div_floor(
                 env,
                 &(*x as i128),
                 &(*y as i128),
                 &(*z as i128),
             );
-            i32::try_from(res).ok()
+            i64::try_from(res).ok()
                 .unwrap_or_else(|| panic_with_error!(env, SorobanFixedPointError::ResultOverflow))
         }
     }
 }
 
 /// Performs floor(x * y / z)
-pub fn scaled_mul_div_ceil(x: &i32, env: &Env, y: &i32, z: &i32) -> i32 {
+pub fn scaled_mul_div_ceil(x: &i64, env: &Env, y: &i64, z: &i64) -> i64 {
     match x.checked_mul(*y) {
         Some(r) => div_ceil(r, *z)
             .unwrap_or_else(|| panic_with_error!(env, SorobanFixedPointError::ZeroDenominator)),
         None => {
             // scale to i256 and retry
-            let res = crate::math_munged::i256_fixed_point::mul_div_ceil(
+            let res = mul_div_ceil(
                 env,
                 &(*x as i128),
                 &(*y as i128),
                 &(*z as i128),
             );
-            i32::try_from(res).ok()
+            i64::try_from(res).ok()
                 .unwrap_or_else(|| panic_with_error!(env, SorobanFixedPointError::ResultOverflow))
         }
     }

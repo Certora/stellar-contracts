@@ -1,3 +1,4 @@
+pub mod vault_64;
 pub mod asset_token;
 pub mod vault_conversions;
 pub mod vault;

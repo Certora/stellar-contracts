@@ -427,8 +427,17 @@ impl Base {
         } else {
             // `from` is None, so we're minting tokens.
             let total_supply = Base::total_supply(e);
+            #[cfg(not(feature = "certora"))]
             let Some(new_total_supply) = total_supply.checked_add(amount) else {
                 panic_with_error!(e, FungibleTokenError::MathOverflow);
+            };
+            #[cfg(feature = "certora")]
+            let new_total_supply = {
+                // checked_add overflows iff total_supply > i128::MAX - amount
+                if total_supply > i128::MAX - amount {
+                    panic_with_error!(e, FungibleTokenError::MathOverflow);
+                }
+                total_supply + amount
             };
             e.storage().instance().set(&StorageKey::TotalSupply, &new_total_supply);
         }

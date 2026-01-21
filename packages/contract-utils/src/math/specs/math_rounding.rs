@@ -1,0 +1,172 @@
+use cvlr::{clog, cvlr_assert, cvlr_assume, cvlr_satisfy, nondet::*};
+use cvlr_soroban_derive::rule;
+use soroban_sdk::Env;
+
+use crate::math::math_64::i64_fixed_point::{div_ceil, div_floor};
+
+// status: violation
+// link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
+#[rule]
+pub fn div_floor_rounds_correct_when_result_nonneg(_e: Env) {
+    let r = i64::nondet();
+    
+    let z = i64::nondet();
+    
+    cvlr_assume!((r > 0 && z > 0) || (r < 0 && z < 0));
+    
+    clog!(r);
+    clog!(z);
+
+    let result = div_floor(r, z);
+    clog!(result);
+
+    let expected = r / z;
+    clog!(expected);
+
+    cvlr_assume!(result.is_some());
+    
+    let res = result.unwrap();
+
+    clog!(res);
+    cvlr_assert!(res == expected);
+}
+// status: verified
+// link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
+#[rule]
+pub fn div_floor_rounds_correct_when_result_neg(_e: Env) {
+    let r = i64::nondet();
+    let z = i64::nondet();
+
+    cvlr_assume!((r > 0 && z < 0) || (r < 0 && z > 0));
+    cvlr_assume!(r % z != 0);
+
+    clog!(r);
+    clog!(z);
+
+    let result = div_floor(r, z);
+    clog!(result);
+
+    cvlr_assume!(result.is_some());
+
+    let expected = (r / z) - 1;
+    clog!(expected);
+
+    cvlr_assert!(result.unwrap() == expected);
+}
+
+// status: verified
+// link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
+#[rule]
+pub fn div_ceil_rounds_correct_when_result_nonpos(_e: Env) {
+    let r = i64::nondet();
+    let z = i64::nondet();
+
+    cvlr_assume!((r > 0 && z < 0) || (r < 0 && z > 0));
+
+    clog!(r);
+    clog!(z);
+
+    let result = div_ceil(r, z);
+    clog!(result);
+
+    cvlr_assume!(result.is_some());
+
+    let expected = r / z;
+
+    clog!(expected);
+
+    let res = result.unwrap();
+    clog!(res);
+
+    cvlr_assert!(res == expected);
+}
+
+// status: violation
+// link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
+#[rule]
+pub fn div_ceil_rounds_correct_when_result_pos(_e: Env) {
+    let r = i64::nondet();
+    let z = i64::nondet();
+
+    cvlr_assume!((r > 0 && z > 0) || (r < 0 && z < 0));
+    cvlr_assume!(r % z != 0);
+
+    clog!(r);
+    clog!(z);
+
+    let result = div_ceil(r, z);
+    clog!(result);
+
+    cvlr_assume!(result.is_some());
+
+    let expected = (r / z) + 1;
+    clog!(expected);
+
+    cvlr_assert!(result.unwrap() == expected);
+}
+
+
+// original rules from Raz and Netanel
+
+// #[rule]
+// // fixed_mul_floor rounds down
+// // status: 
+// // https://prover.certora.com/output/5771024/d18b5dd660814c0fabda5d992cce0b81/?anonymousKey=99db903e03d82e901d62761ec6a5f9d836fa54ed
+// pub fn munged_fixed_mul_floor_rounds_down(e: &Env) {
+//     let x = i32::nondet();
+//     clog!(x);
+//     cvlr_assume!(x <= i32::MAX as i32 && x >= i32::MIN as i32);
+//     let y = i32::nondet();
+//     clog!(y);
+//     cvlr_assume!(y <= i32::MAX as i32 && y >= i32::MIN as i32);
+//     let z = i32::nondet();
+//     clog!(z);
+//     cvlr_assume!(z <= i32::MAX as i32 && z >= i32::MIN as i32);
+//     let result = x.fixed_mul_floor(e, &y, &z);
+//     clog!(result);
+//     let result_rounded_towards_zero = x * y / z;
+//     clog!(result_rounded_towards_zero);
+//     let result_rounded_towards_zero_mul_z = result_rounded_towards_zero * z;
+//     clog!(result_rounded_towards_zero_mul_z);
+//     let x_times_y = x * y;
+//     clog!(x_times_y);
+//     let result_rounded_down: i32;
+//     if (result_rounded_towards_zero_mul_z > x * y && z > 0) ||
+//        (result_rounded_towards_zero_mul_z < x * y && z < 0) 
+//     {
+//         result_rounded_down = result_rounded_towards_zero - 1;
+//     } else {
+//         result_rounded_down = result_rounded_towards_zero;
+//     }
+//     clog!(result_rounded_down);
+//     cvlr_assert!(result_rounded_down == result);
+// }
+
+// #[rule]
+// // fixed_mul_ceil rounds up
+// // status: 
+// pub fn munged_fixed_mul_ceil_rounds_up(e: &Env) {
+//     let x = i32::nondet();
+//     clog!(x);
+//     let y = i32::nondet();
+//     clog!(y);
+//     let z = i32::nondet();
+//     clog!(z);
+//     let result = x.fixed_mul_ceil(e, &y, &z);
+//     clog!(result);
+//     let result_rounded_towards_zero = x * y / z; // rounds towards zero.
+//     clog!(result_rounded_towards_zero);
+//     let result_rounded_towards_zero_mul_z = result_rounded_towards_zero * z;
+//     clog!(result_rounded_towards_zero_mul_z);
+//     let result_rounded_up = 0;
+//     if (result_rounded_towards_zero_mul_z < x * y && z > 0) ||
+//        (result_rounded_towards_zero_mul_z > x * y && z < 0) 
+//     {
+//         let result_rounded_up = result_rounded_towards_zero + 1;
+//     }
+//     else {
+//         let result_rounded_up = result_rounded_towards_zero;
+//     }
+//     clog!(result_rounded_up);
+//     cvlr_assert!(result == result_rounded_up);
+// }

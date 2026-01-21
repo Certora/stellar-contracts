@@ -53,7 +53,8 @@ pub fn after_transfer_solvency(e: Env) {
 }
 
 #[rule]
-// status: timeout
+// status: verified
+// link: https://prover.certora.com/output/33158/99961ce1bc304846b2028c82740052d5
 pub fn after_transfer_from_solvency(e: Env) {
     safe_assumptions(&e);
     assume_pre_solvency(&e);
@@ -179,7 +180,8 @@ pub fn after_token_transfer_solvency(e: Env) {
 }
 
 #[rule]
-// status: timeout
+// status: verified
+// link: https://prover.certora.com/output/33158/6bc95f9eea284b71a6cd42aebfce216a
 pub fn after_token_transfer_from_solvency(e: Env) {
     safe_assumptions(&e);
     assume_pre_solvency(&e);
@@ -218,7 +220,7 @@ pub fn after_token_approve_solvency(e: Env) {
 
 #[rule]
 // status: timeout
-pub fn conert_to_shares_and_solvency(e: Env) {
+pub fn convert_to_shares_and_solvency(e: Env) {
     safe_assumptions(&e);
     assume_pre_solvency(&e);
     let effective_total_assets = effective_total_assets(&e);

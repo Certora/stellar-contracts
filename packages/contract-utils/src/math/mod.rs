@@ -6,4 +6,7 @@ mod soroban_fixed_point;
 mod test;
 
 #[cfg(feature = "certora")]
+pub mod math_64;
+
+#[cfg(feature = "certora")]
 pub mod specs;

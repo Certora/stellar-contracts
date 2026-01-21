@@ -1,12 +1,9 @@
 use cvlr::clog;
-use soroban_sdk::{Env, panic_with_error};
+use soroban_sdk::{panic_with_error, Env};
 
 use crate::{
     fungible::FungibleToken,
-    vault::{
-        specs::vault::BasicVault,
-        FungibleVault, Vault, VaultTokenError,
-    },
+    vault::{specs::vault::BasicVault, FungibleVault, Vault, VaultTokenError},
 };
 
 pub fn effective_total_assets(e: &Env) -> i128 {
@@ -23,7 +20,10 @@ pub fn effective_total_assets(e: &Env) -> i128 {
 pub fn virtual_offset(e: &Env) -> i128 {
     let decimals_offset = Vault::get_decimals_offset(e);
     clog!(decimals_offset);
-    let virtual_offset = 10_i128.checked_pow(decimals_offset).unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+    // let virtual_offset = 10_i128
+    //     .checked_pow(decimals_offset)
+    //     .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+    let virtual_offset = 1_i128;
     clog!(virtual_offset);
     virtual_offset
 }
@@ -36,7 +36,17 @@ pub fn effective_total_supply(e: &Env) -> i128 {
     }
     let virtual_offset = virtual_offset(e);
     clog!(virtual_offset);
-    let effective_total_supply = total_supply.checked_add(virtual_offset).unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+
+    // let effective_total_supply = total_supply
+    //     .checked_add(virtual_offset)
+    //     .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
+
+    let effective_total_supply = {
+        if total_supply + virtual_offset > i128::MAX {
+            panic_with_error!(e, VaultTokenError::MathOverflow);
+        }
+        total_supply + virtual_offset
+    };
     clog!(effective_total_supply);
     effective_total_supply
 }

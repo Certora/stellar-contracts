@@ -26,6 +26,8 @@ SOFTWARE.
 
 use soroban_sdk::{contracterror, Env};
 
+// For formal verification purposes
+
 // @dev - more detail about the forced panic can be found here: https://github.com/stellar/rs-soroban-env/pull/1091
 //
 /// Soroban fixed point trait for computing fixed point calculations with
