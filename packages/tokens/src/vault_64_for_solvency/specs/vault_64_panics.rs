@@ -64,7 +64,8 @@ pub fn withdraw_panic_assets_lt_0(e: Env) {
 
 #[rule]
 // withdraw panics if assets > max withdraw 
-// status: timeout
+// status: verified
+// link: https://prover.certora.com/output/33158/dd9a7673ad0e42ebb66cad4a9365bb3d
 pub fn withdraw_panic_assets_gt_max_withdraw(e: Env) {
     let assets: i64 = nondet();
     clog!(assets);
