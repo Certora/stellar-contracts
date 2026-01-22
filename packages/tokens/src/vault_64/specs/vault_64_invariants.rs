@@ -390,7 +390,7 @@ pub fn after_redeem_total_assets_geq_zero(e: Env) {
 #[rule]
 // invariant: total_assets >= 0, case: set_asset
 // status: verified
-// link: https://prover.certora.com/output/5771024/5836f2b6cde24450a77131f33ce5a77b/?anonymousKey=d73db7c427056cffec889b0e36ad6d405a9384bf
+// link: https://prover.certora.com/output/5771024/5836f2b6cde24450a77131f33ce5a77b/?anonymousKey=d73db7c427056cffec889b0e36ad6d405a9384bfa
 pub fn after_set_asset_total_assets_geq_zero(e: Env) {
     assume_pre_total_assets_geq_zero(&e);
     let asset: Address = nondet_address();
