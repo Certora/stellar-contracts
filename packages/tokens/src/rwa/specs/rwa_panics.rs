@@ -11,7 +11,7 @@ use crate::rwa::compliance::Compliance;
 use crate::rwa::specs::mocks::compliance_trivial::ComplianceTrivial;
 use crate::rwa::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial;
 
-// P-XX. RWA Panics-Integrity.
+// property: P-XX. RWA Panics.
 // description: RWA token functions panic as expected.
 // status: violated
 

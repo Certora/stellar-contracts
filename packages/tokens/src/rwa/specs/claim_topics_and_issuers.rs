@@ -12,7 +12,7 @@ use crate::rwa::claim_topics_and_issuers::ClaimTopicsAndIssuers;
 use crate::rwa::specs::helpers::nondet::nondet_vec_u32;
 use crate::rwa::specs::helpers::clogs::{clog_vec, clog_vec_addresses};
 
-// P-XX. Claim Topics and Issuers-Integrity.
+// property: P-XX. Claim Topics and Issuers-Integrity.
 // description: Claim Topics and Issuers functions change state as expected.
 // status: verified
 

@@ -12,7 +12,7 @@ use crate::rwa::identity_registry_storage::storage::IdentityType;
 use crate::rwa::identity_registry_storage::storage::IRSStorageKey;
 use crate::rwa::identity_registry_storage::storage::IdentityProfile;
 
-// P-XX. Identity Registry Storage-Integrity.
+// property: P-XX. Identity Registry Storage-Integrity.
 // description: Identity Registry Storage functions change state as expected.
 // status: verified
 

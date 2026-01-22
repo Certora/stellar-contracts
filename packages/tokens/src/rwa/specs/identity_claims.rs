@@ -10,7 +10,7 @@ use cvlr_soroban::{nondet_address, nondet_bytes, nondet_bytes_n, nondet_string};
 use crate::rwa::specs::mocks::claim_issuer_trivial::try_is_claim_valid;
 use crate::rwa::specs::helpers::clogs::clog_vec_bytes_n;
 
-// P-XX. Identity Claims-Integrity.
+// property: P-XX. Identity Claims-Integrity.
 // description: Identity Claims functions change state as expected.
 // status: verified
 

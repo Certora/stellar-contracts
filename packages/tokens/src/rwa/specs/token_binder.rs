@@ -7,7 +7,7 @@ use crate::rwa::specs::helpers::nondet::nondet_vec_address;
 use crate::rwa::utils::token_binder::storage::linked_token_count;
 use crate::rwa::specs::helpers::clogs::clog_vec_addresses;
 
-// P-XX. Token Binder-Integrity.
+// property: P-XX. Token Binder-Integrity.
 // description: Token Binder functions change state as expected.
 // status: verified
 

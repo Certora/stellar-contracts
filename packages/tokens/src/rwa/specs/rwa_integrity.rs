@@ -7,7 +7,7 @@ use crate::rwa::RWA;
 use crate::fungible::ContractOverrides;
 use crate::fungible::FungibleToken;
 
-// P-XX. RWA-Integrity.
+// property: P-XX. RWA-Integrity.
 // description: RWA token functions change state as expected.
 // status: violated
 
@@ -16,6 +16,7 @@ use crate::fungible::FungibleToken;
 #[rule]
 // forced_transfer changes balance of from appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_forced_transfer_integrity_1(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -39,6 +40,7 @@ pub fn rwa_forced_transfer_integrity_1(e: Env) {
 #[rule]
 // forced_transfer changes balance of to appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/9cb62ab307ec4a949a07c205addd986c/?anonymousKey=f65eb0d9bb08f0138a69f41d45f076bcd6f6e549
 pub fn rwa_forced_transfer_integrity_2(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -62,6 +64,7 @@ pub fn rwa_forced_transfer_integrity_2(e: Env) {
 #[rule]
 // forced_transfer does not change total supply
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_forced_transfer_integrity_3(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -82,6 +85,7 @@ pub fn rwa_forced_transfer_integrity_3(e: Env) {
 #[rule]
 // mint increases balance of to appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_mint_integrity_1(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -98,6 +102,7 @@ pub fn rwa_mint_integrity_1(e: Env) {
 #[rule]
 // mint increases total supply by amount
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_mint_integrity_2(e: Env) {
     let to = nondet_address();
     clog!(cvlr_soroban::Addr(&to));
@@ -114,6 +119,7 @@ pub fn rwa_mint_integrity_2(e: Env) {
 #[rule]
 // burn decreases balance of user appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_burn_integrity_1(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -130,6 +136,7 @@ pub fn rwa_burn_integrity_1(e: Env) {
 #[rule]
 // set_address_frozen sets the frozen status
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_set_address_frozen_integrity(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -145,6 +152,7 @@ pub fn rwa_set_address_frozen_integrity(e: Env) {
 #[rule]
 // freeze_partial_tokens increase the frozen token amount for a user
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_freeze_partial_tokens_integrity(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -160,6 +168,7 @@ pub fn rwa_freeze_partial_tokens_integrity(e: Env) {
 #[rule]
 // unfreeze_partial_tokens decrease the frozen token amount for a user
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_unfreeze_partial_tokens_integrity(e: Env) {
     let user = nondet_address();
     clog!(cvlr_soroban::Addr(&user));
@@ -176,6 +185,7 @@ pub fn rwa_unfreeze_partial_tokens_integrity(e: Env) {
 #[rule]
 // set_compliance sets the compliance contract
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_set_compliance_integrity(e: Env) {
     let compliance = nondet_address();
     clog!(cvlr_soroban::Addr(&compliance));
@@ -188,6 +198,7 @@ pub fn rwa_set_compliance_integrity(e: Env) {
 #[rule]
 // set_identity_verifier sets the identity verifier contract
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_set_identity_verifier_integrity(e: Env) {
     let identity_verifier = nondet_address();
     clog!(cvlr_soroban::Addr(&identity_verifier));
@@ -202,6 +213,7 @@ pub fn rwa_set_identity_verifier_integrity(e: Env) {
 #[rule]
 // transfer changes balance of from appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/2454c39057c24b75a1c7545e553bb052/?anonymousKey=4f4658c8129ab14e27129bfd717bcd1375f7ab1c
 pub fn rwa_transfer_integrity_1(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -224,6 +236,7 @@ pub fn rwa_transfer_integrity_1(e: Env) {
 #[rule]
 // transfer changes balance of to appropriately
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_transfer_integrity_2(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -246,6 +259,7 @@ pub fn rwa_transfer_integrity_2(e: Env) {
 #[rule]
 // transfer does not change total supply
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_transfer_integrity_3(e: Env) {
     let from = nondet_address();
     clog!(cvlr_soroban::Addr(&from));
@@ -266,6 +280,7 @@ pub fn rwa_transfer_integrity_3(e: Env) {
 #[rule]
 // transfer_from does not change total supply
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_transfer_from_integrity_1(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -286,6 +301,7 @@ pub fn rwa_transfer_from_integrity_1(e: Env) {
 #[rule]
 // transfer_from changes the balance of from accordingly
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_transfer_from_integrity_2(e: Env) {
     let spender = nondet_address();
     clog!(cvlr_soroban::Addr(&spender));
@@ -310,7 +326,7 @@ pub fn rwa_transfer_from_integrity_2(e: Env) {
 #[rule]
 // transfer_from changes allowance accordingly
 // status: violated
-// same bug as the bug in fungible
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_transfer_from_integrity_4(e: Env) {
     let spender = nondet_address();
     let from = nondet_address();
@@ -332,6 +348,7 @@ pub fn rwa_transfer_from_integrity_4(e: Env) {
 #[rule]
 // approve changes allowance accordingly
 // status: verified
+// link: https://prover.certora.com/output/5771024/78c6f1f1739d477aabba15e5d0ca1078/?anonymousKey=0cba45c7cbe5989417eff1ae2b222cb6e9cbbe13
 pub fn rwa_approve_integrity(e: Env) {
     let owner = nondet_address();
     clog!(cvlr_soroban::Addr(&owner));

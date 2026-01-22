@@ -6,7 +6,7 @@ use crate::rwa::identity_verifier::storage;
 use crate::rwa::identity_verifier::IdentityVerifier;
 use crate::rwa::identity_registry_storage;
 
-// P-XX. Identity Verifier-Integrity.
+// property: P-XX. Identity Verifier-Integrity.
 // description: Identity Verifier functions change state as expected.
 // status: verified
 
