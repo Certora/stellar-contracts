@@ -139,11 +139,15 @@
 //! }
 //! ```
 
-mod storage;
+pub mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractclient, contracterror, contractevent, Address, Bytes, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contractclient, contracterror, Address, Bytes, Env};
 pub use storage::{
     allow_key, build_claim_identifier, decode_claim_data_expiration, encode_claim_data_expiration,
     get_current_nonce_for, get_keys_for_topic, get_registries, invalidate_claim_signatures,
@@ -261,6 +265,7 @@ pub struct KeyRemoved {
 /// * `registry` - The address of the `claim_topics_and_issuers` registry.
 /// * `scheme` - The signature scheme used.
 /// * `claim_topic` - Optional claim topic for topic-specific operations.
+#[cfg(not(feature = "certora"))]
 pub fn emit_key_allowed(
     e: &Env,
     public_key: &Bytes,
@@ -281,6 +286,7 @@ pub fn emit_key_allowed(
 /// * `registry` - The address of the `claim_topics_and_issuers` registry.
 /// * `scheme` - The signature scheme used.
 /// * `claim_topic` - Optional claim topic for topic-specific operations.
+#[cfg(not(feature = "certora"))]
 pub fn emit_key_removed(
     e: &Env,
     public_key: &Bytes,
@@ -314,6 +320,7 @@ pub struct ClaimRevoked {
 /// * `claim_topic` - The topic of the claim.
 /// * `claim_data` - The claim data.
 /// * `revoked` - Whether the claim should be marked as revoked.
+#[cfg(not(feature = "certora"))]
 pub fn emit_revocation_event(
     e: &Env,
     identity: &Address,
@@ -350,6 +357,7 @@ pub struct SignaturesInvalidated {
 /// * `identity` - The identity address whose signatures are invalidated.
 /// * `claim_topic` - The claim topic for which signatures are invalidated.
 /// * `nonce` - The nonce value before invalidation.
+#[cfg(not(feature = "certora"))]
 pub fn emit_signatures_invalidated(e: &Env, identity: &Address, claim_topic: u32, nonce: u32) {
     SignaturesInvalidated { identity: identity.clone(), claim_topic, nonce }.publish(e);
 }

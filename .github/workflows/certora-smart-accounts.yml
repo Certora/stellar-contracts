@@ -1,0 +1,51 @@
+name: Certora verification - Smart Accounts
+
+on: pull_request
+
+env:
+  CONFIGS: |
+    simple_threshold_integrity.conf
+    simple_threshold_invariants.conf
+    simple_threshold_non_panics.conf
+    simple_threshold_panics.conf
+    smart_account_integrity.conf
+    smart_account_invariants.conf
+    spending_limit_integrity.conf
+    spending_limit_invariants.conf
+    spending_limit_panics.conf
+    weighted_threshold_integrity.conf
+    weighted_threshold_invariants.conf
+    weighted_threshold_panics.conf
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install just
+        uses: extractions/setup-just@v3
+      - name: Install soroban
+        run: |
+          cargo update -p cvlr-soroban
+          rustup target add wasm32-unknown-unknown
+      - name: run configs
+        uses: Certora/certora-run-action@v2
+        with:
+          ecosystem: soroban
+          configurations: ${{ env.CONFIGS }}
+          job-name: "Verified Soroban Rules"
+          certora-key: ${{ secrets.CERTORAKEY }}
+          working-directory: packages/accounts/confs
+          cli-release: stable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

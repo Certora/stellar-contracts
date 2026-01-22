@@ -1,5 +1,6 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env, Map, Vec};
 
+#[cfg(not(feature = "certora"))]
 use super::{
     emit_claim_topic_added, emit_claim_topic_removed, emit_issuer_topics_updated,
     emit_trusted_issuer_added, emit_trusted_issuer_removed,
@@ -8,7 +9,8 @@ use crate::rwa::claim_topics_and_issuers::{
     ClaimTopicsAndIssuersError, CLAIMS_EXTEND_AMOUNT, CLAIMS_TTL_THRESHOLD, ISSUERS_EXTEND_AMOUNT,
     ISSUERS_TTL_THRESHOLD, MAX_CLAIM_TOPICS, MAX_ISSUERS,
 };
-
+use crate::rwa::specs::helpers::clogs::clog_vec;
+use cvlr::clog;
 /// Storage keys for the data associated with the claim topics and issuers
 /// extension
 #[contracttype]
@@ -179,6 +181,10 @@ pub fn has_claim_topic(e: &Env, issuer: &Address, claim_topic: u32) -> bool {
 /// security risks as it could allow unauthorized modifications.
 pub fn add_claim_topic(e: &Env, claim_topic: u32) {
     let mut claim_topics = get_claim_topics(e);
+    clog_vec(&claim_topics);
+    clog!(claim_topic);
+    let claim_topic_in_claim_topics = claim_topics.contains(claim_topic);
+    clog!(claim_topic_in_claim_topics);
 
     if claim_topics.len() >= MAX_CLAIM_TOPICS {
         panic_with_error!(e, ClaimTopicsAndIssuersError::MaxClaimTopicsLimitReached);
@@ -195,7 +201,7 @@ pub fn add_claim_topic(e: &Env, claim_topic: u32) {
         // initializing ClaimTopicIssuers for this topic
         let key = ClaimTopicsAndIssuersStorageKey::ClaimTopicIssuers(claim_topic);
         e.storage().persistent().set(&key, &Vec::<Address>::new(e));
-
+        #[cfg(not(feature = "certora"))]
         emit_claim_topic_added(e, claim_topic);
     }
 }
@@ -252,7 +258,7 @@ pub fn remove_claim_topic(e: &Env, claim_topic: u32) {
         // removing ClaimTopicIssuers for this topic
         let key = ClaimTopicsAndIssuersStorageKey::ClaimTopicIssuers(claim_topic);
         e.storage().persistent().remove(&key);
-
+        #[cfg(not(feature = "certora"))]
         emit_claim_topic_removed(e, claim_topic);
     } else {
         panic_with_error!(e, ClaimTopicsAndIssuersError::ClaimTopicDoesNotExist);
@@ -340,7 +346,7 @@ pub fn add_trusted_issuer(e: &Env, trusted_issuer: &Address, claim_topics: &Vec<
         let topic_key = ClaimTopicsAndIssuersStorageKey::ClaimTopicIssuers(topic);
         e.storage().persistent().set(&topic_key, &topic_issuers);
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_trusted_issuer_added(e, trusted_issuer, claim_topics.clone());
 }
 
@@ -400,7 +406,7 @@ pub fn remove_trusted_issuer(e: &Env, trusted_issuer: &Address) {
                 e.storage().persistent().set(&topic_key, &topic_issuers);
             }
         }
-
+        #[cfg(not(feature = "certora"))]
         emit_trusted_issuer_removed(e, trusted_issuer);
     } else {
         panic_with_error!(e, ClaimTopicsAndIssuersError::IssuerDoesNotExist);
@@ -466,12 +472,32 @@ pub fn update_issuer_claim_topics(e: &Env, trusted_issuer: &Address, claim_topic
     let old_topics = get_trusted_issuer_claim_topics(e, trusted_issuer);
 
     // Calculate topics to remove (in old but not in new)
+    #[cfg(not(feature = "certora"))]
     let topics_to_remove: Vec<u32> =
         Vec::from_iter(e, old_topics.iter().filter(|old_topic| !claim_topics.contains(old_topic)));
 
+    #[cfg(feature = "certora")]
+    let topics_to_remove: Vec<u32> = {
+        let mut v: Vec<u32> = Vec::new(e);
+        for old_topic in old_topics.iter().filter(|old_topic| !claim_topics.contains(old_topic)) {
+            v.push_back(old_topic);
+        }
+        v
+    };
+
     // Calculate topics to add (in new but not in old)
+    #[cfg(not(feature = "certora"))]
     let topics_to_add: Vec<u32> =
         Vec::from_iter(e, claim_topics.iter().filter(|new_topic| !old_topics.contains(new_topic)));
+
+    #[cfg(feature = "certora")]
+    let topics_to_add: Vec<u32> = {
+        let mut v: Vec<u32> = Vec::new(e);
+        for claim_topic in claim_topics.iter().filter(|new_topic| !old_topics.contains(new_topic)) {
+            v.push_back(claim_topic);
+        }
+        v
+    };
 
     // Update issuer's claim topics
     let topics_key = ClaimTopicsAndIssuersStorageKey::IssuerClaimTopics(trusted_issuer.clone());
@@ -496,7 +522,7 @@ pub fn update_issuer_claim_topics(e: &Env, trusted_issuer: &Address, claim_topic
         let topic_key = ClaimTopicsAndIssuersStorageKey::ClaimTopicIssuers(topic_to_add);
         e.storage().persistent().set(&topic_key, &topic_issuers);
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_issuer_topics_updated(e, trusted_issuer, claim_topics.clone());
 }
 

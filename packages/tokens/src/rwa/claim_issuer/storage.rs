@@ -73,14 +73,21 @@ use core::ops::RangeBounds;
 
 use soroban_sdk::{contracttype, panic_with_error, xdr::ToXdr, Address, Bytes, BytesN, Env, Vec};
 
+#[cfg(not(feature = "certora"))]
+use crate::rwa::claim_issuer::{
+    emit_key_allowed, emit_key_removed, emit_revocation_event, emit_signatures_invalidated,
+};
+#[cfg(feature = "certora")]
+use crate::rwa::claim_topics_and_issuers::ClaimTopicsAndIssuers;
+#[cfg(feature = "certora")]
 use crate::rwa::{
     claim_issuer::{
-        emit_key_allowed, emit_key_removed, emit_revocation_event, emit_signatures_invalidated,
         ClaimIssuerError, SignatureVerifier, CLAIMS_EXTEND_AMOUNT, CLAIMS_TTL_THRESHOLD,
         KEYS_EXTEND_AMOUNT, KEYS_TTL_THRESHOLD, MAX_KEYS_PER_TOPIC, MAX_REGISTRIES_PER_KEY,
     },
-    claim_topics_and_issuers::ClaimTopicsAndIssuersClient,
+    claim_topics_and_issuers::ClaimTopicsAndIssuersClient
 };
+use crate::rwa::claim_topics_and_issuers::storage::has_claim_topic;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -316,7 +323,17 @@ pub fn get_registries(e: &Env, signing_key: &SigningKey) -> Vec<Address> {
         .iter()
         .map(|(_, addr)| addr);
 
-    Vec::from_iter(e, iter)
+    #[cfg(not(feature = "certora"))]
+    return Vec::from_iter(e, iter);
+
+    #[cfg(feature = "certora")]
+    {
+        let mut v: Vec<Address> = Vec::new(e);
+        for addr in iter {
+            v.push_back(addr);
+        }
+        v
+    }
 }
 
 /// Checks if a public key and its scheme are allowed to sign claims for a
@@ -349,9 +366,15 @@ pub fn is_key_allowed_for_topic(
 ) -> bool {
     let topics_storage_key = ClaimIssuerStorageKey::Topics(claim_topic);
 
+    use cvlr::clog;
+    use crate::rwa::specs::helpers::clogs::clog_vec_signing_keys;
+    clog!(cvlr_soroban::B(&public_key));
+    clog!(scheme);
+    clog!(claim_topic);
     if let Some(topic_keys) =
         e.storage().persistent().get::<_, Vec<SigningKey>>(&topics_storage_key)
     {
+        clog_vec_signing_keys(&topic_keys);
         e.storage().persistent().extend_ttl(
             &topics_storage_key,
             KEYS_TTL_THRESHOLD,
@@ -383,7 +406,6 @@ pub fn is_key_allowed_for_registry(
 ) -> bool {
     let signing_key = SigningKey { public_key: public_key.clone(), scheme };
     let pairs_storage_key = ClaimIssuerStorageKey::Pairs(signing_key);
-
     if let Some(pairs) = e.storage().persistent().get::<_, Vec<(u32, Address)>>(&pairs_storage_key)
     {
         e.storage().persistent().extend_ttl(
@@ -408,9 +430,12 @@ pub fn is_key_allowed_for_registry(
 /// * `registry` - The registry address to check against.
 /// * `claim_topic` - The claim topic to check authorization for.
 pub fn is_authorized_for(e: &Env, registry: &Address, claim_topic: u32) -> bool {
+    #[cfg(not(feature = "certora"))]
     let registry_client = ClaimTopicsAndIssuersClient::new(e, registry);
-
-    registry_client.has_claim_topic(&e.current_contract_address(), &claim_topic)
+    #[cfg(not(feature = "certora"))]
+    return registry_client.has_claim_topic(&e.current_contract_address(), &claim_topic);
+    #[cfg(feature = "certora")]
+    has_claim_topic(e, &e.current_contract_address(), claim_topic)
 }
 
 /// Allows a public key to sign claims for specific topic and
@@ -453,26 +478,39 @@ pub fn allow_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, c
         panic_with_error!(e, ClaimIssuerError::KeyIsEmpty)
     }
 
+    #[cfg(not(feature = "certora"))]
     let registry_client = ClaimTopicsAndIssuersClient::new(e, registry);
 
     // Check claim issuer can sign claim about a specific topic
+    #[cfg(not(feature = "certora"))]
     if !registry_client.has_claim_topic(&e.current_contract_address(), &claim_topic) {
+        panic_with_error!(e, ClaimIssuerError::NotAllowed)
+    }
+    #[cfg(feature = "certora")]
+    if !has_claim_topic(e, &e.current_contract_address(), claim_topic) {
         panic_with_error!(e, ClaimIssuerError::NotAllowed)
     }
 
     let signing_key = SigningKey { public_key: public_key.clone(), scheme };
 
+    use cvlr::clog;
+    use crate::rwa::specs::helpers::clogs::clog_vec_signing_keys;
+    clog!(cvlr_soroban::B(&signing_key.public_key));
+    clog!(scheme);
+    clog!(claim_topic);
+    clog!(is_key_allowed_for_topic(e, &signing_key.public_key, scheme, claim_topic));
     // Check if key already exists for this topic
     if !is_key_allowed_for_topic(e, &signing_key.public_key, scheme, claim_topic) {
         let key = ClaimIssuerStorageKey::Topics(claim_topic);
         let mut topic_keys: Vec<SigningKey> =
             e.storage().persistent().get(&key).unwrap_or_else(|| Vec::new(e));
-
+        clog_vec_signing_keys(&topic_keys);
         if topic_keys.len() >= MAX_KEYS_PER_TOPIC {
             panic_with_error!(e, ClaimIssuerError::LimitExceeded)
         }
 
         topic_keys.push_back(signing_key.clone());
+        clog_vec_signing_keys(&topic_keys);
         e.storage().persistent().set(&key, &topic_keys);
     }
 
@@ -493,7 +531,7 @@ pub fn allow_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, c
     }
 
     e.storage().persistent().set(&pairs_storage_key, &pairs);
-
+    #[cfg(not(feature = "certora"))]
     emit_key_allowed(e, public_key, registry, scheme, claim_topic);
 }
 
@@ -565,7 +603,7 @@ pub fn remove_key(e: &Env, public_key: &Bytes, registry: &Address, scheme: u32, 
             e.storage().persistent().set(&topics_storage_key, &topic_keys);
         }
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_key_removed(e, public_key, registry, scheme, claim_topic);
 }
 
@@ -642,6 +680,7 @@ pub fn invalidate_claim_signatures(e: &Env, identity: &Address, claim_topic: u32
     let nonce_key = ClaimIssuerStorageKey::ClaimNonce(identity.clone(), claim_topic);
     let mut nonce: u32 = e.storage().persistent().get(&nonce_key).unwrap_or(0);
 
+    #[cfg(not(feature = "certora"))]
     emit_signatures_invalidated(e, identity, claim_topic, nonce);
 
     nonce = nonce
@@ -688,6 +727,7 @@ pub fn set_claim_revoked(
 
     e.storage().persistent().set(&ClaimIssuerStorageKey::RevokedClaim(claim_digest), &revoked);
 
+    #[cfg(not(feature = "certora"))]
     emit_revocation_event(e, identity, claim_topic, claim_data, revoked);
 }
 

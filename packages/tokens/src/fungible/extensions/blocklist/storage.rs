@@ -1,7 +1,8 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env};
 
+#[cfg(not(feature = "certora"))]
+use crate::fungible::extensions::blocklist::{emit_user_blocked, emit_user_unblocked};
 use crate::fungible::{
-    extensions::blocklist::{emit_user_blocked, emit_user_unblocked},
     overrides::{Base, ContractOverrides},
     FungibleTokenError, ALLOW_BLOCK_EXTEND_AMOUNT, ALLOW_BLOCK_TTL_THRESHOLD,
 };
@@ -82,7 +83,7 @@ impl BlockList {
         // if the user is not blocked, block them
         if !e.storage().persistent().has(&key) {
             e.storage().persistent().set(&key, &());
-
+            #[cfg(not(feature = "certora"))]
             emit_user_blocked(e, user);
         }
     }
@@ -115,7 +116,7 @@ impl BlockList {
         // if the user is currently blocked, unblock them
         if e.storage().persistent().has(&key) {
             e.storage().persistent().remove(&key);
-
+            #[cfg(not(feature = "certora"))]
             emit_user_unblocked(e, user);
         }
     }

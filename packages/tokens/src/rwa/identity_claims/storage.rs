@@ -27,10 +27,10 @@ use soroban_sdk::{
     contracttype, panic_with_error, vec, xdr::ToXdr, Address, Bytes, BytesN, Env, String, Vec,
 };
 
-use super::{
-    emit_claim_event, ClaimEvent, ClaimsError, CLAIMS_EXTEND_AMOUNT, CLAIMS_TTL_THRESHOLD,
-};
-use crate::rwa::claim_issuer::ClaimIssuerClient;
+#[cfg(not(feature = "certora"))]
+use super::emit_claim_event;
+use super::{ClaimEvent, ClaimsError, CLAIMS_EXTEND_AMOUNT, CLAIMS_TTL_THRESHOLD};
+use crate::rwa::{claim_issuer::{ClaimIssuer, ClaimIssuerClient}, specs::mocks::claim_issuer_trivial::ClaimIssuerTrivial};
 
 /// Represents a claim stored on-chain.
 #[contracttype]
@@ -96,10 +96,20 @@ pub fn add_claim(
     data: &Bytes,
     uri: &String,
 ) -> BytesN<32> {
+    #[cfg(not(feature = "certora"))]
     let claim_issuer_client = ClaimIssuerClient::new(e, issuer);
     let identity = e.current_contract_address();
 
+    #[cfg(not(feature = "certora"))]
     claim_issuer_client.is_claim_valid(&identity, &topic, &scheme, signature, data);
+    ClaimIssuerTrivial::is_claim_valid(
+        e,
+        identity,
+        topic,
+        scheme,
+        signature.clone(),
+        data.clone(),
+    );
 
     let claim_id = generate_claim_id(e, issuer, topic);
 
@@ -120,8 +130,10 @@ pub fn add_claim(
     // Emit appropriate event
     if is_new_claim {
         add_claim_to_topic_index(e, topic, &claim_id);
+        #[cfg(not(feature = "certora"))]
         emit_claim_event(e, ClaimEvent::Added, claim);
     } else {
+        #[cfg(not(feature = "certora"))]
         emit_claim_event(e, ClaimEvent::Changed, claim);
     }
 
@@ -206,7 +218,7 @@ pub fn remove_claim(e: &Env, claim_id: &BytesN<32>) {
     e.storage().persistent().remove(&claim_key);
 
     remove_claim_from_topic_index(e, claim.topic, claim_id);
-
+    #[cfg(not(feature = "certora"))]
     emit_claim_event(e, ClaimEvent::Removed, claim);
 }
 

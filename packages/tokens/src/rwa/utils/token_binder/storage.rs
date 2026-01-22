@@ -1,8 +1,12 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env, Map, TryFromVal, Val, Vec};
+use cvlr::clog;
+use crate::rwa::specs::helpers::clogs::clog_vec_addresses;
 
+#[cfg(not(feature = "certora"))]
+use crate::rwa::utils::token_binder::{emit_token_bound, emit_token_unbound};
 use crate::rwa::utils::token_binder::{
-    emit_token_bound, emit_token_unbound, TokenBinderError, BUCKET_SIZE, MAX_TOKENS,
-    TOKEN_BINDER_EXTEND_AMOUNT, TOKEN_BINDER_TTL_THRESHOLD,
+    TokenBinderError, BUCKET_SIZE, MAX_TOKENS, TOKEN_BINDER_EXTEND_AMOUNT,
+    TOKEN_BINDER_TTL_THRESHOLD,
 };
 
 /// Storage keys for the token binder system.
@@ -102,6 +106,7 @@ pub fn get_token_index(e: &Env, token: &Address) -> u32 {
 ///
 /// Performs a linear scan across all buckets.
 pub fn is_token_bound(e: &Env, token: &Address) -> bool {
+    // todo: munge it to nondet.
     let count = linked_token_count(e);
     if count == 0 {
         return false;
@@ -125,21 +130,25 @@ pub fn is_token_bound(e: &Env, token: &Address) -> bool {
 /// * `e` - The Soroban environment.
 pub fn linked_tokens(e: &Env) -> Vec<Address> {
     let count = linked_token_count(e);
+    clog!(count);
     let mut tokens = Vec::new(e);
-
+    clog_vec_addresses(&tokens);
     if count == 0 {
         return tokens;
     }
-
+    clog!(count);
+    clog!(BUCKET_SIZE);
     let last_bucket = (count - 1) / BUCKET_SIZE;
+    clog!(last_bucket);
     for bucket_idx in 0..=last_bucket {
+        clog!(bucket_idx);
         let bucket: Vec<Address> =
             get_persistent_entry(e, &TokenBinderStorageKey::TokenBucket(bucket_idx))
                 .unwrap_or_else(|| Vec::new(e));
-
+        clog_vec_addresses(&bucket);
         tokens.append(&bucket);
     }
-
+    clog_vec_addresses(&tokens);
     tokens
 }
 
@@ -179,21 +188,28 @@ pub fn bind_token(e: &Env, token: &Address) {
     }
 
     let mut count = linked_token_count(e);
+    clog!(count);
+    clog!(MAX_TOKENS);
     if count >= MAX_TOKENS {
         panic_with_error!(e, TokenBinderError::MaxTokensReached)
     }
 
+    clog!(BUCKET_SIZE);
     let bucket_index = count / BUCKET_SIZE;
+    clog!(bucket_index);
     let key = TokenBinderStorageKey::TokenBucket(bucket_index);
     let mut bucket: Vec<Address> =
         e.storage().persistent().get(&key).unwrap_or_else(|| Vec::new(e));
-
+    
+    clog_vec_addresses(&bucket);
     bucket.push_back(token.clone());
+    clog_vec_addresses(&bucket);
     e.storage().persistent().set(&key, &bucket);
 
     count += 1;
+    clog!(count);
     e.storage().persistent().set(&TokenBinderStorageKey::TotalCount, &count);
-
+    #[cfg(not(feature = "certora"))]
     emit_token_bound(e, token);
 }
 
@@ -281,6 +297,7 @@ pub fn bind_tokens(e: &Env, tokens: &Vec<Address>) {
                 panic_with_error!(e, TokenBinderError::TokenAlreadyBound)
             }
             bucket.push_back(token.clone());
+            #[cfg(not(feature = "certora"))]
             emit_token_bound(e, &token);
             i += 1;
             count += 1;
@@ -355,7 +372,7 @@ pub fn unbind_token(e: &Env, token: &Address) {
 
     // Update total count
     e.storage().persistent().set(&TokenBinderStorageKey::TotalCount, &last_index);
-
+    #[cfg(not(feature = "certora"))]
     emit_token_unbound(e, token);
 }
 

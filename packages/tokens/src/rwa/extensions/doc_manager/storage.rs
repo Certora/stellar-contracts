@@ -27,9 +27,11 @@
 /// ensures O(1) removal operations.
 use soroban_sdk::{contracttype, panic_with_error, BytesN, Env, String, TryFromVal, Val, Vec};
 
+#[cfg(not(feature = "certora"))]
+use super::{emit_document_removed, emit_document_updated};
 use super::{
-    emit_document_removed, emit_document_updated, DocumentError, BUCKET_SIZE,
-    DOCUMENT_EXTEND_AMOUNT, DOCUMENT_TTL_THRESHOLD, MAX_DOCUMENTS, MAX_URI_LEN,
+    DocumentError, BUCKET_SIZE, DOCUMENT_EXTEND_AMOUNT, DOCUMENT_TTL_THRESHOLD, MAX_DOCUMENTS,
+    MAX_URI_LEN,
 };
 
 /// Represents a document with its metadata.
@@ -203,7 +205,7 @@ pub fn set_document(e: &Env, name: &BytesN<32>, uri: &String, document_hash: &By
 
         e.storage().persistent().set(&DocumentStorageKey::Count, &(count + 1));
     }
-
+    #[cfg(not(feature = "certora"))]
     emit_document_updated(e, name, uri, document_hash, timestamp);
 }
 
@@ -285,7 +287,7 @@ pub fn remove_document(e: &Env, name: &BytesN<32>) {
     e.storage().persistent().remove(&index_key);
 
     e.storage().persistent().set(&DocumentStorageKey::Count, &last_index);
-
+    #[cfg(not(feature = "certora"))]
     emit_document_removed(e, name);
 }
 

@@ -1,5 +1,7 @@
 use soroban_sdk::{Address, Env};
 
+use crate::fungible::Base;
+#[cfg(not(feature = "certora"))]
 use crate::fungible::{extensions::burnable::emit_burn, Base};
 
 impl Base {
@@ -27,6 +29,7 @@ impl Base {
     pub fn burn(e: &Env, from: &Address, amount: i128) {
         from.require_auth();
         Base::update(e, Some(from), None, amount);
+        #[cfg(not(feature = "certora"))]
         emit_burn(e, from, amount);
     }
 
@@ -59,6 +62,7 @@ impl Base {
         spender.require_auth();
         Base::spend_allowance(e, from, spender, amount);
         Base::update(e, Some(from), None, amount);
+        #[cfg(not(feature = "certora"))]
         emit_burn(e, from, amount);
     }
 }

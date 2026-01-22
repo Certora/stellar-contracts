@@ -1,9 +1,9 @@
+use cvlr::clog;
 use soroban_sdk::{contracttype, panic_with_error, symbol_short, Address, Env, String, Symbol};
 
-use crate::fungible::{
-    emit_approve, emit_mint, emit_transfer, Base, FungibleTokenError, BALANCE_EXTEND_AMOUNT,
-    BALANCE_TTL_THRESHOLD,
-};
+#[cfg(not(feature = "certora"))]
+use crate::fungible::{emit_approve, emit_mint, emit_transfer};
+use crate::fungible::{Base, FungibleTokenError, BALANCE_EXTEND_AMOUNT, BALANCE_TTL_THRESHOLD};
 
 /// Storage key that maps to [`Metadata`]
 pub const METADATA_KEY: Symbol = symbol_short!("METADATA");
@@ -211,6 +211,7 @@ impl Base {
     ) {
         owner.require_auth();
         Base::set_allowance(e, owner, spender, amount, live_until_ledger);
+        #[cfg(not(feature = "certora"))]
         emit_approve(e, owner, spender, amount, live_until_ledger);
     }
 
@@ -309,6 +310,9 @@ impl Base {
 
         let allowance = Base::allowance_data(e, owner, spender);
 
+        // maybe this is a bug? because it doesn't consider live_until_ledger, should be
+        // allowance() instead?
+
         if allowance.amount < amount {
             panic_with_error!(e, FungibleTokenError::InsufficientAllowance);
         }
@@ -348,6 +352,7 @@ impl Base {
     pub fn transfer(e: &Env, from: &Address, to: &Address, amount: i128) {
         from.require_auth();
         Base::update(e, Some(from), Some(to), amount);
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
 
@@ -381,6 +386,7 @@ impl Base {
         spender.require_auth();
         Base::spend_allowance(e, from, spender, amount);
         Base::update(e, Some(from), Some(to), amount);
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
 
@@ -476,6 +482,7 @@ impl Base {
     /// ```
     pub fn mint(e: &Env, to: &Address, amount: i128) {
         Base::update(e, None, Some(to), amount);
+        #[cfg(not(feature = "certora"))]
         emit_mint(e, to, amount);
     }
 

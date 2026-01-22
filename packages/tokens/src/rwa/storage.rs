@@ -1,14 +1,22 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env, String};
 use stellar_contract_utils::pausable::{paused, PausableError};
 
+#[cfg(feature = "certora")]
+use crate::rwa::{compliance::Compliance, identity_verifier::IdentityVerifier, specs::mocks::{compliance_trivial::ComplianceTrivial, identity_verifier_trivial::IdentityVerifierTrivial}};
+#[cfg(not(feature = "certora"))]
 use crate::{
-    fungible::{emit_transfer, Base, ContractOverrides},
+    fungible::emit_transfer,
     rwa::{
-        compliance::ComplianceClient, emit_address_frozen, emit_burn, emit_compliance_set,
-        emit_identity_verifier_set, emit_mint, emit_recovery_success,
-        emit_token_onchain_id_updated, emit_tokens_frozen, emit_tokens_unfrozen,
-        identity_verifier::IdentityVerifierClient, RWAError, FROZEN_EXTEND_AMOUNT,
-        FROZEN_TTL_THRESHOLD,
+        emit_address_frozen, emit_burn, emit_compliance_set, emit_identity_verifier_set, emit_mint,
+        emit_recovery_success, emit_token_onchain_id_updated, emit_tokens_frozen,
+        emit_tokens_unfrozen,
+    },
+};
+use crate::{
+    fungible::{Base, ContractOverrides},
+    rwa::{
+        compliance::ComplianceClient, identity_verifier::IdentityVerifierClient, RWAError,
+        FROZEN_EXTEND_AMOUNT, FROZEN_TTL_THRESHOLD,
     },
 };
 
@@ -210,15 +218,20 @@ impl RWA {
             let new_frozen = current_frozen - tokens_to_unfreeze;
 
             e.storage().persistent().set(&RWAStorageKey::FrozenTokens(from.clone()), &new_frozen);
+            #[cfg(not(feature = "certora"))]
             emit_tokens_unfrozen(e, from, tokens_to_unfreeze);
         }
 
         Base::update(e, Some(from), Some(to), amount);
 
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         compliance_client.transferred(from, to, &amount, &e.current_contract_address());
-
+        #[cfg(feature = "certora")]
+        ComplianceTrivial::transferred(e, from.clone(), to.clone(), amount, e.current_contract_address());
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
 
@@ -260,14 +273,24 @@ impl RWA {
     /// ```
     pub fn mint(e: &Env, to: &Address, amount: i128) {
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(to);
 
+        #[cfg(feature = "certora")]
+        IdentityVerifierTrivial::verify_identity(e, to);
+
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
 
+        #[cfg(not(feature = "certora"))]
         let can_create: bool =
             compliance_client.can_create(to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        let can_create: bool =
+            ComplianceTrivial::can_create(e, to.clone(), amount, e.current_contract_address());
 
         if !can_create {
             panic_with_error!(e, RWAError::MintNotCompliant);
@@ -275,8 +298,11 @@ impl RWA {
 
         Base::update(e, None, Some(to), amount);
 
+        #[cfg(not(feature = "certora"))]
         compliance_client.created(to, &amount, &e.current_contract_address());
-
+        #[cfg(feature = "certora")]
+        ComplianceTrivial::created(e, to.clone(), amount, e.current_contract_address());
+        #[cfg(not(feature = "certora"))]
         emit_mint(e, to, amount);
     }
 
@@ -318,15 +344,20 @@ impl RWA {
             e.storage()
                 .persistent()
                 .set(&RWAStorageKey::FrozenTokens(user_address.clone()), &new_frozen);
+            #[cfg(not(feature = "certora"))]
             emit_tokens_unfrozen(e, user_address, tokens_to_unfreeze);
         }
 
         Base::update(e, Some(user_address), None, amount);
 
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         compliance_client.destroyed(user_address, &amount, &e.current_contract_address());
-
+        #[cfg(feature = "certora")]
+        ComplianceTrivial::destroyed(e, user_address.clone(), amount, e.current_contract_address());
+        #[cfg(not(feature = "certora"))]
         emit_burn(e, user_address, amount);
     }
 
@@ -374,12 +405,21 @@ impl RWA {
     pub fn recover_balance(e: &Env, old_account: &Address, new_account: &Address) -> bool {
         // Verify identity for the new account
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(new_account);
+        #[cfg(feature = "certora")]
+        IdentityVerifierTrivial::verify_identity(e, new_account);
 
         // Verify that the new account is the recovery target for the old account
+        #[cfg(not(feature = "certora"))]
         let recovery_target = identity_verifier_client
             .recovery_target(old_account)
+            .unwrap_or_else(|| panic_with_error!(e, RWAError::IdentityMismatch));
+
+        #[cfg(feature = "certora")]
+        let recovery_target = IdentityVerifierTrivial::recovery_target(e, old_account)
             .unwrap_or_else(|| panic_with_error!(e, RWAError::IdentityMismatch));
 
         if recovery_target != *new_account {
@@ -410,7 +450,7 @@ impl RWA {
         if is_address_frozen {
             Self::set_address_frozen(e, new_account, true);
         }
-
+        #[cfg(not(feature = "certora"))]
         emit_recovery_success(e, old_account, new_account);
 
         true
@@ -437,7 +477,7 @@ impl RWA {
     /// authorization logic.
     pub fn set_address_frozen(e: &Env, user_address: &Address, freeze: bool) {
         e.storage().persistent().set(&RWAStorageKey::AddressFrozen(user_address.clone()), &freeze);
-
+        #[cfg(not(feature = "certora"))]
         emit_address_frozen(e, user_address, freeze);
     }
 
@@ -481,6 +521,7 @@ impl RWA {
         e.storage()
             .persistent()
             .set(&RWAStorageKey::FrozenTokens(user_address.clone()), &new_frozen);
+        #[cfg(not(feature = "certora"))]
         emit_tokens_frozen(e, user_address, amount);
     }
 
@@ -522,6 +563,7 @@ impl RWA {
         e.storage()
             .persistent()
             .set(&RWAStorageKey::FrozenTokens(user_address.clone()), &new_frozen);
+        #[cfg(not(feature = "certora"))]
         emit_tokens_unfrozen(e, user_address, amount);
     }
 
@@ -545,7 +587,7 @@ impl RWA {
     /// authorization logic.
     pub fn set_onchain_id(e: &Env, onchain_id: &Address) {
         e.storage().instance().set(&RWAStorageKey::OnchainId, onchain_id);
-
+        #[cfg(not(feature = "certora"))]
         emit_token_onchain_id_updated(e, onchain_id);
     }
 
@@ -568,6 +610,7 @@ impl RWA {
     /// authorization logic.
     pub fn set_compliance(e: &Env, compliance: &Address) {
         e.storage().instance().set(&RWAStorageKey::Compliance, compliance);
+        #[cfg(not(feature = "certora"))]
         emit_compliance_set(e, compliance);
     }
 
@@ -590,6 +633,7 @@ impl RWA {
     /// authorization logic.
     pub fn set_identity_verifier(e: &Env, identity_verifier: &Address) {
         e.storage().instance().set(&RWAStorageKey::IdentityVerifier, identity_verifier);
+        #[cfg(not(feature = "certora"))]
         emit_identity_verifier_set(e, identity_verifier);
     }
 
@@ -632,15 +676,28 @@ impl RWA {
         }
 
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(from);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(to);
+        #[cfg(feature = "certora")]
+        {
+            IdentityVerifierTrivial::verify_identity(e, from);
+            IdentityVerifierTrivial::verify_identity(e, to);
+        }
+
 
         // Validate compliance rules for the transfer
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         let can_transfer: bool =
             compliance_client.can_transfer(from, to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        let can_transfer: bool = ComplianceTrivial::can_transfer(e, from.clone(), to.clone(), amount, e.current_contract_address());
 
         if !can_transfer {
             panic_with_error!(e, RWAError::TransferNotCompliant);
@@ -648,8 +705,12 @@ impl RWA {
 
         Base::update(e, Some(from), Some(to), amount);
 
+        #[cfg(not(feature = "certora"))]
         compliance_client.transferred(from, to, &amount, &e.current_contract_address());
-
+        #[cfg(feature = "certora")]
+        ComplianceTrivial::transferred(e, from.clone(), to.clone(), amount, e.current_contract_address());
+        
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
 

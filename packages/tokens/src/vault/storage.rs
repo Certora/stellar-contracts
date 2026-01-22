@@ -1,9 +1,13 @@
 use soroban_sdk::{contracttype, panic_with_error, token, Address, Env};
 use stellar_contract_utils::math::fixed_point::{muldiv, Rounding};
 
+#[cfg(not(feature = "certora"))]
+use crate::vault::{emit_deposit, emit_withdraw};
 use crate::{
-    fungible::{Base, ContractOverrides},
-    vault::{emit_deposit, emit_withdraw, VaultTokenError, MAX_DECIMALS_OFFSET},
+    fungible::{Base, ContractOverrides, FungibleToken},
+    vault::{
+        VaultTokenError, MAX_DECIMALS_OFFSET,
+    },
 };
 
 pub struct Vault;
@@ -141,7 +145,7 @@ impl Vault {
     /// details on the deviation from the standard.
     pub fn total_assets(e: &Env) -> i128 {
         let token_client = token::Client::new(e, &Self::query_asset(e));
-        token_client.balance(&e.current_contract_address())
+        return token_client.balance(&e.current_contract_address());
     }
 
     /// Converts an amount of underlying assets to the equivalent amount of
@@ -623,6 +627,8 @@ impl Vault {
     /// * [`VaultTokenError::MathOverflow`] - When mathematical operations
     ///   result in overflow.
     pub fn convert_to_shares_with_rounding(e: &Env, assets: i128, rounding: Rounding) -> i128 {
+        use cvlr::clog;
+        clog!(assets);
         if assets < 0 {
             panic_with_error!(e, VaultTokenError::VaultInvalidAssetsAmount);
         }
@@ -632,22 +638,22 @@ impl Vault {
 
         // Assets being deposited
         let x = assets;
-
+        clog!(x);
         // Virtual offset = 10^offset
         let pow = 10_i128
             .checked_pow(Self::get_decimals_offset(e))
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
+        clog!(pow);
         // Effective total supply = totalSupply + virtual offset
         let y = Self::total_supply(e)
             .checked_add(pow)
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
+        clog!(y);
         // Effective total assets = totalAssets + 1 (prevents division by zero)
         let denominator = Self::total_assets(e)
             .checked_add(1_i128)
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
+        clog!(denominator);
         // (assets × (totalSupply + 10^offset)) / (totalAssets + 1)
         muldiv(e, x, y, denominator, rounding)
     }
@@ -690,7 +696,7 @@ impl Vault {
         let pow = 10_i128
             .checked_pow(Self::get_decimals_offset(e))
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
+        
         // Effective total supply = totalSupply + virtual offset
         let denominator = Self::total_supply(e)
             .checked_add(pow)
@@ -740,10 +746,9 @@ impl Vault {
         let token_client = token::Client::new(e, &Self::query_asset(e));
         // `safeTransfer` mechanism is not present in the base module, (will be provided
         // as an extension)
-
         if operator == from {
             // Direct transfer: `operator` is depositing their own assets
-            token_client.transfer(from, e.current_contract_address(), &assets);
+            token_client.transfer(from, &e.current_contract_address(), &assets);
         } else {
             // Allowance-based transfer: `operator` is depositing on behalf of `from`
             // This requires that `from` has approved `operator` on the underlying asset
@@ -751,6 +756,7 @@ impl Vault {
         }
 
         Base::mint(e, receiver, shares);
+        #[cfg(not(feature = "certora"))]
         emit_deposit(e, operator, from, receiver, assets, shares);
     }
 
@@ -798,6 +804,7 @@ impl Vault {
         // `safeTransfer` mechanism is not present in the base module, (will be provided
         // as an extension)
         token_client.transfer(&e.current_contract_address(), receiver, &assets);
+        #[cfg(not(feature = "certora"))]
         emit_withdraw(e, operator, receiver, owner, assets, shares);
     }
 
@@ -836,6 +843,6 @@ impl Vault {
     /// * refer to [`Self::query_asset()`] errors.
     pub fn get_underlying_asset_decimals(e: &Env) -> u32 {
         let token_client = token::Client::new(e, &Self::query_asset(e));
-        token_client.decimals()
+        return token_client.decimals();
     }
 }

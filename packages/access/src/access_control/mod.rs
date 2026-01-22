@@ -91,7 +91,14 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, Env, Symbol};
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env, Symbol};
 
 pub use crate::access_control::storage::{
     accept_admin_transfer, add_to_role_enumeration, enforce_admin_auth,
@@ -374,6 +381,7 @@ pub struct RoleGranted {
 /// * `role` - The role that was granted.
 /// * `account` - The account that received the role.
 /// * `caller` - The account that granted the role.
+#[cfg(not(feature = "certora"))]
 pub fn emit_role_granted(e: &Env, role: &Symbol, account: &Address, caller: &Address) {
     RoleGranted { role: role.clone(), account: account.clone(), caller: caller.clone() }.publish(e);
 }
@@ -398,6 +406,7 @@ pub struct RoleRevoked {
 /// * `account` - The account that lost the role.
 /// * `caller` - The account that revoked the role (either the admin or the
 ///   account itself).
+#[cfg(not(feature = "certora"))]
 pub fn emit_role_revoked(e: &Env, role: &Symbol, account: &Address, caller: &Address) {
     RoleRevoked { role: role.clone(), account: account.clone(), caller: caller.clone() }.publish(e);
 }
@@ -420,6 +429,7 @@ pub struct RoleAdminChanged {
 /// * `role` - The role whose admin is changing.
 /// * `previous_admin_role` - The previous admin role.
 /// * `new_admin_role` - The new admin role.
+#[cfg(not(feature = "certora"))]
 pub fn emit_role_admin_changed(
     e: &Env,
     role: &Symbol,
@@ -453,6 +463,7 @@ pub struct AdminTransferInitiated {
 /// * `new_admin` - The proposed new admin.
 /// * `live_until_ledger` - The ledger number at which the pending transfer will
 ///   expire. If this value is `0`, it means the pending transfer is cancelled.
+#[cfg(not(feature = "certora"))]
 pub fn emit_admin_transfer_initiated(
     e: &Env,
     current_admin: &Address,
@@ -483,6 +494,7 @@ pub struct AdminTransferCompleted {
 /// * `e` - Access to Soroban environment.
 /// * `previous_admin` - The previous admin.
 /// * `new_admin` - The new admin who accepted the transfer.
+#[cfg(not(feature = "certora"))]
 pub fn emit_admin_transfer_completed(e: &Env, previous_admin: &Address, new_admin: &Address) {
     AdminTransferCompleted { new_admin: new_admin.clone(), previous_admin: previous_admin.clone() }
         .publish(e);
@@ -502,6 +514,7 @@ pub struct AdminRenounced {
 ///
 /// * `e` - Access to Soroban environment.
 /// * `admin` - The admin that renounced the role.
+#[cfg(not(feature = "certora"))]
 pub fn emit_admin_renounced(e: &Env, admin: &Address) {
     AdminRenounced { admin: admin.clone() }.publish(e);
 }

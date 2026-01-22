@@ -1,10 +1,12 @@
 use soroban_sdk::{contracttype, panic_with_error, xdr::ToXdr, BytesN, Env, Vec};
 
+#[cfg(not(feature = "certora"))]
+use crate::merkle_distributor::{emit_set_claimed, emit_set_root};
 use crate::{
     crypto::{hasher::Hasher, merkle::Verifier},
     merkle_distributor::{
-        emit_set_claimed, emit_set_root, IndexableLeaf, MerkleDistributor, MerkleDistributorError,
-        MERKLE_CLAIMED_EXTEND_AMOUNT, MERKLE_CLAIMED_TTL_THRESHOLD,
+        IndexableLeaf, MerkleDistributor, MerkleDistributorError, MERKLE_CLAIMED_EXTEND_AMOUNT,
+        MERKLE_CLAIMED_TTL_THRESHOLD,
     },
 };
 
@@ -79,6 +81,7 @@ where
     pub fn set_root(e: &Env, root: H::Output) {
         let key = MerkleDistributorStorageKey::Root;
         e.storage().instance().set(&key, &root);
+        #[cfg(not(feature = "certora"))]
         emit_set_root(e, root.into());
     }
 
@@ -101,6 +104,7 @@ where
     pub fn set_claimed(e: &Env, index: u32) {
         let key = MerkleDistributorStorageKey::Claimed(index);
         e.storage().persistent().set(&key, &true);
+        #[cfg(not(feature = "certora"))]
         emit_set_claimed(e, index.into());
     }
 
@@ -189,7 +193,7 @@ where
     ///
     /// * `e` - Access to Soroban environment.
     /// * `leaf` - The leaf data containing an index field.
-    fn get_verification_args<N: ToXdr + IndexableLeaf>(
+    pub fn get_verification_args<N: ToXdr + IndexableLeaf>(
         e: &Env,
         leaf: N,
     ) -> (H::Output, H::Output, u32) {

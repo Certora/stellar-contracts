@@ -1,10 +1,16 @@
+#[cfg(not(feature = "certora"))]
 mod storage;
+
+#[cfg(feature = "certora")]
+pub mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{
-    contractclient, contracterror, contractevent, Address, Bytes, BytesN, Env, String, Vec,
-};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contractclient, contracterror, Address, Bytes, BytesN, Env, String, Vec};
 pub use storage::{
     add_claim, generate_claim_id, get_claim, get_claim_ids_by_topic, remove_claim, Claim,
 };
@@ -127,6 +133,7 @@ pub struct ClaimChanged {
 /// * `e` - The Soroban environment.
 /// * `event_type` - The type of claim event (Added, Removed, or Changed).
 /// * `claim` - The claim data.
+#[cfg(not(feature = "certora"))]
 pub fn emit_claim_event(e: &Env, event_type: ClaimEvent, claim: Claim) {
     match event_type {
         ClaimEvent::Added => ClaimAdded { claim }.publish(e),

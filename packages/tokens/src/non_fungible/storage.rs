@@ -1,9 +1,12 @@
+use cvlr::clog;
 use soroban_sdk::{contracttype, panic_with_error, Address, Env, String};
 
+#[cfg(not(feature = "certora"))]
+use crate::non_fungible::{emit_approve, emit_approve_for_all, emit_mint, emit_transfer};
 use crate::non_fungible::{
-    emit_approve, emit_approve_for_all, emit_mint, emit_transfer, sequential::increment_token_id,
-    Base, NonFungibleTokenError, BALANCE_EXTEND_AMOUNT, BALANCE_TTL_THRESHOLD, MAX_BASE_URI_LEN,
-    MAX_NUM_DIGITS, OWNER_EXTEND_AMOUNT, OWNER_TTL_THRESHOLD,
+    sequential::increment_token_id, Base, NonFungibleTokenError, BALANCE_EXTEND_AMOUNT,
+    BALANCE_TTL_THRESHOLD, MAX_BASE_URI_LEN, MAX_NUM_DIGITS, OWNER_EXTEND_AMOUNT,
+    OWNER_TTL_THRESHOLD,
 };
 
 /// Storage container for the token for which an approval is granted
@@ -253,6 +256,7 @@ impl Base {
     pub fn transfer(e: &Env, from: &Address, to: &Address, token_id: u32) {
         from.require_auth();
         Base::update(e, Some(from), Some(to), token_id);
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, token_id);
     }
 
@@ -286,6 +290,7 @@ impl Base {
         spender.require_auth();
         Base::check_spender_approval(e, spender, from, token_id);
         Base::update(e, Some(from), Some(to), token_id);
+        #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, token_id);
     }
 
@@ -365,6 +370,7 @@ impl Base {
         // If revoking approval (live_until_ledger == 0)
         if live_until_ledger == 0 {
             e.storage().temporary().remove(&key);
+            #[cfg(not(feature = "certora"))]
             emit_approve_for_all(e, owner, operator, live_until_ledger);
             return;
         }
@@ -383,7 +389,7 @@ impl Base {
         // Update the TTL based on the expiration ledger
         let live_for = live_until_ledger - current_ledger;
         e.storage().temporary().extend_ttl(&key, live_for, live_for);
-
+        #[cfg(not(feature = "certora"))]
         emit_approve_for_all(e, owner, operator, live_until_ledger);
     }
 
@@ -413,8 +419,11 @@ impl Base {
             if owner != *from_address {
                 panic_with_error!(e, NonFungibleTokenError::IncorrectOwner);
             }
-
+            clog!(cvlr_soroban::Addr(from_address));
+            clog!(token_id);
+            clog!(Self::balance(e, from_address));
             Base::decrease_balance(e, from_address, 1);
+            clog!(Self::balance(e, from_address));
 
             // Clear any existing approval
             let approval_key = NFTStorageKey::Approval(token_id);
@@ -425,8 +434,11 @@ impl Base {
         }
 
         if let Some(to_address) = to {
+            clog!(cvlr_soroban::Addr(to_address));
+            clog!(token_id);
+            clog!(Self::balance(e, to_address));
             Base::increase_balance(e, to_address, 1);
-
+            clog!(Self::balance(e, to_address));
             // Set the new owner
             e.storage().persistent().set(&NFTStorageKey::Owner(token_id), to_address);
         } else {
@@ -472,7 +484,7 @@ impl Base {
 
         if live_until_ledger == 0 {
             e.storage().temporary().remove(&key);
-
+            #[cfg(not(feature = "certora"))]
             emit_approve(e, approver, approved, token_id, live_until_ledger);
             return;
         }
@@ -488,7 +500,7 @@ impl Base {
         let live_for = live_until_ledger - e.ledger().sequence();
 
         e.storage().temporary().extend_ttl(&key, live_for, live_for);
-
+        #[cfg(not(feature = "certora"))]
         emit_approve(e, approver, approved, token_id, live_until_ledger);
     }
 
@@ -658,7 +670,9 @@ impl Base {
     /// the `token_id` is unique and not already in use.
     pub fn sequential_mint(e: &Env, to: &Address) -> u32 {
         let token_id = increment_token_id(e, 1);
+        clog!(token_id);
         Base::update(e, None, Some(to), token_id);
+        #[cfg(not(feature = "certora"))]
         emit_mint(e, to, token_id);
 
         token_id
@@ -705,6 +719,7 @@ impl Base {
     /// implemented accordingly.
     pub fn mint(e: &Env, to: &Address, token_id: u32) {
         Base::update(e, None, Some(to), token_id);
+        #[cfg(not(feature = "certora"))]
         emit_mint(e, to, token_id);
     }
 }

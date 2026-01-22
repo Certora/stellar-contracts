@@ -52,7 +52,14 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, Env};
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env};
 
 pub use crate::pausable::storage::{pause, paused, unpause, when_not_paused, when_paused};
 
@@ -149,6 +156,7 @@ pub struct Paused {}
 /// # Arguments
 ///
 /// * `e` - The Soroban environment.
+#[cfg(not(feature = "certora"))]
 pub fn emit_paused(e: &Env) {
     Paused {}.publish(e);
 }
@@ -163,6 +171,7 @@ pub struct Unpaused {}
 /// # Arguments
 ///
 /// * `e` - The Soroban environment.
+#[cfg(not(feature = "certora"))]
 pub fn emit_unpaused(e: &Env) {
     Unpaused {}.publish(e);
 }

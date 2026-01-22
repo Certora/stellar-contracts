@@ -83,7 +83,10 @@
 //!     policies: [threshold_policy, spending_limit_policy],
 //! }
 //! ```
-
+use cvlr::nondet::{self, Nondet};
+use cvlr_soroban::{nondet_address, nondet_bytes, nondet_bytes_n, nondet_string};
+#[cfg(feature = "certora")]
+use soroban_sdk::FromVal;
 use soroban_sdk::{
     auth::{
         Context, ContractContext, ContractExecutable, CreateContractHostFnContext,
@@ -96,15 +99,31 @@ use soroban_sdk::{
     Address, Bytes, BytesN, Env, IntoVal, Map, String, TryFromVal, Val, Vec,
 };
 
+#[cfg(not(feature = "certora"))]
+use crate::smart_account::{
+    emit_context_rule_added, emit_context_rule_removed, emit_context_rule_updated,
+    emit_policy_added, emit_policy_removed, emit_signer_added, emit_signer_removed,
+};
 use crate::{
-    policies::PolicyClient,
+    policies::{self, PolicyClient},
     smart_account::{
-        emit_context_rule_added, emit_context_rule_removed, emit_context_rule_updated,
-        emit_policy_added, emit_policy_removed, emit_signer_added, emit_signer_removed,
-        SmartAccountError, MAX_CONTEXT_RULES, MAX_POLICIES, MAX_SIGNERS,
-        SMART_ACCOUNT_EXTEND_AMOUNT, SMART_ACCOUNT_TTL_THRESHOLD,
+        specs::nondet::nondet_policy_vec, SmartAccountError, MAX_CONTEXT_RULES, MAX_POLICIES,
+        MAX_SIGNERS, SMART_ACCOUNT_EXTEND_AMOUNT, SMART_ACCOUNT_TTL_THRESHOLD,
     },
     verifiers::VerifierClient,
+};
+#[cfg(feature = "certora")]
+use crate::{
+    policies::{
+        simple_threshold::SimpleThresholdAccountParams, spending_limit::SpendingLimitAccountParams,
+        Policy,
+    },
+    smart_account::specs::{
+        policy1::Policy1,
+        policy2::Policy2,
+        policy::SimpleThresholdPolicyContract,
+    },
+    verifiers::Verifier,
 };
 
 /// Storage keys for smart account data.
@@ -142,6 +161,16 @@ pub enum Signer {
     External(Address, Bytes),
 }
 
+impl Nondet for Signer {
+    fn nondet() -> Self {
+        if bool::nondet() {
+            Signer::Delegated(nondet_address())
+        } else {
+            Signer::External(nondet_address(), nondet_bytes())
+        }
+    }
+}
+
 /// A collection of signatures mapped to their respective signers.
 #[contracttype]
 #[derive(Clone, Debug, PartialEq)]
@@ -159,6 +188,17 @@ pub enum ContextRuleType {
     CreateContract(BytesN<32>),
 }
 
+impl Nondet for ContextRuleType {
+    fn nondet() -> Self {
+        match u8::nondet() % 3 {
+            0 => ContextRuleType::Default,
+            1 => ContextRuleType::CallContract(nondet_address()),
+            2 => ContextRuleType::CreateContract(nondet_bytes_n()),
+            _ => panic!("unreachable % 3 can only give 0, 1, 2"),
+        }
+    }
+}
+
 /// Metadata for a context rule.
 #[contracttype]
 #[derive(Clone, Debug, PartialEq)]
@@ -169,6 +209,16 @@ pub struct Meta {
     pub context_type: ContextRuleType,
     /// Optional expiration ledger sequence for the rule.
     pub valid_until: Option<u32>,
+}
+
+impl Nondet for Meta {
+    fn nondet() -> Self {
+        Meta {
+            name: nondet_string(),
+            context_type: ContextRuleType::nondet(),
+            valid_until: Option::nondet(),
+        }
+    }
 }
 
 /// A complete context rule defining authorization requirements.
@@ -187,6 +237,20 @@ pub struct ContextRule {
     pub policies: Vec<Address>,
     /// Optional expiration ledger sequence for the rule.
     pub valid_until: Option<u32>,
+}
+
+impl Nondet for ContextRule {
+    fn nondet() -> Self {
+        use crate::smart_account::specs::nondet::nondet_signers_vec;
+        ContextRule {
+            id: u32::nondet(),
+            context_type: ContextRuleType::nondet(),
+            name: nondet_string(),
+            signers: nondet_signers_vec(),
+            policies: nondet_policy_vec(),
+            valid_until: Option::<u32>::nondet(),
+        }
+    }
 }
 
 // ################## QUERY STATE ##################
@@ -235,7 +299,19 @@ pub fn get_context_rules(e: &Env, context_rule_type: &ContextRuleType) -> Vec<Co
     let ids_key = SmartAccountStorageKey::Ids(context_rule_type.clone());
     let ids: Vec<u32> = get_persistent_entry(e, &ids_key).unwrap_or_else(|| Vec::new(e));
 
-    Vec::from_iter(e, ids.iter().map(|id| get_context_rule(e, id)))
+    #[cfg(not(feature = "certora"))]
+    {
+        Vec::from_iter(e, ids.iter().map(|id| get_context_rule(e, id)))
+    }
+
+    #[cfg(feature = "certora")]
+    {
+        let mut v: Vec<ContextRule> = Vec::new(e);
+        for id in ids.iter() {
+            v.push_back(get_context_rule(e, id));
+        }
+        v
+    }
 }
 
 /// Retrieves all valid (non-expired) context rules for a specific context type,
@@ -298,6 +374,7 @@ pub fn get_authenticated_signers(
     }
     authenticated
 }
+
 
 /// Validates a context against all applicable rules and returns the matching
 /// rule with authenticated signers. Returns a tuple of the matched context
@@ -372,10 +449,22 @@ pub fn authenticate(e: &Env, signature_payload: &Hash<32>, signers: &Map<Signer,
         match signer {
             Signer::External(verifier, key_data) => {
                 let sig_payload = Bytes::from_array(e, &signature_payload.to_bytes().to_array());
+                #[cfg(not(feature = "certora"))]
                 if !VerifierClient::new(e, &verifier).verify(
                     &sig_payload,
                     &key_data.into_val(e),
                     &sig_data.into_val(e),
+                ) {
+                    panic_with_error!(e, SmartAccountError::ExternalVerificationFailed)
+                }
+                #[cfg(feature = "certora")]
+                use crate::smart_account::specs::dispatcher::verify_dispatch;
+                if !verify_dispatch(
+                    e, 
+                    sig_payload,
+                    key_data.try_into().expect("bytes must have length 32"), 
+                    sig_data.try_into().expect("bytes must have length 64"),
+                    verifier.clone()
                 ) {
                     panic_with_error!(e, SmartAccountError::ExternalVerificationFailed)
                 }
@@ -405,6 +494,7 @@ pub fn can_enforce_all_policies(
 ) -> bool {
     for policy in context_rule.policies.iter() {
         // policies are all or nothing
+        #[cfg(not(feature = "certora"))]
         if !PolicyClient::new(e, &policy).can_enforce(
             context,
             matched_signers,
@@ -412,6 +502,13 @@ pub fn can_enforce_all_policies(
             &e.current_contract_address(),
         ) {
             return false;
+        }
+        #[cfg(feature = "certora")]
+        use crate::smart_account::specs::dispatcher::can_enforce_dispatch;
+        {
+            if !can_enforce_dispatch(e, context, matched_signers, context_rule, &e.current_contract_address(), policy) {
+                return false;
+            }
         }
     }
     true
@@ -477,6 +574,7 @@ pub fn do_check_auth(
 ) -> Result<(), SmartAccountError> {
     authenticate(e, signature_payload, &signatures.0);
 
+    #[cfg(not(feature = "certora"))]
     let validated_contexts = Vec::from_iter(
         e,
         auth_contexts
@@ -484,17 +582,36 @@ pub fn do_check_auth(
             .map(|context| get_validated_context(e, &context, &signatures.0.keys())),
     );
 
+    #[cfg(feature = "certora")]
+    let validated_contexts = {
+        let mut tmp = Vec::new(e);
+        for context in auth_contexts {
+            tmp.push_back(get_validated_context(e, &context, &signatures.0.keys()));
+        }
+        tmp
+    };
+
     // After collecting validated context rules and authenticated signers, call for
     // every policy `PolicyClient::enforce` to trigger the state-changing
     // effects if any.
     for (rule, context, authenticated_signers) in validated_contexts.iter() {
         let ContextRule { policies, .. } = rule.clone();
+        // when we get to here the rule was already verified to enforce should not panic.
         for policy in policies.iter() {
+            #[cfg(not(feature = "certora"))]
             PolicyClient::new(e, &policy).enforce(
                 &context,
                 &authenticated_signers,
                 &rule,
                 &e.current_contract_address(),
+            );
+            #[cfg(feature = "certora")]
+            SimpleThresholdPolicyContract::enforce(
+                e,
+                context.clone(),
+                authenticated_signers.clone(),
+                rule.clone(),
+                e.current_contract_address(),
             );
         }
     }
@@ -524,6 +641,7 @@ pub fn do_check_auth(
 ///   during sorting.
 /// * [`SmartAccountError::DuplicatePolicy`] - When duplicate policies are found
 ///   during sorting.
+#[cfg(not(feature = "certora"))]
 pub fn compute_fingerprint(
     e: &Env,
     context_type: &ContextRuleType,
@@ -532,7 +650,7 @@ pub fn compute_fingerprint(
 ) -> BytesN<32> {
     let mut sorted_signers = Vec::new(e);
     for signer in signers.iter() {
-        match sorted_signers.binary_search(&signer) {
+        match sorted_signers.binary_search(&signer) { // summary: contains instead of binary_search?
             Ok(_) => panic_with_error!(e, SmartAccountError::DuplicateSigner),
             Err(pos) => sorted_signers.insert(pos, signer),
         }
@@ -546,11 +664,31 @@ pub fn compute_fingerprint(
         }
     }
 
+    #[cfg(not(feature = "certora"))]
     let mut rule_data = context_type.to_xdr(e);
+    #[cfg(feature = "certora")]
+    let mut rule_data = context_type.clone().to_xdr(e);
     rule_data.append(&sorted_signers.to_xdr(e));
     rule_data.append(&sorted_policies.to_xdr(e));
 
     e.crypto().sha256(&rule_data).to_bytes()
+}
+
+use crate::smart_account::specs::ghosts::GhostMap;
+pub static mut FINGERPRINT_MAP: GhostMap<(ContextRuleType, Vec<Signer>, Vec<Address>), BytesN<32>> = GhostMap::UnInit;
+
+#[cfg(feature = "certora")]
+pub fn compute_fingerprint(
+    e: &Env,
+    context_type: &ContextRuleType,
+    signers: &Vec<Signer>,
+    policies: &Vec<Address>,
+) -> BytesN<32> {
+    // how do we assume injectivity of the ghost mapping
+    let input = (context_type.clone(), signers.clone(), policies.clone());
+    unsafe {
+        FINGERPRINT_MAP.get(&input)
+    }
 }
 
 // ################## CHANGE STATE ##################
@@ -628,7 +766,16 @@ pub fn add_context_rule(
         }
     }
 
+    #[cfg(not(feature = "certora"))]
     let policies_vec = Vec::from_iter(e, policies.keys());
+    #[cfg(feature = "certora")]
+    let policies_vec = {
+        let mut tmp = Vec::new(e);
+        for key in policies.keys() {
+            tmp.push_back(key);
+        }
+        tmp
+    };
 
     validate_signers_and_policies(e, &unique_signers, &policies_vec);
     validate_and_set_fingerprint(e, context_type, &unique_signers, &policies_vec);
@@ -658,10 +805,19 @@ pub fn add_context_rule(
 
     // Install the policies
     for (policy, param) in policies.iter() {
+        #[cfg(not(feature = "certora"))]
         PolicyClient::new(e, &policy).install(&param, &context_rule, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        SimpleThresholdPolicyContract::install(
+            e,
+            SimpleThresholdAccountParams::from_val(e, &param),
+            context_rule.clone(),
+            e.current_contract_address(),
+        );
     }
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_context_rule_added(e, &context_rule);
 
     // Increment next id
@@ -705,6 +861,7 @@ pub fn update_context_rule_name(e: &Env, id: u32, name: &String) -> ContextRule 
         context_type: existing_rule.context_type.clone(),
         valid_until: existing_rule.valid_until,
     };
+
     e.storage().persistent().set(&SmartAccountStorageKey::Meta(id), &meta);
 
     let context_rule = ContextRule {
@@ -717,6 +874,7 @@ pub fn update_context_rule_name(e: &Env, id: u32, name: &String) -> ContextRule 
     };
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_context_rule_updated(e, id, &meta);
 
     context_rule
@@ -762,6 +920,7 @@ pub fn update_context_rule_valid_until(e: &Env, id: u32, valid_until: Option<u32
         context_type: existing_rule.context_type.clone(),
         valid_until,
     };
+
     e.storage().persistent().set(&SmartAccountStorageKey::Meta(id), &meta);
 
     let context_rule = ContextRule {
@@ -774,6 +933,7 @@ pub fn update_context_rule_valid_until(e: &Env, id: u32, valid_until: Option<u32
     };
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_context_rule_updated(e, id, &meta);
 
     context_rule
@@ -806,7 +966,14 @@ pub fn remove_context_rule(e: &Env, id: u32) {
 
     // Uninstall all policies
     for policy in context_rule.policies.iter() {
+        #[cfg(not(feature = "certora"))]
         PolicyClient::new(e, &policy).uninstall(&context_rule, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        SimpleThresholdPolicyContract::uninstall(
+            e,
+            context_rule.clone(),
+            e.current_contract_address(),
+        );
     }
 
     // Remove all storage entries for this context rule
@@ -837,6 +1004,7 @@ pub fn remove_context_rule(e: &Env, id: u32) {
     e.storage().instance().set(&SmartAccountStorageKey::Count, &(count - 1));
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_context_rule_removed(e, id);
 }
 
@@ -896,6 +1064,7 @@ pub fn add_signer(e: &Env, id: u32, signer: &Signer) {
     e.storage().persistent().set(&SmartAccountStorageKey::Signers(id), &signers);
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_signer_added(e, id, signer);
 }
 
@@ -947,6 +1116,7 @@ pub fn remove_signer(e: &Env, id: u32, signer: &Signer) {
         e.storage().persistent().set(&SmartAccountStorageKey::Signers(id), &signers);
 
         // Emit event
+        #[cfg(not(feature = "certora"))]
         emit_signer_removed(e, id, signer);
     } else {
         panic_with_error!(e, SmartAccountError::SignerNotFound)
@@ -992,7 +1162,15 @@ pub fn add_policy(e: &Env, id: u32, policy: &Address, install_param: Val) {
     }
 
     // Install the policy
+    #[cfg(not(feature = "certora"))]
     PolicyClient::new(e, policy).install(&install_param, &rule, &e.current_contract_address());
+    #[cfg(feature = "certora")]
+    SimpleThresholdPolicyContract::install(
+        e,
+        SimpleThresholdAccountParams::from_val(e, &install_param),
+        rule.clone(),
+        e.current_contract_address(),
+    );
 
     policies.push_back(policy.clone());
 
@@ -1006,6 +1184,7 @@ pub fn add_policy(e: &Env, id: u32, policy: &Address, install_param: Val) {
     e.storage().persistent().set(&SmartAccountStorageKey::Policies(id), &policies);
 
     // Emit event
+    #[cfg(not(feature = "certora"))]
     emit_policy_added(e, id, policy, install_param);
 }
 
@@ -1049,11 +1228,15 @@ pub fn remove_policy(e: &Env, id: u32, policy: &Address) {
         remove_fingerprint(e, &rule.context_type, &rule.signers, &rule.policies);
 
         // Uninstall the policy
+        #[cfg(not(feature = "certora"))]
         PolicyClient::new(e, policy).uninstall(&rule, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        SimpleThresholdPolicyContract::uninstall(e, rule, e.current_contract_address());
 
         e.storage().persistent().set(&SmartAccountStorageKey::Policies(id), &policies);
 
         // Emit event
+        #[cfg(not(feature = "certora"))]
         emit_policy_removed(e, id, policy);
     } else {
         panic_with_error!(e, SmartAccountError::PolicyNotFound)
@@ -1118,7 +1301,7 @@ fn remove_fingerprint(
 ///
 /// * `e` - Access to the Soroban environment.
 /// * `key` - The storage key to retrieve the value for.
-fn get_persistent_entry<T: TryFromVal<Env, Val>>(
+pub(crate) fn get_persistent_entry<T: TryFromVal<Env, Val>>(
     e: &Env,
     key: &SmartAccountStorageKey,
 ) -> Option<T> {

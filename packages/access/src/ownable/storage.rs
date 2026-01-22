@@ -1,10 +1,11 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env};
 
+#[cfg(not(feature = "certora"))]
+use crate::ownable::{
+    emit_ownership_renounced, emit_ownership_transfer, emit_ownership_transfer_completed,
+};
 use crate::{
-    ownable::{
-        emit_ownership_renounced, emit_ownership_transfer, emit_ownership_transfer_completed,
-        OwnableError,
-    },
+    ownable::OwnableError,
     role_transfer::{accept_transfer, transfer_role},
 };
 
@@ -78,6 +79,7 @@ pub fn transfer_ownership(e: &Env, new_owner: &Address, live_until_ledger: u32) 
 
     transfer_role(e, new_owner, &OwnableStorageKey::PendingOwner, live_until_ledger);
 
+    #[cfg(not(feature = "certora"))]
     emit_ownership_transfer(e, &owner, new_owner, live_until_ledger);
 }
 
@@ -102,6 +104,7 @@ pub fn transfer_ownership(e: &Env, new_owner: &Address, live_until_ledger: u32) 
 pub fn accept_ownership(e: &Env) {
     let new_owner = accept_transfer(e, &OwnableStorageKey::Owner, &OwnableStorageKey::PendingOwner);
 
+    #[cfg(not(feature = "certora"))]
     emit_ownership_transfer_completed(e, &new_owner);
 }
 
@@ -129,13 +132,19 @@ pub fn accept_ownership(e: &Env) {
 /// * Authorization for the current owner is required.
 pub fn renounce_ownership(e: &Env) {
     let owner = enforce_owner_auth(e);
+    #[cfg(not(feature = "certora"))]
     let key = OwnableStorageKey::PendingOwner;
-
+    #[cfg(not(feature = "certora"))]
     if e.storage().temporary().get::<_, Address>(&key).is_some() {
+        panic_with_error!(e, OwnableError::TransferInProgress);
+    }
+    #[cfg(feature = "certora")]
+    if e.storage().temporary().get::<_, Address>(&OwnableStorageKey::PendingOwner).is_some() {
         panic_with_error!(e, OwnableError::TransferInProgress);
     }
 
     e.storage().instance().remove(&OwnableStorageKey::Owner);
+    #[cfg(not(feature = "certora"))]
     emit_ownership_renounced(e, &owner);
 }
 

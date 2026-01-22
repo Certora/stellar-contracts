@@ -1,0 +1,221 @@
+use soroban_sdk::{Address, Env};
+use cvlr_soroban::{nondet_address, nondet_bytes, nondet_bytes_n, nondet_string};
+use crate::rwa::specs::helpers::nondet::nondet_vec_country;
+use cvlr_soroban_derive::rule;
+use cvlr::{clog, cvlr_assert, cvlr_assume, cvlr_satisfy, nondet::*};
+use crate::rwa::identity_registry_storage::storage::{
+    get_identity_profile, get_country_data_entries, get_country_data, stored_identity, get_recovered_to,
+    add_identity, remove_identity, modify_identity, recover_identity, modify_country_data, add_country_data_entries, delete_country_data
+};
+use crate::rwa::specs::helpers::nondet;
+use crate::rwa::identity_registry_storage::storage::IdentityType;
+use crate::rwa::identity_registry_storage::storage::IRSStorageKey;
+use crate::rwa::identity_registry_storage::storage::IdentityProfile;
+
+// property: P-XX. Identity Registry Storage-Integrity.
+// description: Identity Registry Storage functions change state as expected.
+// status: verified
+
+// helpers
+
+pub fn get_stored_identity_non_pancicking(e: Env, account: Address) -> Option<Address> {
+    let key = IRSStorageKey::Identity(account.clone());
+    e.storage().persistent().get(&key)
+}
+
+pub fn get_identity_profile_non_pancicking(e: Env, account: Address) -> Option<IdentityProfile> {
+    let key = IRSStorageKey::IdentityProfile(account.clone());
+    e.storage().persistent().get(&key)
+}
+
+pub fn get_recovered_to_non_pancicking(e: Env, account: Address) -> Option<Address> {
+    let key = IRSStorageKey::RecoveredTo(account.clone());
+    e.storage().persistent().get(&key)
+}
+
+// functions in the trait
+
+#[rule]
+// after add_identity the stored identity is some
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn add_identity_integrity_1(e: Env) {
+    let account: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&account));
+    let identity = nondet_address();
+    clog!(cvlr_soroban::Addr(&identity));
+    let identity_type: IdentityType = nondet();
+    clog!(identity_type.clone() as u32);
+    let initial_countries = nondet_vec_country();
+    clog!(initial_countries.len());
+    add_identity(&e, &account, &identity, identity_type, &initial_countries);
+    let key = IRSStorageKey::Identity(account.clone());
+    let stored_identity: Option<Address> = get_stored_identity_non_pancicking(e, account);
+    if let Some(stored_identity) = stored_identity.clone() {
+        clog!(cvlr_soroban::Addr(&stored_identity));
+    }
+    cvlr_assert!(stored_identity.is_some());
+}
+
+#[rule]
+// after add_identity the stored_identity is the given identity
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn add_identity_integrity_2(e: Env) {
+    let account: Address = nondet_address();
+    let identity = nondet_address();
+    let identity_type = nondet();
+    let initial_countries = nondet_vec_country();
+    add_identity(&e, &account, &identity, identity_type, &initial_countries);
+    let stored_identity = stored_identity(&e, &account);
+    cvlr_assert!(stored_identity == identity);
+}
+
+#[rule]
+// after add_identity the identity_profile has the same identity_type
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn add_identity_integrity_3(e: Env) {
+    let account: Address = nondet_address();
+    let identity = nondet_address();
+    let identity_type: IdentityType = nondet();
+    let initial_countries = nondet_vec_country();
+    add_identity(&e, &account, &identity, identity_type.clone(), &initial_countries);
+    let identity_profile = get_identity_profile(&e, &account);
+    let identity_profile_type = identity_profile.identity_type;
+    cvlr_assert!(identity_profile_type == identity_type);
+}
+
+#[rule]
+// after remove_identity the stored identity is none
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn remove_identity_integrity_1(e: Env) {
+    let account: Address = nondet_address();
+    remove_identity(&e, &account);
+    let stored_identity: Option<Address> = get_stored_identity_non_pancicking(e, account);
+    cvlr_assert!(stored_identity.is_none());
+}
+
+#[rule]
+// after remove_identity the identity_profile is none
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn remove_identity_integrity_2(e: Env) {
+    let account: Address = nondet_address();
+    remove_identity(&e, &account);
+    let identity_profile: Option<IdentityProfile> = get_identity_profile_non_pancicking(e, account);
+    cvlr_assert!(identity_profile.is_none());
+}
+
+#[rule]
+// after modify_identity the identity changes
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn modify_identity_integrity_1(e: Env) {
+    let account: Address = nondet_address();
+    let new_identity = nondet_address();
+    modify_identity(&e, &account, &new_identity);
+    let stored_identity = stored_identity(&e, &account);
+    cvlr_assert!(stored_identity == new_identity);
+}
+
+#[rule]
+// after recover_identity the identity moves from old_account to new_account
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn recover_identity_integrity_1(e: Env) {
+    let old_account: Address = nondet_address();
+    let new_account: Address = nondet_address();
+    let store_identity_pre_old_account = stored_identity(&e, &old_account);
+    recover_identity(&e, &old_account, &new_account);
+    let stored_identity_post_new_account = stored_identity(&e, &new_account);
+    cvlr_assert!(stored_identity_post_new_account == store_identity_pre_old_account);
+}
+
+#[rule]
+// after recover_identity the recovered_to is set to new_account
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn recover_identity_integrity_3(e: Env) {
+    let old_account: Address = nondet_address();
+    let new_account: Address = nondet_address();
+    recover_identity(&e, &old_account, &new_account);
+    let recovered_to = get_recovered_to(&e, &old_account);
+    cvlr_assert!(recovered_to == Some(new_account));
+}
+
+#[rule]
+// after recover_identity the stored_identity of the old account is none
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn recover_identity_integrity_4(e: Env) {
+    let old_account: Address = nondet_address();
+    let new_account: Address = nondet_address();
+    recover_identity(&e, &old_account, &new_account);
+    let stored_identity = get_stored_identity_non_pancicking(e, old_account);
+    cvlr_assert!(stored_identity.is_none());
+}
+
+#[rule]
+// after recover_identity the identity_profile of the old account is none
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn recover_identity_integrity_5(e: Env) {
+    let old_account: Address = nondet_address();
+    let new_account: Address = nondet_address();
+    recover_identity(&e, &old_account, &new_account);
+    let identity_profile = get_identity_profile_non_pancicking(e, old_account);
+    cvlr_assert!(identity_profile.is_none());
+}
+
+
+#[rule]
+// after modify_country_data the country_data in given index is some
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn modify_country_data_integrity_1(e: Env) {
+    let account: Address = nondet_address();
+    let index: u32 = nondet();
+    let country_data = nondet();
+    modify_country_data(&e, &account, index, &country_data);
+    let country_data_entries_post = get_country_data_entries(&e, &account);
+    let country_data_in_entries_post = country_data_entries_post.get(index);
+    cvlr_assert!(country_data_in_entries_post.is_some());
+}
+
+#[rule]
+// after modify_country_data the length is unchanged
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn modify_country_data_integrity_3(e: Env) {
+    let account: Address = nondet_address();
+    let index: u32 = nondet();
+    let country_data = nondet();
+    let length_pre = get_country_data_entries(&e, &account).len();
+    modify_country_data(&e, &account, index, &country_data);
+    let country_data_entries_post = get_country_data_entries(&e, &account);
+    let length_post = country_data_entries_post.len();
+    cvlr_assert!(length_post == length_pre);
+}
+
+
+
+#[rule]
+// after_delete_country_data the length is decreased by 1
+// status: verified
+// link: https://prover.certora.com/output/40748/654bee5d2f0948a89b718f672d1f996c/?anonymousKey=cb031fcaaa5d3d309ef77bf8f937aa90e7182a8e
+pub fn delete_country_data_integrity_2(e: Env) {
+    let account: Address = nondet_address();
+    let index: u32 = nondet();
+    let length_pre = get_country_data_entries(&e, &account).len();
+    delete_country_data(&e, &account, index);
+    let country_data_entries_post = get_country_data_entries(&e, &account);
+    let length_post = country_data_entries_post.len();
+    cvlr_assert!(length_post == length_pre - 1);
+}
+
+// todo
+// invariants 
+// there are a few checks that should hold for all identities as an invariant
+// identity exists iff identity profile exists
