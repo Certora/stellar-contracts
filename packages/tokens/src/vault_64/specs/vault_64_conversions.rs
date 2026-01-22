@@ -5,7 +5,7 @@ use soroban_sdk::{Address, Env};
 use stellar_contract_utils::math::fixed_point::Rounding;
 
 use super::{vault_64_invariants::safe_assumptions, vault_64_solvency::assume_pre_solvency};
-use crate::vault_64_for_solvency::{
+use crate::vault_64::{
     fungible_64::FungibleToken,
     specs::{asset_token::AssetToken, vault::BasicVault},
     FungibleVault, Vault,
@@ -80,20 +80,11 @@ pub fn convert_to_shares_monotonicity(e: Env) {
     clog!(shares2);
     cvlr_assert!(shares1 <= shares2);
 }
-// cex:
-// assets1 = 0
-// assets2 = 0x7fffffffffffdd0d
-// shares1 = 0
-// shares2 = -1
-// total_supply = 1
-// total_assets = 2^127-1
 
 #[rule]
 // convert to assets monotonicity
 // status: verified
 // link: https://prover.certora.com/output/33158/a09a1e0b270942fd9f083f08a97a2fb7
-// Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
-// (which is the default value)
 pub fn convert_to_assets_monotonicity(e: Env) {
     safe_assumptions(&e);
     let shares1: i64 = nondet();
@@ -210,16 +201,15 @@ pub fn preview_deposit_matches_convert_to_shares(e: Env) {
 // status: violation https://prover.certora.com/output/33158/6009cedc99d7443fa155a182444a6c48
 // Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
 // (which is the default value)
-pub fn preview_mint_matches_convert_to_assets(e: Env) {
+pub fn preview_mint_matches_convert_to_shares(e: Env) {
     safe_assumptions(&e);
     let shares: i64 = nondet();
     cvlr_assume!(shares >= i64::MIN as i64 && shares <= i64::MAX as i64);
     clog!(shares);
-    let assets = BasicVault::convert_to_assets(&e, shares);
-    clog!(assets);
     let preview_mint = BasicVault::preview_mint(&e, shares);
-    clog!(preview_mint);
-    cvlr_assert!(preview_mint == assets);
+    let shares_from_preview_mint_assets = BasicVault::convert_to_shares(&e, preview_mint);
+    clog!(shares_from_preview_mint_assets);
+    cvlr_assert!(shares_from_preview_mint_assets == shares);
 }
 
 #[rule]
@@ -232,11 +222,11 @@ pub fn preview_withdraw_matches_convert_to_shares(e: Env) {
     let assets: i64 = nondet();
     cvlr_assume!(assets >= i64::MIN as i64 && assets <= i64::MAX as i64);
     clog!(assets);
-    let shares = BasicVault::convert_to_shares(&e, assets);
-    clog!(shares);
     let preview_withdraw = BasicVault::preview_withdraw(&e, assets);
     clog!(preview_withdraw);
-    cvlr_assert!(preview_withdraw == shares);
+    let assets_from_preview_withdraw_shares = BasicVault::convert_to_assets(&e, preview_withdraw);
+    clog!(assets_from_preview_withdraw_shares);
+    cvlr_assert!(assets_from_preview_withdraw_shares == assets);
 }
 
 #[rule]

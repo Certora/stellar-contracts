@@ -3,7 +3,7 @@ use cvlr_soroban::nondet_address;
 use cvlr_soroban_derive::rule;
 use soroban_sdk::{Address, Env};
 
-use crate::vault_64_for_solvency::{
+use crate::vault_64::{
     specs::vault::BasicVault,
     storage::VaultStorageKey,
     FungibleVault, Vault, MAX_DECIMALS_OFFSET,

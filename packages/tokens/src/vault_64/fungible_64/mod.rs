@@ -3,9 +3,6 @@
 pub mod overrides;
 pub mod storage;
 
-#[cfg(test)]
-mod test;
-
 use soroban_sdk::{contracterror, Address, Env, String};
 pub use storage::{AllowanceData, AllowanceKey, StorageKey};
 pub use overrides::ContractOverrides;

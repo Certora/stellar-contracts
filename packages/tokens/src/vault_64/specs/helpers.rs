@@ -1,7 +1,7 @@
 use cvlr::{clog, cvlr_assert, cvlr_assume};
 use soroban_sdk::{panic_with_error, Env};
 
-use crate::vault_64_for_solvency::{fungible_64::FungibleToken, specs::vault::BasicVault, storage::Vault, *};
+use crate::vault_64::{fungible_64::FungibleToken, specs::vault::BasicVault, storage::Vault, *};
 
 pub fn effective_total_assets(e: &Env) -> i64 {
     let total_assets = BasicVault::total_assets(e);

@@ -21,4 +21,4 @@ pub mod rwa;
 pub mod vault;
 
 #[cfg(feature = "certora")]
-pub mod vault_64_for_solvency;
+pub mod vault_64;

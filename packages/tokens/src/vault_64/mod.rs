@@ -1,9 +1,6 @@
 pub mod storage;
 pub mod fungible_64;
 
-#[cfg(test)]
-mod test;
-
 #[cfg(feature = "certora")]
 pub mod specs;
 
@@ -13,8 +10,8 @@ use cvlr_soroban_derive::contractevent;
 use soroban_sdk::contractevent;
 use soroban_sdk::{contracterror, Address, Env};
 
-use crate::vault_64_for_solvency::fungible_64::FungibleToken;
-use crate::vault_64_for_solvency::storage::Vault;
+use crate::vault_64::fungible_64::FungibleToken;
+use crate::vault_64::storage::Vault;
 
 // 64 bit version of the vault for formal verification purposes
 

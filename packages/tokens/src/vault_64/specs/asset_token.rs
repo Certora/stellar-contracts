@@ -1,5 +1,5 @@
 use soroban_sdk::{contract, contractimpl, Address, Env, String};
-use crate::vault_64_for_solvency::fungible_64::{FungibleToken, overrides::Base};
+use crate::vault_64::fungible_64::{FungibleToken, overrides::Base};
 
 pub struct AssetToken<'a> {
     pub asset: &'a Address,

@@ -4,12 +4,12 @@ use cvlr_soroban_derive::rule;
 use soroban_sdk::{Address, Env};
 use stellar_contract_utils::math::fixed_point::Rounding;
 
-use crate::vault_64_for_solvency::specs::helpers::{effective_total_assets, effective_total_supply, safe_assumptions};
-use crate::vault_64_for_solvency::{
+use crate::vault_64::specs::helpers::{effective_total_assets, effective_total_supply, safe_assumptions};
+use crate::vault_64::{
     specs::{asset_token::AssetToken, vault::BasicVault},
     FungibleVault, Vault,
 };
-use crate::vault_64_for_solvency::fungible_64::FungibleToken;
+use crate::vault_64::fungible_64::FungibleToken;
 
 // invariant: effective total assets >= effective total supply
 

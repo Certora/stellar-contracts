@@ -5,7 +5,7 @@ use soroban_sdk::{Address, Env};
 use stellar_contract_utils::math::fixed_point::Rounding;
 
 use super::vault_64_invariants::safe_assumptions;
-use crate::vault_64_for_solvency::{
+use crate::vault_64::{
     fungible_64::FungibleToken,
     specs::{asset_token::AssetToken, vault::BasicVault},
     FungibleVault, Vault,

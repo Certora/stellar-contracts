@@ -4,13 +4,13 @@ use stellar_contract_utils::math::math_64::fixed_point::{muldiv, Rounding};
 #[cfg(not(feature = "certora"))]
 use crate::vault::{emit_deposit, emit_withdraw};
 use crate::{
-    vault_64_for_solvency::{
+    vault_64::{
         VaultTokenError, MAX_DECIMALS_OFFSET,
         fungible_64::{overrides::{ContractOverrides, Base}, FungibleToken},
     },
 };
 #[cfg(feature = "certora")]
-use crate::vault_64_for_solvency::specs::asset_token::AssetToken;
+use crate::vault_64::specs::asset_token::AssetToken;
 
 // 64 bit implementation of the vault contract for formal verification purposes
 pub struct Vault;

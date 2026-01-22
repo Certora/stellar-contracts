@@ -1,7 +1,7 @@
 use soroban_sdk::{Address, Env};
 
 use crate::{
-    vault_64_for_solvency::{
+    vault_64::{
         fungible_64::{ContractOverrides, FungibleToken},
         FungibleVault, Vault,
     },
