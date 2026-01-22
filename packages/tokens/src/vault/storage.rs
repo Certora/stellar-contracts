@@ -6,7 +6,6 @@ use crate::vault::{emit_deposit, emit_withdraw};
 use crate::{
     fungible::{Base, ContractOverrides, FungibleToken},
     vault::{
-        specs::asset_token::{self, AssetToken},
         VaultTokenError, MAX_DECIMALS_OFFSET,
     },
 };
@@ -145,12 +144,8 @@ impl Vault {
     /// See the ERC-4626 Compliance Note in that function's documentation for
     /// details on the deviation from the standard.
     pub fn total_assets(e: &Env) -> i128 {
-        #[cfg(not(feature = "certora"))]
         let token_client = token::Client::new(e, &Self::query_asset(e));
-        #[cfg(not(feature = "certora"))]
         return token_client.balance(&e.current_contract_address());
-        #[cfg(feature = "certora")]
-        AssetToken::balance(e, e.current_contract_address())
     }
 
     /// Converts an amount of underlying assets to the equivalent amount of
@@ -645,13 +640,9 @@ impl Vault {
         let x = assets;
         clog!(x);
         // Virtual offset = 10^offset
-        #[cfg(not(feature = "certora"))]
         let pow = 10_i128
             .checked_pow(Self::get_decimals_offset(e))
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
-        #[cfg(feature = "certora")]
-        let pow = 1_i128;
         clog!(pow);
         // Effective total supply = totalSupply + virtual offset
         let y = Self::total_supply(e)
@@ -702,13 +693,9 @@ impl Vault {
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
 
         // Virtual offset = 10^offset
-        #[cfg(not(feature = "certora"))]
         let pow = 10_i128
             .checked_pow(Self::get_decimals_offset(e))
             .unwrap_or_else(|| panic_with_error!(e, VaultTokenError::MathOverflow));
-
-        #[cfg(feature = "certora")]
-        let pow = 1_i128;
         
         // Effective total supply = totalSupply + virtual offset
         let denominator = Self::total_supply(e)
@@ -756,29 +743,16 @@ impl Vault {
     ) {
         // This function assumes prior authorization of the operator and validation of
         // amounts.
-        #[cfg(not(feature = "certora"))]
         let token_client = token::Client::new(e, &Self::query_asset(e));
         // `safeTransfer` mechanism is not present in the base module, (will be provided
         // as an extension)
         if operator == from {
             // Direct transfer: `operator` is depositing their own assets
-            #[cfg(not(feature = "certora"))]
             token_client.transfer(from, &e.current_contract_address(), &assets);
-            #[cfg(feature = "certora")]
-            AssetToken::transfer(e, from.clone(), e.current_contract_address(), assets);
         } else {
             // Allowance-based transfer: `operator` is depositing on behalf of `from`
             // This requires that `from` has approved `operator` on the underlying asset
-            #[cfg(not(feature = "certora"))]
             token_client.transfer_from(operator, from, &e.current_contract_address(), &assets);
-            #[cfg(feature = "certora")]
-            AssetToken::transfer_from(
-                e,
-                operator.clone(),
-                from.clone(),
-                e.current_contract_address(),
-                assets,
-            );
         }
 
         Base::mint(e, receiver, shares);
@@ -826,14 +800,10 @@ impl Vault {
             Base::spend_allowance(e, owner, operator, shares);
         }
         Base::update(e, Some(owner), None, shares);
-        #[cfg(not(feature = "certora"))]
         let token_client = token::Client::new(e, &Self::query_asset(e));
         // `safeTransfer` mechanism is not present in the base module, (will be provided
         // as an extension)
-        #[cfg(not(feature = "certora"))]
         token_client.transfer(&e.current_contract_address(), receiver, &assets);
-        #[cfg(feature = "certora")]
-        AssetToken::transfer(e, e.current_contract_address(), receiver.clone(), assets);
         #[cfg(not(feature = "certora"))]
         emit_withdraw(e, operator, receiver, owner, assets, shares);
     }
@@ -872,11 +842,7 @@ impl Vault {
     ///
     /// * refer to [`Self::query_asset()`] errors.
     pub fn get_underlying_asset_decimals(e: &Env) -> u32 {
-        #[cfg(not(feature = "certora"))]
         let token_client = token::Client::new(e, &Self::query_asset(e));
-        #[cfg(not(feature = "certora"))]
         return token_client.decimals();
-        #[cfg(feature = "certora")]
-        AssetToken::decimals(e)
     }
 }
