@@ -1,4 +1,4 @@
-name: Certora verification
+name: Certora verification - Smart Accounts
 
 on: pull_request
 

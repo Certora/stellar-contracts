@@ -1,4 +1,4 @@
-name: Certora verification - Vault
+name: Certora verification - Token - Vault
 
 on: pull_request
 

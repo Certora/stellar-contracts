@@ -1,10 +1,12 @@
-name: Certora verification
+name: Certora verification - Contract Utils
 
 on: pull_request
 
 env:
   CONFIGS: |
     math_rounding.conf
+    merkle_distributor_integrity.conf
+    merkle_distributor_panics.conf
     pausable_integrity.conf
     pausable_non_panics.conf
     pausable_panics.conf

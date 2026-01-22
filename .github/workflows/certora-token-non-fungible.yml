@@ -1,4 +1,4 @@
-name: Certora verification - Non-Fungible
+name: Certora verification - Token - Non-Fungible
 
 on: pull_request
 

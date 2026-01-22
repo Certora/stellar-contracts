@@ -1,4 +1,4 @@
-name: Certora verification - RWA
+name: Certora verification - Token - RWA
 
 on: pull_request
 

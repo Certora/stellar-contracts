@@ -1,4 +1,4 @@
-name: Certora verification
+name: Certora verification - Access
 
 on: pull_request
 
