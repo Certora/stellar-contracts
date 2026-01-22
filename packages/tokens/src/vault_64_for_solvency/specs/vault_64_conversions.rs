@@ -303,7 +303,8 @@ pub fn withdraw_matches_preview_withdraw(e: Env) {
 
 #[rule]
 // mint matches preview_mint
-// status: timeout
+// status: verified
+// link: https://prover.certora.com/output/33158/0a037865a74a4873a11d0189d58f5f4e
 pub fn mint_matches_preview_mint(e: Env) {
     safe_assumptions(&e);
     let shares: i64 = nondet();
