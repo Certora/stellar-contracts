@@ -15,7 +15,7 @@ use crate::rwa::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial
 // description: RWA token functions panic as expected.
 // status: violated
 
-// due to the discrepency between trait function and storage functions
+// due to the discrepancy between trait function and storage functions
 // we cannot verify the fact that authorization of the operator is required
 // and other properties on the operator
 // this is an issue and should be revised after they change their code.

@@ -208,7 +208,7 @@ pub fn rwa_set_identity_verifier_integrity(e: Env) {
     cvlr_assert!(identity_verifier_post == identity_verifier);
 }
 
-// functions from the fungible token trait and overriden
+// functions from the fungible token trait and overridden
 
 #[rule]
 // transfer changes balance of from appropriately
