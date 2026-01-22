@@ -14,7 +14,6 @@ use crate::{
 };
 
 use super::vault_invariants::safe_assumptions;
-// integrity rules for all functions of the vault.
 
 #[rule]
 // set assets sets the asset adress in storage

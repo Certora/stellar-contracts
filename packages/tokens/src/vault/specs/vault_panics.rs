@@ -62,6 +62,26 @@ pub fn withdraw_panic_assets_lt_0(e: Env) {
     cvlr_assert!(false);
 }
 
+#[rule]
+// withdraw panics if assets > max withdraw 
+// status: verified
+// link: https://prover.certora.com/output/33158/dd9a7673ad0e42ebb66cad4a9365bb3d
+pub fn withdraw_panic_assets_gt_max_withdraw(e: Env) {
+    let assets: i128 = nondet();
+    clog!(assets);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let max_withdraw = BasicVault::max_withdraw(&e, owner.clone());
+    clog!(max_withdraw);
+    cvlr_assume!(assets > max_withdraw);
+    let _ = BasicVault::withdraw(&e, assets, receiver, owner, operator);
+    cvlr_assert!(false);
+}
+
 #[rule] 
 // mint panics if shares < 0 
 // status: verified
@@ -149,7 +169,6 @@ pub fn set_asset_panic_asset_already_set(e: Env) {
 
 #[rule]
 // query_asset panics if the asset is not set
-// status: 
 // status: verified
 pub fn query_asset_panic_asset_not_set(e: Env) {
     let storage_has_key = e.storage().instance().has(&VaultStorageKey::AssetAddress);
