@@ -9,9 +9,14 @@ use crate::vault_64::{
     FungibleVault, Vault, MAX_DECIMALS_OFFSET,
 };
 
+// property: P-XX. Vault-Panics.
+// description: Vault functions panic as expected.
+// status: verified
+
 #[rule]
 // deposit panics if assets < 0 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn deposit_panic_assets_lt_0(e: Env) {
     let assets: i64 = nondet();
     clog!(assets);
@@ -176,7 +181,6 @@ pub fn set_asset_panic_asset_already_set(e: Env) {
 
 #[rule]
 // query_asset panics if the asset is not set
-// status: 
 // status: verified
 // link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn query_asset_panic_asset_not_set(e: Env) {

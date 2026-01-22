@@ -12,8 +12,12 @@ use crate::vault_64::{
 };
 // integrity rules for all functions of the vault.
 
+// property: P-XX. Vault-Integrity.
+// description: Vault functions change state as expected.
+// status: verified
+
 #[rule]
-// set assets sets the asset adress in storage
+// set_asset sets the asset address in storage
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn set_asset_integrity(e: Env) {
@@ -39,7 +43,7 @@ pub fn set_decimals_offset_integrity(e: Env) {
 }
 
 #[rule]
-// deposit changes decreases the asset balance by assets
+// deposit does not increase the asset balance of the from account
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn deposit_integrity_1(e: Env) {
@@ -62,7 +66,7 @@ pub fn deposit_integrity_1(e: Env) {
 }
 
 #[rule]
-// deposit increases the shares balance by shares (output)
+// deposit does not decrease the shares balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn deposit_integrity_2(e: Env) {
@@ -83,7 +87,7 @@ pub fn deposit_integrity_2(e: Env) {
 }
 
 #[rule]
-// deposit increases total_assets by assets
+// deposit does not increase total_assets
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn deposit_integrity_3(e: Env) {
@@ -106,7 +110,7 @@ pub fn deposit_integrity_3(e: Env) {
 }
 
 #[rule]
-// deposit does not decrease the shares of the receiver
+// deposit does not decrease the shares balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn deposit_integrity_4(e: Env) {
@@ -129,7 +133,7 @@ pub fn deposit_integrity_4(e: Env) {
 }
 
 #[rule]
-// withdraw decreases the shares balance of owner by shares (output)
+// withdraw decreases the shares balance of owner by the shares returned
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn withdraw_integrity_1(e: Env) {
@@ -152,7 +156,7 @@ pub fn withdraw_integrity_1(e: Env) {
 }
 
 #[rule]
-// withdraw increases the asset balance to receiver by assets
+// withdraw does not increase the asset balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn withdraw_integrity_2(e: Env) {
@@ -175,9 +179,9 @@ pub fn withdraw_integrity_2(e: Env) {
 }
 
 #[rule]
-// withdraw decreases total_assets by assets
-// status: 
-// link: 
+// withdraw does not decrease total_assets
+// status: verified
+// link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn withdraw_integrity_3(e: Env) {
     safe_assumptions(&e);
     let assets: i64 = nondet();
@@ -198,7 +202,7 @@ pub fn withdraw_integrity_3(e: Env) {
 }
 
 #[rule]
-// withdraw does not increase the shares of the owner
+// withdraw does not increase the shares balance of the owner
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn withdraw_integrity_4(e: Env) {
@@ -221,7 +225,7 @@ pub fn withdraw_integrity_4(e: Env) {
 }
 
 #[rule]
-// mint decreases the asset balance from from by assets (output)
+// mint does not decrease the asset balance of the from account
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn mint_integrity_1(e: Env) {
@@ -244,7 +248,7 @@ pub fn mint_integrity_1(e: Env) {
 }
 
 #[rule]
-// mint increases the shares balance to receiver by shares (input)
+// mint does not increase the shares balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn mint_integrity_2(e: Env) {
@@ -267,7 +271,7 @@ pub fn mint_integrity_2(e: Env) {
 }
 
 #[rule]
-// mint increases total_assets by assets (output)
+// mint does not increase total_assets
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn mint_integrity_3(e: Env) {
@@ -290,7 +294,7 @@ pub fn mint_integrity_3(e: Env) {
 }
 
 #[rule]
-// mint does not decrease the shares of the receiver
+// mint does not decrease the shares balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn mint_integrity_4(e: Env) {
@@ -313,7 +317,7 @@ pub fn mint_integrity_4(e: Env) {
 }
 
 #[rule]
-// redeem decreases the shares balance from owner by shares (input)
+// redeem does not decrease the shares balance of the owner
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn redeem_integrity_1(e: Env) {
@@ -336,7 +340,7 @@ pub fn redeem_integrity_1(e: Env) {
 }
 
 #[rule]
-// redeem increases the asset balance to receiver by assets (output)
+// redeem does not increase the asset balance of the receiver
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn redeem_integrity_2(e: Env) {
@@ -359,7 +363,7 @@ pub fn redeem_integrity_2(e: Env) {
 }
 
 #[rule]
-// redeem decreases total_assets by assets (output)
+// redeem does not decrease total_assets
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn redeem_integrity_3(e: Env) {
@@ -382,7 +386,7 @@ pub fn redeem_integrity_3(e: Env) {
 }
 
 #[rule]
-// redeem does not increase the shares of the owner
+// redeem does not increase the shares balance of the owner
 // status: verified
 // link: https://prover.certora.com/output/5771024/83979cd7b9c94fdfa2417ea4ca23df3c?anonymousKey=ab1081dc996b059e8884e800cf73abd1aa4d29cf
 pub fn redeem_integrity_4(e: Env) {

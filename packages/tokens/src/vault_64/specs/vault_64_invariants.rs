@@ -10,7 +10,9 @@ use crate::vault_64::{
     FungibleVault, Vault,
 };
 
-// decimals <= max_decimals
+// property: P-XX. Vault-Invariants.
+// description: Vault invariants: 1. total_supply >= 0 and 2. total_assets >= 0.
+// status: verified
 
 pub fn safe_assumptions(e: &Env) {
     assume_pre_total_supply_geq_zero(e);
@@ -131,7 +133,7 @@ pub fn after_mint_total_supply_geq_zero(e: Env) {
 
 #[rule]
 // invariant: total_supply >= 0, case: withdraw
-// status: violation
+// status: verified
 // link: https://prover.certora.com/output/5771024/5836f2b6cde24450a77131f33ce5a77b/?anonymousKey=d73db7c427056cffec889b0e36ad6d405a9384bf
 pub fn after_withdraw_total_supply_geq_zero(e: Env) {
     assume_pre_total_supply_geq_zero(&e);
@@ -388,7 +390,7 @@ pub fn after_redeem_total_assets_geq_zero(e: Env) {
 #[rule]
 // invariant: total_assets >= 0, case: set_asset
 // status: verified
-// link: https://prover.certora.com/output/5771024/5836f2b6cde24450a77131f33ce5a77b/?anonymousKey=d73db7c
+// link: https://prover.certora.com/output/5771024/5836f2b6cde24450a77131f33ce5a77b/?anonymousKey=d73db7c427056cffec889b0e36ad6d405a9384bf
 pub fn after_set_asset_total_assets_geq_zero(e: Env) {
     assume_pre_total_assets_geq_zero(&e);
     let asset: Address = nondet_address();

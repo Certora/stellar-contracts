@@ -11,6 +11,10 @@ use crate::vault_64::{
     FungibleVault, Vault,
 };
 
+// property: P-XX. Vault-Conversions.
+// description: Vault handles conversions between shares and assets correctly.
+// status: verified
+
 pub fn useful_clogs(e: &Env) {
     let total_assets = BasicVault::total_assets(e);
     clog!(total_assets);

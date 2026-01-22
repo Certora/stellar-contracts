@@ -4,9 +4,10 @@ on: pull_request
 
 env:
   CONFIGS: |
-    vault_conversions.conf
-    vault_integrity.conf
-    vault_panics.conf
+    vault_64_conversions.conf
+    vault_64_integrity.conf
+    vault_64_panics.conf
+    vault_64_invariants.conf
 
 jobs:
   check:
