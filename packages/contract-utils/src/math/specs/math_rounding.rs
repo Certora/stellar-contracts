@@ -4,9 +4,13 @@ use soroban_sdk::Env;
 
 use crate::math::math_64::i64_fixed_point::{div_ceil, div_floor};
 
+// property: P-XX. Math Rounding.
+// description: muldiv functions round correctly.
+// status: violated
+
 #[rule]
 // div_floor rounds correctly when the result is non-negative
-// status: violation
+// status: violated
 // link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
 pub fn div_floor_rounds_correct_when_result_nonneg(_e: Env) {
     let r = i64::nondet();
@@ -87,9 +91,8 @@ pub fn div_ceil_rounds_correct_when_result_nonpos(_e: Env) {
 
 #[rule]
 // div_ceil rounds correctly when the result is positive
-// status: violation
+// status: violated
 // link: https://prover.certora.com/output/33158/14b5817d1bb04d45aa3abd1be1f84b36
-#[rule]
 pub fn div_ceil_rounds_correct_when_result_pos(_e: Env) {
     let r = i64::nondet();
     let z = i64::nondet();
