@@ -4,8 +4,7 @@ on: pull_request
 
 env:
   CONFIGS: |
-    math_integrity.conf
-    math_panics.conf
+    math_rounding.conf
     pausable_integrity.conf
     pausable_non_panics.conf
     pausable_panics.conf
