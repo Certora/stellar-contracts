@@ -29,6 +29,7 @@ pub fn deposit_panic_assets_lt_0(e: Env) {
 #[rule]
 // deposit panics if assets > max deposit 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn deposit_panic_assets_gt_max_deposit(e: Env) {
     let assets: i64 = nondet();
     clog!(assets);
@@ -48,6 +49,7 @@ pub fn deposit_panic_assets_gt_max_deposit(e: Env) {
 #[rule]
 // withdraw panics if assets < 0 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn withdraw_panic_assets_lt_0(e: Env) {
     let assets: i64 = nondet();
     clog!(assets);
@@ -85,6 +87,7 @@ pub fn withdraw_panic_assets_gt_max_withdraw(e: Env) {
 #[rule] 
 // mint panics if shares < 0 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn mint_panic_shares_lt_0(e: Env) {
     let shares: i64 = nondet();
     clog!(shares);
@@ -102,6 +105,7 @@ pub fn mint_panic_shares_lt_0(e: Env) {
 #[rule]
 // mint panics if shares > max mint 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn mint_panic_shares_gt_max_mint(e: Env) {
     let shares: i64 = nondet();
     clog!(shares);
@@ -121,6 +125,7 @@ pub fn mint_panic_shares_gt_max_mint(e: Env) {
 #[rule]
 // redeem panics if shares < 0 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn redeem_panic_shares_lt_0(e: Env) {
     let shares: i64 = nondet();
     clog!(shares);
@@ -138,6 +143,7 @@ pub fn redeem_panic_shares_lt_0(e: Env) {
 #[rule]
 // redeem panics if shares > max redeem 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn redeem_panic_shares_gt_max_redeem(e: Env) {
     let shares: i64 = nondet();
     clog!(shares);
@@ -157,6 +163,7 @@ pub fn redeem_panic_shares_gt_max_redeem(e: Env) {
 #[rule]
 // set_asset panics if the asset is already set
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn set_asset_panic_asset_already_set(e: Env) {
     let asset: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&asset));
@@ -171,6 +178,7 @@ pub fn set_asset_panic_asset_already_set(e: Env) {
 // query_asset panics if the asset is not set
 // status: 
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn query_asset_panic_asset_not_set(e: Env) {
     let storage_has_key = e.storage().instance().has(&VaultStorageKey::AssetAddress);
     clog!(storage_has_key);
@@ -182,6 +190,7 @@ pub fn query_asset_panic_asset_not_set(e: Env) {
 #[rule]
 // set_decimals_offset if the offset is already set
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn set_decimals_offset_panic_offset_already_set(e: Env) {
     let offset: u32 = nondet();
     clog!(offset);
@@ -195,6 +204,7 @@ pub fn set_decimals_offset_panic_offset_already_set(e: Env) {
 #[rule]
 // set_decimals_offset panics if the offset is greater than MAX_DECIMALS_OFFSET
 // status: verified
+// link: https://prover.certora.com/output/5771024/7936e78c73a74c95b49f92394f97d6f5/?anonymousKey=1da90507c7b834d5a86860737a53e901bcd0750a
 pub fn set_decimals_offset_panic_offset_gt_max_decimals_offset(e: Env) {
     let offset: u32 = nondet();
     clog!(offset);

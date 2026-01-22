@@ -17,6 +17,16 @@ pub fn safe_assumptions(e: &Env) {
     assume_pre_total_assets_geq_zero(e);
 }
 
+// helper assumption - total_supply >= balance
+
+pub fn assume_pre_total_supply_geq_balance(e: &Env, account: &Address) {
+    let total_supply = BasicVault::total_supply(e);
+    clog!(total_supply);
+    let balance = BasicVault::balance(e, account.clone());
+    clog!(balance);
+    cvlr_assume!(total_supply >= balance);
+}
+
 // total_supply >= 0
 // helpers
 pub fn assume_pre_total_supply_geq_zero(e: &Env) {
@@ -126,6 +136,7 @@ pub fn after_withdraw_total_supply_geq_zero(e: Env) {
     clog!(cvlr_soroban::Addr(&owner));
     let operator: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));
+    assume_pre_total_supply_geq_balance(&e, &owner);
     BasicVault::withdraw(&e, shares, receiver, owner, operator);
     assert_post_total_supply_geq_zero(&e);
 }

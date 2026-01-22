@@ -57,7 +57,6 @@ pub fn deposit_integrity_1(e: Env) {
     let assets_from_post = AssetToken::balance(&e, from.clone());
     clog!(assets_from_post);
     cvlr_assert!(assets_from_post <= assets_from_pre);
-    // cvlr_assert!(asset_from_post == assets_from_pre - assets);
 }
 
 #[rule]
@@ -79,7 +78,6 @@ pub fn deposit_integrity_2(e: Env) {
     let shares_receiver_post = BasicVault::balance(&e, receiver.clone());
     clog!(shares_receiver_post);
     cvlr_assert!(shares_receiver_post >= shares_receiver_pre);
-    // cvlr_assert!(shares_receiver_post == shares_receiver_pre + shares);
 }
 
 #[rule]
@@ -103,11 +101,10 @@ pub fn deposit_integrity_3(e: Env) {
     let total_assets_post = BasicVault::total_assets(&e);
     clog!(total_assets_post);
     cvlr_assert!(total_assets_post >= total_assets_pre);
-    // cvlr_assert!(total_assets_post == total_assets_pre + assets);
 }
 
 #[rule]
-// deposit increases the shares balance by shares (output)
+// deposit does not decrease the shares of the receiver
 // status: verified
 // link: https://prover.certora.com/output/33158/1c1c23c5ccac41409333a228ec0053da
 pub fn deposit_integrity_4(e: Env) {
@@ -127,31 +124,106 @@ pub fn deposit_integrity_4(e: Env) {
     let shares_receiver_post = BasicVault::balance(&e, receiver.clone());
     clog!(shares_receiver_post);
     cvlr_assert!(shares_receiver_post >= shares_receiver_pre);
-    // cvlr_assert!(shares_receiver_post == shares_receiver_pre + shares);
 }
 
-// similar rules for withdraw, mint, redeem
-
-// if these don't work we will write them in terms of the internal functions
-// deposit_internal and withdraw_internal
-
 #[rule]
-// OLD COMMENTS START
-// deposit_internal decreases the asset balance of from by assets
-// status: spurious violation - vault and token have same balance storage
-// https://prover.certora.com/output/5771024/e8f44da0afee4942a34883390d752df4/
-// verified after munge to the name of balances,
-// in a rerun with disable_split
-// 50 minutes
-// https://prover.certora.com/output/5771024/2b4d1a4cdc554b5caee76f9faa592096/?
-// OLD COMMENTS END
-
-// status: verified
-// link: https://prover.certora.com/output/33158/a72e748b927642b88796b079d80a938a
-pub fn deposit_internal_integrity_1(e: Env) {
+// withdraw decreases the shares balance of owner by shares (output)
+// status:
+// link:
+pub fn withdraw_integrity_1(e: Env) {
     safe_assumptions(&e);
     let assets: i64 = nondet();
     clog!(assets);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let shares_owner_pre = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_pre);
+    let shares = BasicVault::withdraw(&e, assets, receiver.clone(), owner.clone(), operator.clone());
+    clog!(shares);
+    let shares_owner_post = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_post);
+    cvlr_assert!(shares_owner_post <= shares_owner_pre);
+}
+
+#[rule]
+// withdraw increases the asset balance to receiver by assets
+// status:
+// link:
+pub fn withdraw_integrity_2(e: Env) {
+    safe_assumptions(&e);
+    let assets: i64 = nondet();
+    clog!(assets);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let assets_receiver_pre = AssetToken::balance(&e, receiver.clone());
+    clog!(assets_receiver_pre);
+    let shares = BasicVault::withdraw(&e, assets, receiver.clone(), owner.clone(), operator.clone());
+    clog!(shares);
+    let assets_receiver_post = AssetToken::balance(&e, receiver.clone());
+    clog!(assets_receiver_post);
+    cvlr_assert!(assets_receiver_post >= assets_receiver_pre);
+}
+
+#[rule]
+// withdraw decreases total_assets by assets
+// status:
+// link:
+pub fn withdraw_integrity_3(e: Env) {
+    safe_assumptions(&e);
+    let assets: i64 = nondet();
+    clog!(assets);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let total_assets_pre = BasicVault::total_assets(&e);
+    clog!(total_assets_pre);
+    let shares = BasicVault::withdraw(&e, assets, receiver.clone(), owner.clone(), operator.clone());
+    clog!(shares);
+    let total_assets_post = BasicVault::total_assets(&e);
+    clog!(total_assets_post);
+    cvlr_assert!(total_assets_post <= total_assets_pre);
+}
+
+#[rule]
+// withdraw does not increase the shares of the owner
+// status:
+// link:
+pub fn withdraw_integrity_4(e: Env) {
+    safe_assumptions(&e);
+    let assets: i64 = nondet();
+    clog!(assets);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let shares_owner_pre = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_pre);
+    let shares = BasicVault::withdraw(&e, assets, receiver.clone(), owner.clone(), operator.clone());
+    clog!(shares);
+    let shares_owner_post = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_post);
+    cvlr_assert!(shares_owner_post <= shares_owner_pre);
+}
+
+#[rule]
+// mint decreases the asset balance from from by assets (output)
+// status:
+// link:
+pub fn mint_integrity_1(e: Env) {
+    safe_assumptions(&e);
     let shares: i64 = nondet();
     clog!(shares);
     let receiver: Address = nondet_address();
@@ -162,21 +234,19 @@ pub fn deposit_internal_integrity_1(e: Env) {
     clog!(cvlr_soroban::Addr(&operator));
     let assets_from_pre = AssetToken::balance(&e, from.clone());
     clog!(assets_from_pre);
-    Vault::deposit_internal(&e, &receiver, assets, shares, &from, &operator);
+    let assets = BasicVault::mint(&e, shares, receiver.clone(), from.clone(), operator.clone());
+    clog!(assets);
     let assets_from_post = AssetToken::balance(&e, from.clone());
     clog!(assets_from_post);
     cvlr_assert!(assets_from_post <= assets_from_pre);
-    // cvlr_assert!(assets_from_post == assets_from_pre - assets);
 }
 
 #[rule]
-// deposit_internal increases the shares balance of receiver by shares
-// status: verified
-// link: https://prover.certora.com/output/33158/a72e748b927642b88796b079d80a938a
-pub fn deposit_internal_integrity_2(e: Env) {
+// mint increases the shares balance to receiver by shares (input)
+// status:
+// link:
+pub fn mint_integrity_2(e: Env) {
     safe_assumptions(&e);
-    let assets: i64 = nondet();
-    clog!(assets);
     let shares: i64 = nondet();
     clog!(shares);
     let receiver: Address = nondet_address();
@@ -187,22 +257,19 @@ pub fn deposit_internal_integrity_2(e: Env) {
     clog!(cvlr_soroban::Addr(&operator));
     let shares_receiver_pre = BasicVault::balance(&e, receiver.clone());
     clog!(shares_receiver_pre);
-    Vault::deposit_internal(&e, &receiver, assets, shares, &from, &operator);
+    let assets = BasicVault::mint(&e, shares, receiver.clone(), from.clone(), operator.clone());
+    clog!(assets);
     let shares_receiver_post = BasicVault::balance(&e, receiver.clone());
     clog!(shares_receiver_post);
     cvlr_assert!(shares_receiver_post >= shares_receiver_pre);
-    // cvlr_assert!(shares_receiver_post == shares_receiver_pre + shares);
 }
 
 #[rule]
-// OLD: in a rerun with disable_split (59min) https://prover.certora.com/output/5771024/faeda71b5e70472eb4ad1bc8be561e99/
-// deposit_internal increases total_assets by assets
-// status: verified
-// link: https://prover.certora.com/output/33158/5e7e8a069f0a467ba0e459b7b8c1625c
-pub fn deposit_internal_integrity_3(e: Env) {
+// mint increases total_assets by assets (output)
+// status:
+// link:
+pub fn mint_integrity_3(e: Env) {
     safe_assumptions(&e);
-    let assets: i64 = nondet();
-    clog!(assets);
     let shares: i64 = nondet();
     clog!(shares);
     let receiver: Address = nondet_address();
@@ -213,21 +280,19 @@ pub fn deposit_internal_integrity_3(e: Env) {
     clog!(cvlr_soroban::Addr(&operator));
     let total_assets_pre = BasicVault::total_assets(&e);
     clog!(total_assets_pre);
-    Vault::deposit_internal(&e, &receiver, assets, shares, &from, &operator);
+    let assets = BasicVault::mint(&e, shares, receiver.clone(), from.clone(), operator.clone());
+    clog!(assets);
     let total_assets_post = BasicVault::total_assets(&e);
     clog!(total_assets_post);
     cvlr_assert!(total_assets_post >= total_assets_pre);
-    // cvlr_assert!(total_assets_post == total_assets_pre + assets);
 }
 
 #[rule]
-// deposit_internal increases total_supply by shares
-// status: verified
-// link: https://prover.certora.com/output/33158/5e7e8a069f0a467ba0e459b7b8c1625c
-pub fn deposit_internal_integrity_4(e: Env) {
+// mint does not decrease the shares of the receiver
+// status:
+// link:
+pub fn mint_integrity_4(e: Env) {
     safe_assumptions(&e);
-    let assets: i64 = nondet();
-    clog!(assets);
     let shares: i64 = nondet();
     clog!(shares);
     let receiver: Address = nondet_address();
@@ -236,11 +301,104 @@ pub fn deposit_internal_integrity_4(e: Env) {
     clog!(cvlr_soroban::Addr(&from));
     let operator: Address = nondet_address();
     clog!(cvlr_soroban::Addr(&operator));
-    let total_supply_pre = BasicVault::total_supply(&e);
-    clog!(total_supply_pre);
-    Vault::deposit_internal(&e, &receiver, assets, shares, &from, &operator);
-    let total_supply_post = BasicVault::total_supply(&e);
-    clog!(total_supply_post);
-    cvlr_assert!(total_supply_post >= total_supply_pre);
-    // cvlr_assert!(total_supply_post == total_supply_pre + shares);
+    let shares_receiver_pre = BasicVault::balance(&e, receiver.clone());
+    clog!(shares_receiver_pre);
+    let assets = BasicVault::mint(&e, shares, receiver.clone(), from.clone(), operator.clone());
+    clog!(assets);
+    let shares_receiver_post = BasicVault::balance(&e, receiver.clone());
+    clog!(shares_receiver_post);
+    cvlr_assert!(shares_receiver_post >= shares_receiver_pre);
 }
+
+#[rule]
+// redeem decreases the shares balance from owner by shares (input)
+// status:
+// link:
+pub fn redeem_integrity_1(e: Env) {
+    safe_assumptions(&e);
+    let shares: i64 = nondet();
+    clog!(shares);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let shares_owner_pre = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_pre);
+    let assets = BasicVault::redeem(&e, shares, receiver.clone(), owner.clone(), operator.clone());
+    clog!(assets);
+    let shares_owner_post = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_post);
+    cvlr_assert!(shares_owner_post <= shares_owner_pre);
+}
+
+#[rule]
+// redeem increases the asset balance to receiver by assets (output)
+// status:
+// link:
+pub fn redeem_integrity_2(e: Env) {
+    safe_assumptions(&e);
+    let shares: i64 = nondet();
+    clog!(shares);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let assets_receiver_pre = AssetToken::balance(&e, receiver.clone());
+    clog!(assets_receiver_pre);
+    let assets = BasicVault::redeem(&e, shares, receiver.clone(), owner.clone(), operator.clone());
+    clog!(assets);
+    let assets_receiver_post = AssetToken::balance(&e, receiver.clone());
+    clog!(assets_receiver_post);
+    cvlr_assert!(assets_receiver_post >= assets_receiver_pre);
+}
+
+#[rule]
+// redeem decreases total_assets by assets (output)
+// status:
+// link:
+pub fn redeem_integrity_3(e: Env) {
+    safe_assumptions(&e);
+    let shares: i64 = nondet();
+    clog!(shares);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let total_assets_pre = BasicVault::total_assets(&e);
+    clog!(total_assets_pre);
+    let assets = BasicVault::redeem(&e, shares, receiver.clone(), owner.clone(), operator.clone());
+    clog!(assets);
+    let total_assets_post = BasicVault::total_assets(&e);
+    clog!(total_assets_post);
+    cvlr_assert!(total_assets_post <= total_assets_pre);
+}
+
+#[rule]
+// redeem does not increase the shares of the owner
+// status:
+// link:
+pub fn redeem_integrity_4(e: Env) {
+    safe_assumptions(&e);
+    let shares: i64 = nondet();
+    clog!(shares);
+    let receiver: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&receiver));
+    let owner: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&owner));
+    let operator: Address = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let shares_owner_pre = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_pre);
+    let assets = BasicVault::redeem(&e, shares, receiver.clone(), owner.clone(), operator.clone());
+    clog!(assets);
+    let shares_owner_post = BasicVault::balance(&e, owner.clone());
+    clog!(shares_owner_post);
+    cvlr_assert!(shares_owner_post <= shares_owner_pre);
+}
+

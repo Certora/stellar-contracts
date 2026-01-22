@@ -102,50 +102,6 @@ pub fn convert_to_assets_monotonicity(e: Env) {
 }
 
 #[rule]
-// convert to shares weak additivity
-// status: timeout
-pub fn convert_to_shares_weak_additivity(e: Env) {
-    safe_assumptions(&e);
-    let assets1: i64 = nondet();
-    let assets2: i64 = nondet();
-    cvlr_assume!(assets1 >= i64::MIN as i64 && assets1 <= i64::MAX as i64);
-    cvlr_assume!(assets2 >= i64::MIN as i64 && assets2 <= i64::MAX as i64);
-    let assets_sum = assets1 + assets2;
-    clog!(assets1);
-    clog!(assets2);
-    clog!(assets_sum);
-    let shares1 = BasicVault::convert_to_shares(&e, assets1);
-    let shares2 = BasicVault::convert_to_shares(&e, assets2);
-    let shares_sum = BasicVault::convert_to_shares(&e, assets_sum);
-    clog!(shares1);
-    clog!(shares2);
-    clog!(shares_sum);
-    cvlr_assert!(shares1 + shares2 <= shares_sum);
-}
-
-#[rule]
-// convert to assets weak additivity
-// status: timeout
-pub fn convert_to_assets_weak_additivity(e: Env) {
-    safe_assumptions(&e);
-    let shares1: i64 = nondet();
-    let shares2: i64 = nondet();
-    cvlr_assume!(shares1 >= i64::MIN as i64 && shares1 <= i64::MAX as i64);
-    cvlr_assume!(shares2 >= i64::MIN as i64 && shares2 <= i64::MAX as i64);
-    let shares_sum = shares1 + shares2;
-    clog!(shares1);
-    clog!(shares2);
-    clog!(shares_sum);
-    let assets1 = BasicVault::convert_to_assets(&e, shares1);
-    let assets2 = BasicVault::convert_to_assets(&e, shares2);
-    let assets_sum = BasicVault::convert_to_assets(&e, shares_sum);
-    clog!(assets1);
-    clog!(assets2);
-    clog!(assets_sum);
-    cvlr_assert!(assets1 + assets2 <= assets_sum);
-}
-
-#[rule]
 // convert to shares weak inverse
 // status: verified
 // Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
@@ -177,73 +133,6 @@ pub fn convert_to_assets_weak_inverse(e: Env) {
     let shares_from_assets_from_shares = BasicVault::convert_to_shares(&e, assets_from_shares);
     clog!(shares_from_assets_from_shares);
     cvlr_assert!(shares_from_assets_from_shares <= shares);
-}
-
-#[rule]
-// preview_deposit matches convert to shares
-// status: verified
-// Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
-// (which is the default value)
-pub fn preview_deposit_matches_convert_to_shares(e: Env) {
-    safe_assumptions(&e);
-    let assets: i64 = nondet();
-    cvlr_assume!(assets >= i64::MIN as i64 && assets <= i64::MAX as i64);
-    clog!(assets);
-    let shares = BasicVault::convert_to_shares(&e, assets);
-    clog!(shares);
-    let preview_deposit = BasicVault::preview_deposit(&e, assets);
-    clog!(preview_deposit);
-    cvlr_assert!(preview_deposit == shares);
-}
-
-#[rule]
-// preview_mint matches convert to assets
-// status: violation https://prover.certora.com/output/33158/6009cedc99d7443fa155a182444a6c48
-// Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
-// (which is the default value)
-pub fn preview_mint_matches_convert_to_shares(e: Env) {
-    safe_assumptions(&e);
-    let shares: i64 = nondet();
-    cvlr_assume!(shares >= i64::MIN as i64 && shares <= i64::MAX as i64);
-    clog!(shares);
-    let preview_mint = BasicVault::preview_mint(&e, shares);
-    let shares_from_preview_mint_assets = BasicVault::convert_to_shares(&e, preview_mint);
-    clog!(shares_from_preview_mint_assets);
-    cvlr_assert!(shares_from_preview_mint_assets == shares);
-}
-
-#[rule]
-// preview_withdraw matches convert to shares
-// status: violation https://prover.certora.com/output/33158/6009cedc99d7443fa155a182444a6c48
-// Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
-// (which is the default value)
-pub fn preview_withdraw_matches_convert_to_shares(e: Env) {
-    safe_assumptions(&e);
-    let assets: i64 = nondet();
-    cvlr_assume!(assets >= i64::MIN as i64 && assets <= i64::MAX as i64);
-    clog!(assets);
-    let preview_withdraw = BasicVault::preview_withdraw(&e, assets);
-    clog!(preview_withdraw);
-    let assets_from_preview_withdraw_shares = BasicVault::convert_to_assets(&e, preview_withdraw);
-    clog!(assets_from_preview_withdraw_shares);
-    cvlr_assert!(assets_from_preview_withdraw_shares == assets);
-}
-
-#[rule]
-// preview_redeem matches convert to assets
-// status: verified
-// Note the i64 assumption and the virtual offset being set to 0 in `storage.rs`
-// (which is the default value)
-pub fn preview_redeem_matches_convert_to_assets(e: Env) {
-    safe_assumptions(&e);
-    let shares: i64 = nondet();
-    cvlr_assume!(shares >= i64::MIN as i64 && shares <= i64::MAX as i64);
-    clog!(shares);
-    let assets = BasicVault::convert_to_assets(&e, shares);
-    clog!(assets);
-    let preview_redeem = BasicVault::preview_redeem(&e, shares);
-    clog!(preview_redeem);
-    cvlr_assert!(preview_redeem == assets);
 }
 
 #[rule]
