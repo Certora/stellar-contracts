@@ -16,6 +16,8 @@
 pub mod fungible;
 pub mod non_fungible;
 pub mod rwa;
+
+#[cfg(not(feature = "certora"))]
 pub mod vault;
 
 #[cfg(feature = "certora")]

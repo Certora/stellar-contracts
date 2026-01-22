@@ -3,15 +3,14 @@ use soroban_sdk::{contracttype, panic_with_error, symbol_short, Address, Env, St
 
 #[cfg(not(feature = "certora"))]
 use crate::vault_64_for_solvency::fungible_64::{emit_approve, emit_mint, emit_transfer};
-use crate::vault_64_for_solvency::fungible_64::{overrides::Base, BALANCE_EXTEND_AMOUNT, BALANCE_TTL_THRESHOLD};
-use crate::vault_64_for_solvency::fungible_64::FungibleTokenError;
+use crate::vault_64_for_solvency::fungible_64::{overrides::Base, FungibleTokenError, BALANCE_EXTEND_AMOUNT, BALANCE_TTL_THRESHOLD};
 
-/// Storage key that maps to [`Metadata`]
-pub const METADATA_KEY: Symbol = symbol_short!("METADATA");
+/// Storage key that maps to [`MetadataMunged`]
+pub const METADATA_KEY_MUNGED: Symbol = symbol_short!("METMUNGED");
 
-/// Storage key that maps to [`AllowanceData`]
+/// Storage key that maps to [`AllowanceDataMunged`]
 #[contracttype]
-pub struct AllowanceKey {
+pub struct AllowanceKeyMunged {
     pub owner: Address,
     pub spender: Address,
 }
@@ -19,22 +18,22 @@ pub struct AllowanceKey {
 /// Storage container for the amount of tokens for which an allowance is granted
 /// and the ledger number at which this allowance expires.
 #[contracttype]
-pub struct AllowanceData {
+pub struct AllowanceDataMunged {
     pub amount: i64,
     pub live_until_ledger: u32,
 }
 
 /// Storage keys for the data associated with `FungibleToken`
 #[contracttype]
-pub enum StorageKey {
-    TotalSupply,
-    Balance(Address),
-    Allowance(AllowanceKey),
+pub enum StorageKeyMunged {
+    TotalSupplyMunged,
+    BalanceMunged(Address),
+    AllowanceMunged(AllowanceKeyMunged),
 }
 
 /// Storage container for token metadata
 #[contracttype]
-pub struct Metadata {
+pub struct MetadataMunged {
     pub decimals: u32,
     pub name: String,
     pub symbol: String,
@@ -49,8 +48,8 @@ impl Base {
     /// # Arguments
     ///
     /// * `e` - Access to the Soroban environment.
-    pub fn total_supply(e: &Env) -> i64 {
-        e.storage().instance().get(&StorageKey::TotalSupply).unwrap_or(0)
+    pub fn total_supply_munged(e: &Env) -> i64 {
+        e.storage().instance().get(&StorageKeyMunged::TotalSupplyMunged).unwrap_or(0)
     }
 
     /// Returns the amount of tokens held by `account`. Defaults to `0` if no
@@ -60,8 +59,8 @@ impl Base {
     ///
     /// * `e` - Access to the Soroban environment.
     /// * `account` - The address for which the balance is being queried.
-    pub fn balance(e: &Env, account: &Address) -> i64 {
-        let key = StorageKey::Balance(account.clone());
+    pub fn balance_munged(e: &Env, account: &Address) -> i64 {
+        let key = StorageKeyMunged::BalanceMunged(account.clone());
         if let Some(balance) = e.storage().persistent().get::<_, i64>(&key) {
             e.storage().persistent().extend_ttl(&key, BALANCE_TTL_THRESHOLD, BALANCE_EXTEND_AMOUNT);
             balance
@@ -85,12 +84,12 @@ impl Base {
     /// Attention is required when `live_until_ledger` is less than the current
     /// ledger number, as this indicates the entry has expired. In such cases,
     /// the allowance should be treated as `0`.
-    pub fn allowance_data(e: &Env, owner: &Address, spender: &Address) -> AllowanceData {
-        let key = AllowanceKey { owner: owner.clone(), spender: spender.clone() };
+    pub fn allowance_data_munged(e: &Env, owner: &Address, spender: &Address) -> AllowanceDataMunged {
+        let key = AllowanceKeyMunged { owner: owner.clone(), spender: spender.clone() };
         e.storage()
             .temporary()
-            .get(&StorageKey::Allowance(key))
-            .unwrap_or(AllowanceData { amount: 0, live_until_ledger: 0 })
+            .get(&StorageKeyMunged::AllowanceMunged(key))
+            .unwrap_or(AllowanceDataMunged { amount: 0, live_until_ledger: 0 })
     }
 
     /// Returns the amount of tokens a `spender` is allowed to spend on behalf
@@ -106,8 +105,8 @@ impl Base {
     ///
     /// An allowance entry where `live_until_ledger` is less than the current
     /// ledger number is treated as an allowance with amount `0`.
-    pub fn allowance(e: &Env, owner: &Address, spender: &Address) -> i64 {
-        let allowance = Base::allowance_data(e, owner, spender);
+    pub fn allowance_munged(e: &Env, owner: &Address, spender: &Address) -> i64 {
+        let allowance = Base::allowance_data_munged(e, owner, spender);
 
         if allowance.live_until_ledger < e.ledger().sequence() {
             return 0;
@@ -126,10 +125,10 @@ impl Base {
     ///
     /// * [`FungibleTokenError::UnsetMetadata`] - When trying to access
     ///   uninitialized metadata.
-    pub fn get_metadata(e: &Env) -> Metadata {
+    pub fn get_metadata_munged(e: &Env) -> MetadataMunged {
         e.storage()
             .instance()
-            .get(&METADATA_KEY)
+            .get(&METADATA_KEY_MUNGED)
             .unwrap_or_else(|| panic_with_error!(e, FungibleTokenError::UnsetMetadata))
     }
 
@@ -141,9 +140,9 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::get_metadata`] errors.
-    pub fn decimals(e: &Env) -> u32 {
-        Base::get_metadata(e).decimals
+    /// * refer to [`Base::get_metadata_munged`] errors.
+    pub fn decimals_munged(e: &Env) -> u32 {
+        Base::get_metadata_munged(e).decimals
     }
 
     /// Returns the token name.
@@ -154,9 +153,9 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::get_metadata`] errors.
-    pub fn name(e: &Env) -> String {
-        Base::get_metadata(e).name
+    /// * refer to [`Base::get_metadata_munged`] errors.
+    pub fn name_munged(e: &Env) -> String {
+        Base::get_metadata_munged(e).name
     }
 
     /// Returns the token symbol.
@@ -167,9 +166,9 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::get_metadata`] errors.
-    pub fn symbol(e: &Env) -> String {
-        Base::get_metadata(e).symbol
+    /// * refer to [`Base::get_metadata_munged`] errors.
+    pub fn symbol_munged(e: &Env) -> String {
+        Base::get_metadata_munged(e).symbol
     }
 
     // ################## CHANGE STATE ##################
@@ -189,7 +188,7 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::set_allowance`] errors.
+    /// * refer to [`Base::set_allowance_munged`] errors.
     ///
     /// # Events
     ///
@@ -203,7 +202,7 @@ impl Base {
     ///   value which is a network parameter, i.e. one cannot set an allowance
     ///   for a longer period. This behavior closely mirrors the functioning of
     ///   the "Stellar Asset Contract" implementation for consistency reasons.
-    pub fn approve(
+    pub fn approve_munged(
         e: &Env,
         owner: &Address,
         spender: &Address,
@@ -211,7 +210,7 @@ impl Base {
         live_until_ledger: u32,
     ) {
         owner.require_auth();
-        Base::set_allowance(e, owner, spender, amount, live_until_ledger);
+        Base::set_allowance_munged(e, owner, spender, amount, live_until_ledger);
         #[cfg(not(feature = "certora"))]
         emit_approve(e, owner, spender, amount, live_until_ledger);
     }
@@ -247,7 +246,7 @@ impl Base {
     ///   value which is a network parameter, i.e. one cannot set an allowance
     ///   for a longer period. This behavior closely mirrors the functioning of
     ///   the "Stellar Asset Contract" implementation for consistency reasons.
-    pub fn set_allowance(
+    pub fn set_allowance_munged(
         e: &Env,
         owner: &Address,
         spender: &Address,
@@ -267,8 +266,8 @@ impl Base {
         }
 
         let key =
-            StorageKey::Allowance(AllowanceKey { owner: owner.clone(), spender: spender.clone() });
-        let allowance = AllowanceData { amount, live_until_ledger };
+            StorageKeyMunged::AllowanceMunged(AllowanceKeyMunged { owner: owner.clone(), spender: spender.clone() });
+        let allowance = AllowanceDataMunged { amount, live_until_ledger };
 
         e.storage().temporary().set(&key, &allowance);
 
@@ -298,28 +297,28 @@ impl Base {
     /// * [`FungibleTokenError::InsufficientAllowance`] - When attempting to
     ///   transfer more tokens than `spender` current allowance.
     /// * [`FungibleTokenError::LessThanZero`] - Occurs when `amount < 0`.
-    /// * also refer to [`Base::set_allowance`] errors.
+    /// * also refer to [`Base::set_allowance_munged`] errors.
     ///
     /// # Notes
     ///
     /// This function does not enforce authorization. Ensure that authorization
     /// is handled at a higher level.
-    pub fn spend_allowance(e: &Env, owner: &Address, spender: &Address, amount: i64) {
+    pub fn spend_allowance_munged(e: &Env, owner: &Address, spender: &Address, amount: i64) {
         if amount < 0 {
             panic_with_error!(e, FungibleTokenError::LessThanZero)
         }
 
-        let allowance = Base::allowance_data(e, owner, spender);
+        let allowance = Base::allowance_data_munged(e, owner, spender);
 
         // maybe this is a bug? because it doesn't consider live_until_ledger, should be
-        // allowance() instead?
+        // allowance_munged() instead?
 
         if allowance.amount < amount {
             panic_with_error!(e, FungibleTokenError::InsufficientAllowance);
         }
 
         if amount > 0 {
-            Base::set_allowance(
+            Base::set_allowance_munged(
                 e,
                 owner,
                 spender,
@@ -340,7 +339,7 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::update`] errors.
+    /// * refer to [`Base::update_munged`] errors.
     ///
     /// # Events
     ///
@@ -350,9 +349,9 @@ impl Base {
     /// # Notes
     ///
     /// Authorization for `from` is required.
-    pub fn transfer(e: &Env, from: &Address, to: &Address, amount: i64) {
+    pub fn transfer_munged(e: &Env, from: &Address, to: &Address, amount: i64) {
         from.require_auth();
-        Base::update(e, Some(from), Some(to), amount);
+        Base::update_munged(e, Some(from), Some(to), amount);
         #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
@@ -372,8 +371,8 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// * refer to [`Base::spend_allowance`] errors.
-    /// * refer to [`Base::update`] errors.
+    /// * refer to [`Base::spend_allowance_munged`] errors.
+    /// * refer to [`Base::update_munged`] errors.
     ///
     /// # Events
     ///
@@ -383,10 +382,10 @@ impl Base {
     /// # Notes
     ///
     /// Authorization for `spender` is required.
-    pub fn transfer_from(e: &Env, spender: &Address, from: &Address, to: &Address, amount: i64) {
+    pub fn transfer_from_munged(e: &Env, spender: &Address, from: &Address, to: &Address, amount: i64) {
         spender.require_auth();
-        Base::spend_allowance(e, from, spender, amount);
-        Base::update(e, Some(from), Some(to), amount);
+        Base::spend_allowance_munged(e, from, spender, amount);
+        Base::update_munged(e, Some(from), Some(to), amount);
         #[cfg(not(feature = "certora"))]
         emit_transfer(e, from, to, amount);
     }
@@ -413,47 +412,38 @@ impl Base {
     ///
     /// This function does not enforce authorization. Ensure that authorization
     /// is handled at a higher level.
-    pub fn update(e: &Env, from: Option<&Address>, to: Option<&Address>, amount: i64) {
+    pub fn update_munged(e: &Env, from: Option<&Address>, to: Option<&Address>, amount: i64) {
         if amount < 0 {
             panic_with_error!(e, FungibleTokenError::LessThanZero);
         }
         if let Some(account) = from {
-            let mut from_balance = Base::balance(e, account);
+            let mut from_balance = Base::balance_munged(e, account);
             if from_balance < amount {
                 panic_with_error!(e, FungibleTokenError::InsufficientBalance);
             }
             // NOTE: can't underflow because of the check above.
             from_balance -= amount;
-            e.storage().persistent().set(&StorageKey::Balance(account.clone()), &from_balance);
+            e.storage().persistent().set(&StorageKeyMunged::BalanceMunged(account.clone()), &from_balance);
         } else {
             // `from` is None, so we're minting tokens.
-            let total_supply = Base::total_supply(e);
-            #[cfg(not(feature = "certora"))]
+            let total_supply = Base::total_supply_munged(e);
             let Some(new_total_supply) = total_supply.checked_add(amount) else {
                 panic_with_error!(e, FungibleTokenError::MathOverflow);
             };
-            #[cfg(feature = "certora")]
-            let new_total_supply = {
-                // checked_add overflows iff total_supply > i64::MAX - amount
-                if total_supply > i64::MAX - amount {
-                    panic_with_error!(e, FungibleTokenError::MathOverflow);
-                }
-                total_supply + amount
-            };
-            e.storage().instance().set(&StorageKey::TotalSupply, &new_total_supply);
+            e.storage().instance().set(&StorageKeyMunged::TotalSupplyMunged, &new_total_supply);
         }
 
         if let Some(account) = to {
             // NOTE: can't overflow because balance + amount is at most total_supply.
-            let to_balance = Base::balance(e, account) + amount;
-            e.storage().persistent().set(&StorageKey::Balance(account.clone()), &to_balance);
+            let to_balance = Base::balance_munged(e, account) + amount;
+            e.storage().persistent().set(&StorageKeyMunged::BalanceMunged(account.clone()), &to_balance);
         } else {
             // `to` is None, so we're burning tokens.
 
             // NOTE: can't overflow because amount <= total_supply or amount <= from_balance
             // <= total_supply.
-            let total_supply = Base::total_supply(e) - amount;
-            e.storage().instance().set(&StorageKey::TotalSupply, &total_supply);
+            let total_supply = Base::total_supply_munged(e) - amount;
+            e.storage().instance().set(&StorageKeyMunged::TotalSupplyMunged, &total_supply);
         }
     }
 
@@ -468,7 +458,7 @@ impl Base {
     ///
     /// # Errors
     ///
-    /// refer to [`Base::update`] errors.
+    /// refer to [`Base::update_munged`] errors.
     ///
     /// # Events
     ///
@@ -490,8 +480,8 @@ impl Base {
     /// let admin = read_administrator(e);
     /// admin.require_auth();
     /// ```
-    pub fn mint(e: &Env, to: &Address, amount: i64) {
-        Base::update(e, None, Some(to), amount);
+    pub fn mint_munged(e: &Env, to: &Address, amount: i64) {
+        Base::update_munged(e, None, Some(to), amount);
         #[cfg(not(feature = "certora"))]
         emit_mint(e, to, amount);
     }
@@ -510,8 +500,8 @@ impl Base {
     /// **IMPORTANT**: This function lacks authorization controls. You want to
     /// invoke it most likely from a constructor or from another function with
     /// admin-only authorization.
-    pub fn set_metadata(e: &Env, decimals: u32, name: String, symbol: String) {
-        let metadata = Metadata { decimals, name, symbol };
-        e.storage().instance().set(&METADATA_KEY, &metadata);
+    pub fn set_metadata_munged(e: &Env, decimals: u32, name: String, symbol: String) {
+        let metadata = MetadataMunged { decimals, name, symbol };
+        e.storage().instance().set(&METADATA_KEY_MUNGED, &metadata);
     }
 }
