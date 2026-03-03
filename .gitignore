@@ -22,3 +22,7 @@ lcov.info
 coverage/
 
 **/test_snapshots/
+
+# Certora
+.certora_internal
+emv-*

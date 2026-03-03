@@ -83,3 +83,19 @@ lto = true
 [profile.release-with-logs]
 inherits = "release"
 debug-assertions = true
+
+[workspace.dependencies.cvlr]
+version = "0.5.0"
+default-features = false
+
+[workspace.dependencies.cvlr-soroban]
+git = "https://github.com/Certora/cvlr-soroban.git"
+branch = "soroban-25.1.1"
+
+[workspace.dependencies.cvlr-soroban-macros]
+git = "https://github.com/Certora/cvlr-soroban.git"
+branch = "soroban-25.1.1"
+
+[workspace.dependencies.cvlr-soroban-derive]
+git = "https://github.com/Certora/cvlr-soroban.git"
+branch = "soroban-25.1.1"

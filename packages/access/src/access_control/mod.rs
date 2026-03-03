@@ -91,6 +91,9 @@ mod storage;
 #[cfg(test)]
 mod test;
 
+#[cfg(feature = "certora")]
+pub mod specs;
+
 use soroban_sdk::{contracterror, contractevent, contracttrait, Address, Env, Symbol, Vec};
 
 pub use crate::access_control::storage::{

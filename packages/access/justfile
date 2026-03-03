@@ -1,0 +1,12 @@
+export RUSTFLAGS := "-C strip=none"
+
+target := "../../target"
+
+build:
+	cargo build --target wasm32-unknown-unknown --release --features certora
+
+expand:
+	cargo expand --target wasm32-unknown-unknown --release --features certora
+
+clean:
+	rm -rf {{target}}

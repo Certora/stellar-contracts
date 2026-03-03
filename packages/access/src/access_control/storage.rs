@@ -224,6 +224,7 @@ pub fn grant_role_no_auth(e: &Env, account: &Address, role: &Symbol, caller: &Ad
     }
     add_to_role_enumeration(e, account, role);
 
+    #[cfg(not(feature = "certora"))]
     emit_role_granted(e, role, account, caller);
 }
 
