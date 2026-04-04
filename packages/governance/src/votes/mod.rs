@@ -48,7 +48,11 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, contracttrait, Address, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env};
 
 pub use crate::votes::storage::{
     delegate, get_checkpoint, get_delegate, get_total_supply, get_total_supply_at_checkpoint,
@@ -67,7 +71,6 @@ pub use crate::votes::storage::{
 /// The implementing contract must:
 /// - Call `transfer_voting_units` on every balance change
 /// - Expose `delegate` functionality to users
-#[contracttrait]
 pub trait Votes {
     /// Returns the current voting power (delegated votes) of an account.
     ///
@@ -233,6 +236,7 @@ pub fn emit_delegate_changed(
     from_delegate: Option<Address>,
     to_delegate: &Address,
 ) {
+    #[cfg(not(feature = "certora"))]
     DelegateChanged {
         delegator: delegator.clone(),
         from_delegate,
@@ -268,5 +272,6 @@ pub fn emit_delegate_votes_changed(
     previous_votes: u128,
     new_votes: u128,
 ) {
+    #[cfg(not(feature = "certora"))]
     DelegateVotesChanged { delegate: delegate.clone(), previous_votes, new_votes }.publish(e);
 }

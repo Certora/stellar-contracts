@@ -22,3 +22,5 @@ lcov.info
 coverage/
 
 **/test_snapshots/
+
+local.conf

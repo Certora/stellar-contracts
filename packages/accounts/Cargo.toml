@@ -15,6 +15,11 @@ doctest = false
 soroban-sdk = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde-json-core = { workspace = true }
+cvlr = { workspace = true, default-features = false }
+cvlr-soroban = { workspace = true }
+cvlr-soroban-macros = { workspace = true }
+cvlr-soroban-derive = { workspace = true }
+base64ct = { workspace = true }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
@@ -23,3 +28,7 @@ stellar-event-assertion = { workspace = true }
 ed25519-dalek = { workspace = true }
 p256 = { workspace = true, features = ["ecdsa"] }
 hex-literal = { workspace = true }
+
+[features]
+certora = []
+default = ["certora"]

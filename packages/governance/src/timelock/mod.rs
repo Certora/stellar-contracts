@@ -50,7 +50,11 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, BytesN, Env, Symbol, Val, Vec};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, BytesN, Env, Symbol, Val, Vec};
 
 pub use crate::timelock::storage::{
     cancel_operation, execute_operation, get_min_delay, get_operation_ledger, get_operation_state,
@@ -117,6 +121,7 @@ pub struct MinDelayChanged {
 /// * `old_delay` - The previous minimum delay value.
 /// * `new_delay` - The new minimum delay value.
 pub fn emit_min_delay_changed(e: &Env, old_delay: u32, new_delay: u32) {
+    #[cfg(not(feature = "certora"))]
     MinDelayChanged { old_delay, new_delay }.publish(e);
 }
 
@@ -158,6 +163,7 @@ pub fn emit_operation_scheduled(
     salt: &BytesN<32>,
     delay: u32,
 ) {
+    #[cfg(not(feature = "certora"))]
     OperationScheduled {
         id: id.clone(),
         target: target.clone(),
@@ -204,6 +210,7 @@ pub fn emit_operation_executed(
     predecessor: &BytesN<32>,
     salt: &BytesN<32>,
 ) {
+    #[cfg(not(feature = "certora"))]
     OperationExecuted {
         id: id.clone(),
         target: target.clone(),
@@ -230,5 +237,6 @@ pub struct OperationCancelled {
 /// * `e` - Access to Soroban environment.
 /// * `id` - The unique identifier of the operation.
 pub fn emit_operation_cancelled(e: &Env, id: &BytesN<32>) {
+    #[cfg(not(feature = "certora"))]
     OperationCancelled { id: id.clone() }.publish(e);
 }
