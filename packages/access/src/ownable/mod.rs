@@ -35,7 +35,14 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, contracttrait, Address, Env};
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env};
 
 pub use crate::ownable::storage::{
     accept_ownership, enforce_owner_auth, get_owner, renounce_ownership, set_owner,
@@ -46,7 +53,6 @@ pub use crate::ownable::storage::{
 ///
 /// Provides functions to query ownership, initiate a transfer, or renounce
 /// ownership.
-#[contracttrait]
 pub trait Ownable {
     /// Returns `Some(Address)` if ownership is set, or `None` if ownership has
     /// been renounced.
@@ -54,9 +60,7 @@ pub trait Ownable {
     /// # Arguments
     ///
     /// * `e` - Access to the Soroban environment.
-    fn get_owner(e: &Env) -> Option<Address> {
-        get_owner(e)
-    }
+    fn get_owner(e: &Env) -> Option<Address>;
 
     /// Initiates a 2-step ownership transfer to a new address.
     ///
@@ -84,9 +88,7 @@ pub trait Ownable {
     /// # Notes
     ///
     /// * Authorization for the current owner is required.
-    fn transfer_ownership(e: &Env, new_owner: Address, live_until_ledger: u32) {
-        transfer_ownership(e, &new_owner, live_until_ledger);
-    }
+    fn transfer_ownership(e: &Env, new_owner: Address, live_until_ledger: u32);
 
     /// Accepts a pending ownership transfer.
     ///
@@ -103,9 +105,7 @@ pub trait Ownable {
     ///
     /// * topics - `["ownership_transfer_completed"]`
     /// * data - `[new_owner: Address]`
-    fn accept_ownership(e: &Env) {
-        accept_ownership(e);
-    }
+    fn accept_ownership(e: &Env);
 
     /// Renounces ownership of the contract.
     ///
@@ -125,9 +125,7 @@ pub trait Ownable {
     /// # Notes
     ///
     /// * Authorization for the current owner is required.
-    fn renounce_ownership(e: &Env) {
-        renounce_ownership(e);
-    }
+    fn renounce_ownership(e: &Env);
 }
 
 // ################## ERRORS ##################
@@ -161,6 +159,7 @@ pub struct OwnershipTransfer {
 /// * `new_owner` - The address of the proposed new owner.
 /// * `live_until_ledger` - The ledger number until which the new owner can
 ///   accept the transfer.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_transfer(
     e: &Env,
     old_owner: &Address,
@@ -188,6 +187,7 @@ pub struct OwnershipTransferCompleted {
 ///
 /// * `e` - Access to the Soroban environment.
 /// * `new_owner` - The address of the new owner.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_transfer_completed(e: &Env, new_owner: &Address) {
     OwnershipTransferCompleted { new_owner: new_owner.clone() }.publish(e);
 }
@@ -205,6 +205,7 @@ pub struct OwnershipRenounced {
 ///
 /// * `e` - Access to the Soroban environment.
 /// * `old_owner` - The address of the owner who renounced ownership.
+#[cfg(not(feature = "certora"))]
 pub fn emit_ownership_renounced(e: &Env, old_owner: &Address) {
     OwnershipRenounced { old_owner: old_owner.clone() }.publish(e);
 }

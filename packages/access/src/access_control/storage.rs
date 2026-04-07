@@ -1,11 +1,12 @@
 use soroban_sdk::{contracttype, panic_with_error, Address, Env, Symbol, Vec};
 
+#[cfg(not(feature = "certora"))]
+use crate::access_control::{
+    emit_admin_renounced, emit_admin_transfer_completed, emit_admin_transfer_initiated,
+    emit_role_admin_changed, emit_role_granted, emit_role_revoked,
+};
 use crate::{
-    access_control::{
-        emit_admin_renounced, emit_admin_transfer_completed, emit_admin_transfer_initiated,
-        emit_role_admin_changed, emit_role_granted, emit_role_revoked, AccessControlError,
-        MAX_ROLES, ROLE_EXTEND_AMOUNT, ROLE_TTL_THRESHOLD,
-    },
+    access_control::{AccessControlError, MAX_ROLES, ROLE_EXTEND_AMOUNT, ROLE_TTL_THRESHOLD},
     role_transfer::{accept_transfer, transfer_role},
 };
 
@@ -224,6 +225,7 @@ pub fn grant_role_no_auth(e: &Env, account: &Address, role: &Symbol, caller: &Ad
     }
     add_to_role_enumeration(e, account, role);
 
+    #[cfg(not(feature = "certora"))]
     emit_role_granted(e, role, account, caller);
 }
 
@@ -297,6 +299,7 @@ pub fn revoke_role_no_auth(e: &Env, account: &Address, role: &Symbol, caller: &A
     let key = AccessControlStorageKey::HasRole(account.clone(), role.clone());
     e.storage().persistent().remove(&key);
 
+    #[cfg(not(feature = "certora"))]
     emit_role_revoked(e, role, account, caller);
 }
 
@@ -337,6 +340,7 @@ pub fn renounce_role(e: &Env, role: &Symbol, caller: &Address) {
     let key = AccessControlStorageKey::HasRole(caller.clone(), role.clone());
     e.storage().persistent().remove(&key);
 
+    #[cfg(not(feature = "certora"))]
     emit_role_revoked(e, role, caller, caller);
 }
 
@@ -373,6 +377,7 @@ pub fn transfer_admin_role(e: &Env, new_admin: &Address, live_until_ledger: u32)
 
     transfer_role(e, new_admin, &AccessControlStorageKey::PendingAdmin, live_until_ledger);
 
+    #[cfg(not(feature = "certora"))]
     emit_admin_transfer_initiated(e, &admin, new_admin, live_until_ledger);
 }
 
@@ -403,6 +408,7 @@ pub fn accept_admin_transfer(e: &Env) {
     let new_admin =
         accept_transfer(e, &AccessControlStorageKey::Admin, &AccessControlStorageKey::PendingAdmin);
 
+    #[cfg(not(feature = "certora"))]
     emit_admin_transfer_completed(e, &previous_admin, &new_admin);
 }
 
@@ -469,6 +475,7 @@ pub fn renounce_admin(e: &Env) {
 
     e.storage().instance().remove(&AccessControlStorageKey::Admin);
 
+    #[cfg(not(feature = "certora"))]
     emit_admin_renounced(e, &admin);
 }
 
@@ -519,6 +526,7 @@ pub fn set_role_admin_no_auth(e: &Env, role: &Symbol, admin_role: &Symbol) {
 
     e.storage().persistent().set(&key, admin_role);
 
+    #[cfg(not(feature = "certora"))]
     emit_role_admin_changed(e, role, &previous_admin_role, admin_role);
 }
 
