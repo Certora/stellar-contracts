@@ -41,7 +41,6 @@ pub fn assert_post_threshold_non_zero(e: Env, ctx_rule: ContextRule, account_id:
 #[rule]
 // invariant: threshold != 0, case: install
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_install_threshold_non_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -52,7 +51,6 @@ pub fn wt_after_install_threshold_non_zero(e: Env) {
 #[rule]
 // invariant: threshold != 0, case: uninstall (sanity fails but that is
 // expected) status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_uninstall_threshold_non_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -64,7 +62,6 @@ pub fn wt_after_uninstall_threshold_non_zero(e: Env) {
 #[rule]
 // invariant: threshold != 0, case: set_threshold
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_set_threshold_threshold_non_zero(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -77,7 +74,6 @@ pub fn wt_after_set_threshold_threshold_non_zero(e: Env) {
 #[rule]
 // invariant: threshold != 0, case: set_signer_weight
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_set_signer_weight_threshold_non_zero(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -91,7 +87,6 @@ pub fn wt_after_set_signer_weight_threshold_non_zero(e: Env) {
 #[rule]
 // invariant: threshold != 0, case: can_enforce
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_can_enforce_threshold_non_zero(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -104,7 +99,6 @@ pub fn wt_after_can_enforce_threshold_non_zero(e: Env, context: soroban_sdk::aut
 #[rule]
 // invariant: threshold != 0, case: enforce
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_enforce_threshold_non_zero(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -141,7 +135,6 @@ pub fn assert_post_threshold_leq_weight_sum(e: Env, ctx_rule: ContextRule, accou
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: set_threshold
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_set_threshold_threshold_leq_weight_sum(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -154,7 +147,6 @@ pub fn wt_after_set_threshold_threshold_leq_weight_sum(e: Env) {
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: set_signer_weight
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_set_signer_weight_threshold_leq_weight_sum(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -167,8 +159,8 @@ pub fn wt_after_set_signer_weight_threshold_leq_weight_sum(e: Env) {
 
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: install
+// (vacuous: install now rejects already-installed state)
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_install_threshold_leq_weight_sum(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -180,7 +172,6 @@ pub fn wt_after_install_threshold_leq_weight_sum(e: Env) {
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: uninstall (sanity fails but
 // that is expected) status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_uninstall_threshold_leq_weight_sum(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -192,7 +183,6 @@ pub fn wt_after_uninstall_threshold_leq_weight_sum(e: Env) {
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: can_enforce
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_after_can_enforce_threshold_leq_weight_sum(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -205,7 +195,6 @@ pub fn wt_after_can_enforce_threshold_leq_weight_sum(e: Env, context: soroban_sd
 #[rule]
 // invariant: threshold <= weighted_sum(all), case: enforce
 // status: verified
-// link: https://prover.certora.com/output/40748/c75377f133c646e4be4a6aca9ce0ef1f/?anonymousKey=c6fa5c3ffe209e90041ef7545dfd64e373fb29e9
 pub fn wt_enforce_threshold_leq_weight_sum(e: Env, context: soroban_sdk::auth::Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();

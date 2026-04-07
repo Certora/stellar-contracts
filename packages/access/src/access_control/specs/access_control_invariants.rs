@@ -17,7 +17,7 @@ use crate::access_control::{
 
 // property: P-08. Access-Control-Invariants.
 // description: Invariants: 1. admin != None (except for when renounce_admin is
-// called) and 2. pending_admin != none implies admin != none. status: violated
+// called) and 2. pending_admin != none implies admin != none. status: verified
 
 // invariant: admin != None -> holds in all cases except for renounce_admin
 
@@ -35,7 +35,6 @@ pub fn assert_post_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: constructor
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_constructor_admin_is_set(e: Env) {
     let admin = nondet_address();
     AccessControlContract::access_control_constructor(&e, admin);
@@ -45,7 +44,6 @@ pub fn after_constructor_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: grant_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_grant_role_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     let caller = nondet_address();
@@ -58,7 +56,6 @@ pub fn after_grant_role_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: revoke_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_revoke_role_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     let caller = nondet_address();
@@ -71,7 +68,6 @@ pub fn after_revoke_role_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: renounce_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_renounce_role_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     let caller = nondet_address();
@@ -83,7 +79,6 @@ pub fn after_renounce_role_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: transfer_admin_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_transfer_admin_role_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     let new_admin = nondet_address();
@@ -95,7 +90,6 @@ pub fn after_transfer_admin_role_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: accept_admin_transfer
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_accept_admin_transfer_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     AccessControlContract::accept_admin_transfer(&e);
@@ -105,7 +99,6 @@ pub fn after_accept_admin_transfer_admin_is_set(e: Env) {
 #[rule]
 // invariant: admin != None, case: set_role_admin
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_set_role_admin_admin_is_set(e: Env) {
     assume_pre_admin_is_set(e.clone());
     let role = nondet_symbol();
@@ -138,7 +131,6 @@ pub fn assert_post_pending_admin_implies_admin(e: &Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: constructor
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_constructor_pending_admin_implies_admin(e: Env) {
     let admin = nondet_address();
     AccessControlContract::access_control_constructor(&e, admin);
@@ -148,7 +140,6 @@ pub fn after_constructor_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: grant_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_grant_role_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     let caller = nondet_address();
@@ -161,7 +152,6 @@ pub fn after_grant_role_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: revoke_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_revoke_role_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     let caller = nondet_address();
@@ -174,7 +164,6 @@ pub fn after_revoke_role_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: renounce_role
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_renounce_role_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     let caller = nondet_address();
@@ -186,7 +175,6 @@ pub fn after_renounce_role_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case:
 // transfer_admin_role status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_transfer_admin_role_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     let new_admin = nondet_address();
@@ -198,7 +186,6 @@ pub fn after_transfer_admin_role_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case:
 // accept_admin_transfer status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_accept_admin_transfer_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     AccessControlContract::accept_admin_transfer(&e);
@@ -208,7 +195,6 @@ pub fn after_accept_admin_transfer_pending_admin_implies_admin(e: Env) {
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: set_role_admin
 // status: verified
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
 pub fn after_set_role_admin_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     let role = nondet_symbol();
@@ -219,8 +205,7 @@ pub fn after_set_role_admin_pending_admin_implies_admin(e: Env) {
 
 #[rule]
 // invariant: pending_admin != none implies admin != none, case: renounce_admin
-// status: violated
-// link: https://prover.certora.com/output/40748/2fe4902f774a478dbdd6a23e58024caa/?anonymousKey=5b0f52eea2466d8e41877b801d8afa6508a997b9
+// status: verified
 pub fn after_renounce_admin_pending_admin_implies_admin(e: Env) {
     assume_pre_pending_admin_implies_admin(&e);
     AccessControlContract::renounce_admin(&e);

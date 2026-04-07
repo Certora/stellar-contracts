@@ -15,7 +15,6 @@ use crate::ownable::{
 #[rule]
 // after the constructor the owner is set.
 // status: verified
-// link: https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5
 pub fn ownable_constructor_integrity(e: Env) {
     let new_owner = nondet_address();
     clog!(cvlr_soroban::Addr(&new_owner));
@@ -33,7 +32,6 @@ pub fn ownable_constructor_integrity(e: Env) {
 // transfer_ownership with live_until_ledger > current_ledger
 // sets the pending owner to new_owner and does not change the owner
 // status: verified
-// link: https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5
 pub fn transfer_ownership_integrity(e: Env) {
     let new_owner = nondet_address();
     clog!(cvlr_soroban::Addr(&new_owner));
@@ -63,7 +61,6 @@ pub fn transfer_ownership_integrity(e: Env) {
 #[rule]
 // transfer_ownership with a live ledger 0 removes the pending owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5
 pub fn remove_transfer_ownership_integrity(e: Env) {
     let new_owner = nondet_address();
     clog!(cvlr_soroban::Addr(&new_owner));
@@ -82,7 +79,6 @@ pub fn remove_transfer_ownership_integrity(e: Env) {
 // accept_ownership sets the owner to the pending owner and removes the pending
 // owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5
 pub fn accept_ownership_integrity(e: Env) {
     let pending_owner_pre = get_pending_owner(&e);
     if let Some(pending_owner_internal) = pending_owner_pre.clone() {
@@ -109,7 +105,6 @@ pub fn accept_ownership_integrity(e: Env) {
 #[rule]
 // renounce_ownership removes the owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/e9359957e70440219848777039fac90d/?anonymousKey=0f575c24b69229247269a06a9497c6f649dc70d5
 pub fn renounce_ownership_integrity(e: Env) {
     OwnableContract::renounce_ownership(&e);
 

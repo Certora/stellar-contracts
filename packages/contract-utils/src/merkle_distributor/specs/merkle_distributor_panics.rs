@@ -12,7 +12,6 @@ use crate::merkle_distributor::specs::merkle_distributor_sha256::{Leaf, MerkleDi
 #[rule]
 // set_claimed panics if already claimed
 // status: violated
-// link: https://prover.certora.com/output/5771024/6a3483107de148b3b94cbaf918c1a8e5/?anonymousKey=bdd4242775676bd7dd86fdd7155797ac2ee17925
 pub fn set_claimed_panics_if_already_claimed(e: Env) {
     let index: u32 = nondet();
     let is_claimed_pre = MerkleDistributorSha256::is_claimed(&e, index);
@@ -24,7 +23,6 @@ pub fn set_claimed_panics_if_already_claimed(e: Env) {
 #[rule]
 // verify_and_set_claimed panics if already claimed
 // status: verified
-// link: https://prover.certora.com/output/5771024/6a3483107de148b3b94cbaf918c1a8e5/?anonymousKey=bdd4242775676bd7dd86fdd7155797ac2ee17925
 pub fn verify_and_set_claimed_panics_if_already_claimed(e: Env) {
     let leaf = Leaf::nondet();
     let index = leaf.index;
@@ -38,7 +36,6 @@ pub fn verify_and_set_claimed_panics_if_already_claimed(e: Env) {
 #[rule]
 // verify_with_index_and_set_claimed panics if already claimed
 // status: verified
-// link: https://prover.certora.com/output/5771024/6a3483107de148b3b94cbaf918c1a8e5/?anonymousKey=bdd4242775676bd7dd86fdd7155797ac2ee17925
 pub fn verify_with_index_and_set_claimed_panics_if_already_claimed(e: Env) {
     let leaf = Leaf::nondet();
     let index = leaf.index;

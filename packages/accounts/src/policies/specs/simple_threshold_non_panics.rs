@@ -33,7 +33,6 @@ fn storage_setup_threshold(e: Env, ctx_rule_id: u32, account_id: Address) {
 #[rule]
 // if storage is setup, setting a valid threshold and account_id is auth, then
 // set_threshold does not panic status: verified
-// link: https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db
 pub fn set_threshold_non_panic(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -50,7 +49,6 @@ pub fn set_threshold_non_panic(e: Env) {
 #[rule]
 // if storage is setup, threshold exists, then get_threshold does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db
 pub fn get_threshold_non_panic(e: Env) {
     let ctx_rule_id: u32 = u32::nondet();
     let account_id = nondet_address();
@@ -65,7 +63,6 @@ pub fn get_threshold_non_panic(e: Env) {
 #[rule]
 // if storage is setup can_enforce does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db
 pub fn can_enforce_non_panic(e: Env, context: soroban_sdk::auth::Context) {
     let authenticated_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -78,7 +75,6 @@ pub fn can_enforce_non_panic(e: Env, context: soroban_sdk::auth::Context) {
 #[rule]
 // if storage_is_setup, can_enforce returns true, and account_id is auth, then
 // enforce does not panic status: verified
-// link: https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db
 pub fn enforce_non_panic(
     e: Env,
     context: soroban_sdk::auth::Context,
@@ -98,7 +94,6 @@ pub fn enforce_non_panic(
 #[rule]
 // if storage is setup, account_id is auth, then uninstall does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/77b92956f46c47e980883b164ee2d81c/?anonymousKey=9035f9923a813c045c3556dc873cf1cf402e49db
 pub fn uninstall_non_panic(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();

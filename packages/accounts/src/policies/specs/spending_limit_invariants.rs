@@ -45,7 +45,6 @@ pub fn assert_post_spending_limit_gt_zero(e: Env, ctx_rule: ContextRule, account
 #[rule]
 // invariant: spending_limit > 0, case: install
 // status: verified
-// link: https://prover.certora.com/output/5771024/a7272a72ed8d4102abbd1df505031f20/?anonymousKey=4cc4b78d1f9987bb1e74458ef1e4616432f98ef0
 pub fn sl_after_install_spending_limit_gt_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -56,7 +55,6 @@ pub fn sl_after_install_spending_limit_gt_zero(e: Env) {
 #[rule]
 // invariant: spending_limit > 0, case: uninstall
 // status: verified
-// link: https://prover.certora.com/output/5771024/0054528c2e574210874926620c30d73d/?anonymousKey=8229c1669e893c81b224482a7639b4349d773160
 pub fn sl_after_uninstall_spending_limit_gt_zero(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -68,7 +66,6 @@ pub fn sl_after_uninstall_spending_limit_gt_zero(e: Env) {
 #[rule]
 // invariant: spending_limit > 0, case: set_spending_limit
 // status: verified
-// link: https://prover.certora.com/output/5771024/0054528c2e574210874926620c30d73d/?anonymousKey=8229c1669e893c81b224482a7639b4349d773160
 pub fn sl_after_set_spending_limit_spending_limit_gt_zero(e: Env) {
     let spending_limit: i128 = i128::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -81,7 +78,6 @@ pub fn sl_after_set_spending_limit_spending_limit_gt_zero(e: Env) {
 #[rule]
 // invariant: spending_limit > 0, case: can_enforce
 // status: verified
-// link: https://prover.certora.com/output/5771024/0054528c2e574210874926620c30d73d/?anonymousKey=8229c1669e893c81b224482a7639b4349d773160
 pub fn sl_after_can_enforce_spending_limit_gt_zero(e: Env, context: Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();
@@ -94,7 +90,6 @@ pub fn sl_after_can_enforce_spending_limit_gt_zero(e: Env, context: Context) {
 #[rule]
 // invariant: spending_limit > 0, case: enforce
 // status: verified
-// link: https://prover.certora.com/output/5771024/0054528c2e574210874926620c30d73d/?anonymousKey=8229c1669e893c81b224482a7639b4349d773160
 pub fn sl_after_enforce_spending_limit_gt_zero(e: Env, context: Context) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id: Address = nondet_address();

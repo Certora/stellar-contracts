@@ -20,7 +20,6 @@ use crate::ownable::{
 #[rule]
 // transfer_ownership panics if the not authorized by the owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn transfer_ownership_panics_if_unauth_by_owner(e: Env) {
     let new_owner = nondet_address();
     clog!(cvlr_soroban::Addr(&new_owner));
@@ -38,7 +37,6 @@ pub fn transfer_ownership_panics_if_unauth_by_owner(e: Env) {
 #[rule]
 // transfer_ownership panics if the owner is not set.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn transfer_ownership_panics_if_owner_not_set(e: Env) {
     let new_owner = nondet_address();
     let live_until_ledger = u32::nondet();
@@ -51,7 +49,6 @@ pub fn transfer_ownership_panics_if_owner_not_set(e: Env) {
 #[rule]
 // transfer_ownership panics if live_until_ledger = 0 and PendingOwner = None
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn transfer_ownership_panics_if_live_until_ledger_0_and_pending_owner_none(e: Env) {
     let new_owner = nondet_address();
     let live_until_ledger = 0;
@@ -65,7 +62,6 @@ pub fn transfer_ownership_panics_if_live_until_ledger_0_and_pending_owner_none(e
 // transfer_ownership panics if live_until_ledger = 0 and PendingOwner !=
 // new_owner
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn transfer_ownership_panics_if_live_until_ledger_0_and_diff_pending_owner(e: Env) {
     let new_owner = nondet_address();
     let live_until_ledger = 0;
@@ -80,7 +76,6 @@ pub fn transfer_ownership_panics_if_live_until_ledger_0_and_diff_pending_owner(e
 #[rule]
 // transfer_ownership panics if the live_until_ledger is in the past.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn transfer_ownership_panics_if_invalid_live_until_ledger(e: Env) {
     let new_owner = nondet_address();
     let live_until_ledger = u32::nondet();
@@ -96,7 +91,6 @@ pub fn transfer_ownership_panics_if_invalid_live_until_ledger(e: Env) {
 #[rule]
 // accept_ownership panics if the not authorized by the pending owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn accept_ownership_panics_if_unauth_by_pending_owner(e: Env) {
     let pending_owner = get_pending_owner(&e);
     if let Some(pending_owner_internal) = pending_owner.clone() {
@@ -109,7 +103,6 @@ pub fn accept_ownership_panics_if_unauth_by_pending_owner(e: Env) {
 #[rule]
 // accept_ownership panics if the pending owner is not set.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn accept_ownership_panics_if_pending_owner_not_set(e: Env) {
     let pending_owner = get_pending_owner(&e);
     cvlr_assume!(pending_owner.is_none());
@@ -120,7 +113,6 @@ pub fn accept_ownership_panics_if_pending_owner_not_set(e: Env) {
 #[rule]
 // renounce_ownership panics if not authorized by the owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn renounce_ownership_panics_if_unauth_by_owner(e: Env) {
     let owner = OwnableContract::get_owner(&e);
     if let Some(owner_internal) = owner.clone() {
@@ -134,7 +126,6 @@ pub fn renounce_ownership_panics_if_unauth_by_owner(e: Env) {
 #[rule]
 // renounce_ownership panics if the owner is not set.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn renounce_ownership_panics_if_owner_not_set(e: Env) {
     let owner: Option<Address> = OwnableContract::get_owner(&e);
     cvlr_assume!(owner.is_none());
@@ -145,7 +136,6 @@ pub fn renounce_ownership_panics_if_owner_not_set(e: Env) {
 #[rule]
 // renounce_ownership panics if there is a pending ownership transfer.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn renounce_ownership_panics_if_pending_ownership_transfer(e: Env) {
     let pending_owner = e.storage().temporary().get::<_, Address>(&OwnableStorageKey::PendingOwner);
     cvlr_assume!(pending_owner.is_some());
@@ -158,7 +148,6 @@ pub fn renounce_ownership_panics_if_pending_ownership_transfer(e: Env) {
 #[rule]
 // owner_restricted_function panics if not authorized by owner.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn owner_restricted_function_panics_if_unauth_by_owner(e: Env) {
     let owner = OwnableContract::get_owner(&e);
     if let Some(owner_internal) = owner.clone() {
@@ -172,7 +161,6 @@ pub fn owner_restricted_function_panics_if_unauth_by_owner(e: Env) {
 #[rule]
 // owner_restricted_function panics if the owner is not set.
 // status: verified
-// link: https://prover.certora.com/output/40748/cdeae5d5265148f98b06d830f6655304/?anonymousKey=948f82c8edf3d40432b8dfcb197a08bcb5226088
 pub fn owner_restricted_function_panics_if_owner_not_set(e: Env) {
     let owner = OwnableContract::get_owner(&e);
     cvlr_assume!(owner.is_none());

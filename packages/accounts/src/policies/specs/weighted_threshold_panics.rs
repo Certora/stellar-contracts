@@ -27,7 +27,6 @@ use crate::{
 #[rule]
 // set_threshold_panics if invalid threshold (threshold == 0)
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_threshold_panics_if_threshold_zero(e: Env) {
     let threshold: u32 = 0;
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -39,7 +38,6 @@ pub fn wt_set_threshold_panics_if_threshold_zero(e: Env) {
 #[rule]
 // set_threshold_panics if threshold > total_weight
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_threshold_panics_if_threshold_exceeds_total_weight(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -54,7 +52,6 @@ pub fn wt_set_threshold_panics_if_threshold_exceeds_total_weight(e: Env) {
 #[rule]
 // set_threshold_panics if unauth
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_threshold_panics_if_unauth(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -67,7 +64,6 @@ pub fn wt_set_threshold_panics_if_unauth(e: Env) {
 #[rule]
 // set_threshold_panics if not installed
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_threshold_panics_if_not_installed(e: Env) {
     let threshold: u32 = u32::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -83,7 +79,6 @@ pub fn wt_set_threshold_panics_if_not_installed(e: Env) {
 #[rule]
 // set_signer_weight_panics if threshold > total_weight after update
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_signer_weight_panics_if_threshold_exceeds_total_weight(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -105,7 +100,6 @@ pub fn wt_set_signer_weight_panics_if_threshold_exceeds_total_weight(e: Env) {
 #[rule]
 // set_signer_weight_panics if unauth
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_signer_weight_panics_if_unauth(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -119,7 +113,6 @@ pub fn wt_set_signer_weight_panics_if_unauth(e: Env) {
 #[rule]
 // set_signer_weight_panics if not installed
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_set_signer_weight_panics_if_not_installed(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -135,7 +128,6 @@ pub fn wt_set_signer_weight_panics_if_not_installed(e: Env) {
 #[rule]
 // get_threshold_panics if not installed
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_get_threshold_panics_if_no_threshold(e: Env) {
     let ctx_rule_id: u32 = u32::nondet();
     let account_id = nondet_address();
@@ -149,7 +141,6 @@ pub fn wt_get_threshold_panics_if_no_threshold(e: Env) {
 #[rule]
 // get_signer_weights_panics if not installed
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_get_signer_weights_panics_if_not_installed(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
@@ -165,7 +156,6 @@ pub fn wt_get_signer_weights_panics_if_not_installed(e: Env) {
 #[rule]
 // enforce panics if can_enforce returns false
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_enforce_panics_if_can_enforce_returns_false(e: Env, context: soroban_sdk::auth::Context) {
     let authenticated_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -180,7 +170,6 @@ pub fn wt_enforce_panics_if_can_enforce_returns_false(e: Env, context: soroban_s
 #[rule]
 // enforce panics if unauth
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_enforce_panics_if_unauth(e: Env, context: soroban_sdk::auth::Context) {
     let authenticated_signers: Vec<Signer> = nondet_signers_vec();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -193,7 +182,6 @@ pub fn wt_enforce_panics_if_unauth(e: Env, context: soroban_sdk::auth::Context) 
 #[rule]
 // install panics if invalid threshold (threshold == 0)
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_install_panics_if_threshold_zero(e: Env) {
     let mut params: WeightedThresholdAccountParams = WeightedThresholdAccountParams::nondet();
     params.threshold = 0;
@@ -206,7 +194,6 @@ pub fn wt_install_panics_if_threshold_zero(e: Env) {
 #[rule]
 // install panics if threshold > total_weight
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_install_panics_if_threshold_exceeds_total_weight(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();
@@ -222,7 +209,6 @@ pub fn wt_install_panics_if_threshold_exceeds_total_weight(e: Env) {
 #[rule]
 // install panics if unauth
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_install_panics_if_unauth(e: Env) {
     let params: WeightedThresholdAccountParams = WeightedThresholdAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -235,7 +221,6 @@ pub fn wt_install_panics_if_unauth(e: Env) {
 #[rule]
 // uninstall panics if unauth
 // status: verified
-// link: https://prover.certora.com/output/40748/f69ce00ee09741d4a990bd29583cc313/?anonymousKey=41c66115231cba2f8ae604fff6d3745a7e345d09
 pub fn wt_uninstall_panics_if_unauth(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     let account_id = nondet_address();

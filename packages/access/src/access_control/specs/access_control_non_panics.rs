@@ -84,7 +84,6 @@ pub fn storage_setup_last_account(e: Env, role: Symbol) {
 #[rule]
 // if: storage is setup, caller auth and caller is admin or has admin role then
 // grant_role does not panic status: verified
-// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn grant_role_non_panic(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -117,7 +116,6 @@ pub fn grant_role_non_panic(e: Env) {
 // if storage is setup, admin exists, admin auth, pending owner can only be the
 // same as new_admin, and live until ledger is appropriate then
 // transfer_admin_role does not panic status: verified
-// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn transfer_admin_role_non_panic(e: Env) {
     let new_admin = nondet_address().clone();
     let live_until_ledger = u32::nondet();
@@ -150,7 +148,6 @@ pub fn transfer_admin_role_non_panic(e: Env) {
 #[rule]
 // if: storage is setup, pending admin exists and pending admin auth then
 // accept_admin_transfer does not panic status: verified
-// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn accept_admin_transfer_non_panic(e: Env) {
     storage_setup_pending_admin(e.clone());
     storage_setup_admin(e.clone());
@@ -167,7 +164,6 @@ pub fn accept_admin_transfer_non_panic(e: Env) {
 #[rule]
 // if: storage is setup, admin exists and admin auth then set_role_admin does
 // not panic status: verified
-// link: https://prover.certora.com/output/40748/86c9538348fc4f7aaec74a0007f9f336/?anonymousKey=93b13006a8d89ab76818946db2f4eded4567a5d3
 pub fn set_role_admin_non_panic(e: Env) {
     let role = nondet_symbol();
     let admin_role = nondet_symbol();

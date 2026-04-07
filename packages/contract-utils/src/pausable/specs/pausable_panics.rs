@@ -12,7 +12,6 @@ use crate::pausable::{pause, paused, specs::pausable_contract::PausableContract,
 #[rule]
 // pause panics if the contract is already paused
 // status: verified
-// link: https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5
 pub fn pause_panics_if_paused(e: Env) {
     let paused_pre = PausableContract::paused(&e);
     cvlr_assume!(paused_pre);
@@ -24,7 +23,6 @@ pub fn pause_panics_if_paused(e: Env) {
 #[rule]
 // unpause panics if the contract is not paused
 // status: verified
-// link: https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5
 pub fn unpause_panics_if_not_paused(e: Env) {
     let paused_pre = PausableContract::paused(&e);
     cvlr_assume!(!paused_pre);
@@ -36,7 +34,6 @@ pub fn unpause_panics_if_not_paused(e: Env) {
 #[rule]
 // when_not_paused_func panics if paused
 // status: verified
-// link: https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5
 pub fn when_not_paused_panics_if_paused(e: Env) {
     let paused_pre = PausableContract::paused(&e);
     cvlr_assume!(paused_pre);
@@ -47,7 +44,6 @@ pub fn when_not_paused_panics_if_paused(e: Env) {
 #[rule]
 // when_paused_func panics if not paused
 // status: verified
-// link: https://prover.certora.com/output/40748/38a153665ebd4fe0b33095d6a56f250e/?anonymousKey=5d1bd1f9f55a00ce94a01078579b9b8b8dcfc0d5
 pub fn when_paused_panics_if_not_paused(e: Env) {
     let paused_pre = PausableContract::paused(&e);
     cvlr_assume!(!paused_pre);

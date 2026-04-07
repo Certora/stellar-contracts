@@ -27,7 +27,6 @@ use crate::smart_account::{
 #[rule]
 // update_context_rule_name changes the name correctly
 // status: verified
-// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn update_context_rule_name_integrity(e: Env) {
     let id = nondet();
     let name = nondet_string();
@@ -41,7 +40,6 @@ pub fn update_context_rule_name_integrity(e: Env) {
 #[rule]
 // update_context_rule_valid_until changes the valid_until correctly
 // status: verified
-// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn update_context_rule_valid_until_integrity(e: Env) {
     let id: u32 = nondet();
     let valid_until = Option::<u32>::nondet();
@@ -53,7 +51,6 @@ pub fn update_context_rule_valid_until_integrity(e: Env) {
 #[rule]
 // remove_context_rule decrements the rule count correctly
 // status: verified
-// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn remove_context_rule_integrity_1(e: Env) {
     let id: u32 = nondet();
     clog!(id);
@@ -67,7 +64,6 @@ pub fn remove_context_rule_integrity_1(e: Env) {
 #[rule]
 // add_signer adds the signer to the context rule
 // status: verified
-// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn add_signer_integrity(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();
@@ -87,7 +83,6 @@ pub fn add_signer_integrity(e: Env) {
 #[rule]
 // remove_signer removes the signer from the context rule
 // status: verified
-// link: https://prover.certora.com/output/40748/810bcaf4f6fd42e99fd6fd6282647b77/?anonymousKey=87d8f7644e3865a3b25aa8449f765ab680c4267a
 pub fn remove_signer_integrity(e: Env) {
     let id: u32 = nondet();
     let signer = Signer::nondet();

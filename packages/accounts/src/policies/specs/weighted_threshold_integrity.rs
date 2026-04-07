@@ -31,7 +31,6 @@ use crate::{
 // can_enforce returns the expected result: total_weight >= threshold_pre where
 // total_weight is the sum of the weights of the authenticated signers
 // status: verified
-// link: https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1
 pub fn wt_can_enforce_integrity(e: Env) {
     let context: soroban_sdk::auth::Context = nondet_context();
     let auth_signers: Vec<Signer> = nondet_signers_vec();
@@ -59,7 +58,6 @@ pub fn wt_can_enforce_integrity(e: Env) {
 #[rule]
 // set_threshold sets the threshold
 // status: verified
-// link: https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1
 pub fn wt_set_threshold_integrity(e: Env) {
     let threshold: u32 = u32::nondet();
     clog!(threshold);
@@ -76,7 +74,6 @@ pub fn wt_set_threshold_integrity(e: Env) {
 #[rule]
 // set_signer_weight sets the weight for a signer
 // status: verified
-// link: https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1
 pub fn wt_set_signer_weight_integrity(e: Env) {
     let signer: Signer = Signer::nondet();
     let weight: u32 = u32::nondet();
@@ -95,7 +92,6 @@ pub fn wt_set_signer_weight_integrity(e: Env) {
 #[rule]
 // install sets the signer weights and threshold
 // status: verified
-// link: https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1
 pub fn wt_install_integrity(e: Env) {
     let params: WeightedThresholdAccountParams = WeightedThresholdAccountParams::nondet();
     let ctx_rule: ContextRule = ContextRule::nondet();
@@ -113,7 +109,6 @@ pub fn wt_install_integrity(e: Env) {
 #[rule]
 // after uninstall the account ctx is removed
 // status: verified
-// link: https://prover.certora.com/output/40748/c48818ae8a144d3d9afd117c6d9b0124/?anonymousKey=376f40c28a803961a1afea05aa73533354a8a7d1
 pub fn wt_uninstall_integrity(e: Env) {
     let ctx_rule: ContextRule = ContextRule::nondet();
     clog!(ctx_rule.id);

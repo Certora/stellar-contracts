@@ -19,7 +19,6 @@ use crate::ownable::{
 // if: storage is setup, owner exists, owner auth, pending owner is some,
 // pending owner auth, live until ledger is appropriate then transfer_ownership
 // does not panic status: verified
-// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn transfer_ownership_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
@@ -55,7 +54,6 @@ pub fn transfer_ownership_non_panic(e: Env) {
 #[rule]
 // if: storage is setup, pending owner is some, pending owner auth then
 // accept_ownership does not panic status: verified
-// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn accept_ownership_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);
@@ -72,7 +70,6 @@ pub fn accept_ownership_non_panic(e: Env) {
 #[rule]
 // if: storage is setup, pending owner is none then renounce_ownership does not
 // panic status: verified
-// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn renounce_ownership_non_panic(e: Env) {
     // // setup storage: needed for now.
     // // WIP: will have this macro for setting storage up automatically.
@@ -93,7 +90,6 @@ pub fn renounce_ownership_non_panic(e: Env) {
 #[rule]
 // if: storage is setup, owner exists, owner auth then owner_restricted_function
 // does not panic status: verified
-// link: https://prover.certora.com/output/40748/87d4f8f515874dc4a79c6abb67f50808/?anonymousKey=10f2f84212153e212bf95202cb30bc81dd802347
 pub fn owner_restricted_function_non_panic(e: Env) {
     let address1 = nondet_address();
     e.storage().temporary().set(&OwnableStorageKey::PendingOwner, &address1);

@@ -6,11 +6,11 @@ use crate::math::math_64::i64_fixed_point::{div_ceil, div_floor};
 
 // property: P-XX. Math Rounding.
 // description: muldiv functions round correctly.
-// status: violated
+// status: verified for a simplified version
 
 #[rule]
 // div_floor rounds correctly 1
-// status:
+// status: verified
 pub fn div_floor_rounds_correct_1(_e: Env) {
     let r = i64::nondet();
     let z = i64::nondet();
@@ -32,7 +32,7 @@ pub fn div_floor_rounds_correct_1(_e: Env) {
 
 #[rule]
 // div_floor rounds correctly 2
-// status:
+// status: verified
 pub fn div_floor_rounds_correct_2(_e: Env) {
     let r = i64::nondet();
     let z = i64::nondet();
@@ -54,7 +54,7 @@ pub fn div_floor_rounds_correct_2(_e: Env) {
 
 #[rule]
 // div_ceil rounds correctly 1
-// status: 
+// status: verified 
 pub fn div_ceil_rounds_correct_1(_e: Env) {
     let r = i64::nondet();
     let z = i64::nondet();
@@ -75,7 +75,7 @@ pub fn div_ceil_rounds_correct_1(_e: Env) {
 
 #[rule]
 // div_ceil rounds correctly 2
-// status: 
+// status: verified
 pub fn div_ceil_rounds_correct_2(_e: Env) {
     let r = i64::nondet();
     let z = i64::nondet();

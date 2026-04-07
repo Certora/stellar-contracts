@@ -18,7 +18,6 @@ use crate::pausable::{
 #[rule]
 // if unpaused pause does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/8503bf7445624554b26ff046f2e6f413/?anonymousKey=f347db4b63b3cc756554049dea0f2e7e4c806e25
 pub fn pause_non_panic(e: Env) {
     // storage set up
     let bool = bool::nondet();
@@ -33,7 +32,6 @@ pub fn pause_non_panic(e: Env) {
 #[rule]
 // if paused unpause does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/8503bf7445624554b26ff046f2e6f413/?anonymousKey=f347db4b63b3cc756554049dea0f2e7e4c806e25
 pub fn unpause_non_panic(e: Env) {
     // storage set up
     let bool = bool::nondet();
@@ -48,7 +46,6 @@ pub fn unpause_non_panic(e: Env) {
 #[rule]
 // if unpaused when_not_paused_func does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/8503bf7445624554b26ff046f2e6f413/?anonymousKey=f347db4b63b3cc756554049dea0f2e7e4c806e25
 pub fn when_not_paused_non_panic(e: Env) {
     // storage set up
     let bool = bool::nondet();
@@ -62,7 +59,6 @@ pub fn when_not_paused_non_panic(e: Env) {
 #[rule]
 // if paused when_paused_func does not panic
 // status: verified
-// link: https://prover.certora.com/output/40748/8503bf7445624554b26ff046f2e6f413/?anonymousKey=f347db4b63b3cc756554049dea0f2e7e4c806e25
 pub fn when_paused_non_panic(e: Env) {
     // storage set up
     let bool = bool::nondet();

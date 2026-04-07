@@ -12,7 +12,6 @@ use crate::merkle_distributor::specs::merkle_distributor_sha256::{Leaf, MerkleDi
 #[rule]
 // set root sets the root hash in storage
 // status: verified
-// link: https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0
 pub fn set_root_integrity(e: Env) {
     let root_hash = nondet_bytes_n();
     MerkleDistributorSha256::set_root(&e, root_hash.clone());
@@ -23,7 +22,6 @@ pub fn set_root_integrity(e: Env) {
 #[rule]
 // set_claimed set the claimed status of an index to true
 // status: verified
-// link: https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0
 pub fn set_claimed_integrity(e: Env) {
     let index: u32 = nondet();
     MerkleDistributorSha256::set_claimed(&e, index);
@@ -34,7 +32,6 @@ pub fn set_claimed_integrity(e: Env) {
 #[rule]
 // verify_and_set_claimed sets the claimed status of an index to true
 // status: verified
-// link: https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0
 pub fn verify_and_set_claimed_integrity(e: Env) {
     let index: u32 = nondet();
     let leaf = Leaf::nondet();
@@ -47,7 +44,6 @@ pub fn verify_and_set_claimed_integrity(e: Env) {
 #[rule]
 // verify_with_index_and_set_claimed sets the claimed status of an index to true
 // status: verified
-// link: https://prover.certora.com/output/5771024/71175869c99f4772be32263e1faddae5/?anonymousKey=3bc1242e4fb4afc33cef49696fa89572dd5e9ab0
 pub fn verify_with_index_and_set_claimed_integrity(e: Env) {
     let index: u32 = nondet();
     let leaf = Leaf::nondet();

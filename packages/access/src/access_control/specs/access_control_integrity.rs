@@ -15,7 +15,6 @@ use crate::access_control::{
 #[rule]
 // after call to constructor the admin is set
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn access_control_constructor_integrity(e: Env) {
     let admin = nondet_address();
     clog!(cvlr_soroban::Addr(&admin));
@@ -30,7 +29,6 @@ pub fn access_control_constructor_integrity(e: Env) {
 #[rule]
 // after call to grant_role the account has the role
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn grant_role_integrity(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -43,7 +41,6 @@ pub fn grant_role_integrity(e: Env) {
 #[rule]
 // after call to revoke_role the account does not have the role
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn revoke_role_integrity(e: Env) {
     let caller = nondet_address();
     let account = nondet_address();
@@ -56,7 +53,6 @@ pub fn revoke_role_integrity(e: Env) {
 #[rule]
 // after call to renounce_role the account does not have the role
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn renounce_role_integrity(e: Env) {
     let caller = nondet_address();
     let role = nondet_symbol();
@@ -69,7 +65,6 @@ pub fn renounce_role_integrity(e: Env) {
 // after call to transfer_admin_role with live_until_ledger > current_ledger the
 // pending admin is set to the new admin
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn transfer_admin_role_integrity(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = u32::nondet();
@@ -84,7 +79,6 @@ pub fn transfer_admin_role_integrity(e: Env) {
 // after call to accept_admin_transfer with live_until_ledger = 0 the pending
 // admin is none
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn remove_transfer_admin_role_integrity(e: Env) {
     let new_admin = nondet_address();
     let live_until_ledger = 0;
@@ -97,7 +91,6 @@ pub fn remove_transfer_admin_role_integrity(e: Env) {
 // after call to accept_admin_transfer the admin is set to the previous pending
 // admin, which is not none, and the pending admin is set to none
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn accept_admin_transfer_integrity(e: Env) {
     let pending_admin_pre = get_pending_admin(&e);
     cvlr_assume!(!pending_admin_pre.is_none());
@@ -116,7 +109,6 @@ pub fn accept_admin_transfer_integrity(e: Env) {
 // after call to set_role_admin the role admin of the given role is the given
 // admin_role
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn set_role_admin_integrity(e: Env) {
     let role = nondet_symbol();
     let admin_role = nondet_symbol();
@@ -131,7 +123,6 @@ pub fn set_role_admin_integrity(e: Env) {
 #[rule]
 // after call to renounce_admin the admin is none
 // status: verified
-// link: https://prover.certora.com/output/40748/efa6d2fce6eb4cc8ad201a3e3e971205/?anonymousKey=090346eda207bdf9685962ede0a87bb348d4257c
 pub fn renounce_admin_integrity(e: Env) {
     AccessControlContract::renounce_admin(&e);
     let admin = AccessControlContract::get_admin(&e);

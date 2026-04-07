@@ -29,7 +29,6 @@ pub fn assert_post_owner_is_set(e: Env) {
 #[rule]
 // invariant: owner != None, case: constructor
 // status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_constructor_owner_is_set(e: Env) {
     let new_owner = nondet_address();
     OwnableContract::ownable_constructor(&e, new_owner);
@@ -39,7 +38,6 @@ pub fn after_constructor_owner_is_set(e: Env) {
 #[rule]
 // invariant: owner != None, case: transfer_ownership
 // status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_transfer_ownership_pending_owner_is_set(e: Env) {
     assume_pre_owner_is_set(e.clone());
     let new_owner = nondet_address();
@@ -51,7 +49,6 @@ pub fn after_transfer_ownership_pending_owner_is_set(e: Env) {
 #[rule]
 // invariant: owner != None, case: accept_ownership
 // status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_accept_ownership_owner_is_set(e: Env) {
     assume_pre_owner_is_set(e.clone());
     OwnableContract::accept_ownership(&e);
@@ -63,7 +60,6 @@ pub fn after_accept_ownership_owner_is_set(e: Env) {
 #[rule]
 // invariant: owner != None, case: owner_restricted_function
 // status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_owner_restricted_function_owner_is_set(e: Env) {
     assume_pre_owner_is_set(e.clone());
     OwnableContract::owner_restricted_function(&e);
@@ -104,7 +100,6 @@ pub fn assert_post_pending_owner_implies_owner(e: &Env) {
 #[rule]
 // invariant: pending_owner != none implies owner != none, case: constructor
 // status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_constructor_pending_owner_implies_owner(e: Env) {
     let new_owner = nondet_address();
     OwnableContract::ownable_constructor(&e, new_owner);
@@ -114,7 +109,6 @@ pub fn after_constructor_pending_owner_implies_owner(e: Env) {
 #[rule]
 // invariant: pending_owner != none implies owner != none, case:
 // transfer_ownership status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_transfer_ownership_pending_owner_implies_owner(e: Env) {
     assume_pre_pending_owner_implies_owner(&e);
     let new_owner = nondet_address();
@@ -126,7 +120,6 @@ pub fn after_transfer_ownership_pending_owner_implies_owner(e: Env) {
 #[rule]
 // invariant: pending_owner != none implies owner != none, case:
 // accept_ownership status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_accept_ownership_pending_owner_implies_owner(e: Env) {
     assume_pre_pending_owner_implies_owner(&e);
     OwnableContract::accept_ownership(&e);
@@ -136,7 +129,6 @@ pub fn after_accept_ownership_pending_owner_implies_owner(e: Env) {
 #[rule]
 // invariant: pending_owner != none implies owner != none, case:
 // renounce_ownership status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_renounce_ownership_pending_owner_implies_owner(e: Env) {
     assume_pre_pending_owner_implies_owner(&e);
     OwnableContract::renounce_ownership(&e);
@@ -146,7 +138,6 @@ pub fn after_renounce_ownership_pending_owner_implies_owner(e: Env) {
 #[rule]
 // invariant: pending_owner != none implies owner != none, case:
 // owner_restricted_function status: verified
-// link: https://prover.certora.com/output/40748/8a7b63203eee4a5ab84c1bf2d3723354/?anonymousKey=263b91d6efad44a318950ca0ba0c114cd3951741
 pub fn after_owner_restricted_function_pending_owner_implies_owner(e: Env) {
     assume_pre_pending_owner_implies_owner(&e);
     OwnableContract::owner_restricted_function(&e);
