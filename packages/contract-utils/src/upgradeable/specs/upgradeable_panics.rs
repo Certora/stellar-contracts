@@ -1,0 +1,79 @@
+use cvlr::{clog, cvlr_assert, cvlr_assume, cvlr_satisfy, nondet};
+use cvlr_soroban::{is_auth, nondet_address, nondet_bytes_n};
+use cvlr_soroban_derive::rule;
+use soroban_sdk::Env;
+
+use crate::upgradeable::{
+    can_complete_migration, complete_migration, enable_migration,
+    specs::upgradeable_migratable_contract::UpgradeableMigratableContract, UpgradeableMigratable,
+};
+
+// property: P-13. Upgradeable-Panics.
+// description: Upgradeable functions panic in all appropriate cases.
+// status: verified
+
+#[rule]
+// upgrade panics if not auth by owner
+// status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
+pub fn upgrade_panics_if_not_auth_by_owner(e: Env) {
+    let operator = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let owner = UpgradeableMigratableContract::get_owner(&e);
+    clog!(cvlr_soroban::Addr(&owner));
+    let wasm_hash: soroban_sdk::BytesN<32> = nondet_bytes_n();
+    clog!(cvlr_soroban::BN(&wasm_hash));
+    cvlr_assume!(!is_auth(operator.clone()));
+    UpgradeableMigratableContract::upgrade(&e, wasm_hash, operator);
+    cvlr_assert!(false);
+}
+
+#[rule]
+// upgrade panics if operator != owner
+// status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
+pub fn upgrade_panics_if_operator_not_owner(e: Env) {
+    let operator = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let owner = UpgradeableMigratableContract::get_owner(&e);
+    clog!(cvlr_soroban::Addr(&owner));
+    cvlr_assume!(operator != owner);
+    let wasm_hash: soroban_sdk::BytesN<32> = nondet_bytes_n();
+    clog!(cvlr_soroban::BN(&wasm_hash));
+    UpgradeableMigratableContract::upgrade(&e, wasm_hash, operator);
+    cvlr_assert!(false);
+}
+
+#[rule]
+// migrate panics if not auth by owner
+// status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
+pub fn migrate_panics_if_not_auth_by_owner(e: Env) {
+    let operator = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let owner = UpgradeableMigratableContract::get_owner(&e);
+    clog!(cvlr_soroban::Addr(&owner));
+    cvlr_assume!(!is_auth(operator.clone()));
+    let migrate_data: u32 = nondet();
+    clog!(migrate_data);
+    UpgradeableMigratableContract::migrate(&e, migrate_data, operator);
+    cvlr_assert!(false);
+}
+
+#[rule]
+// migrate panics if migration has completed
+// status: verified
+// link: https://prover.certora.com/output/5771024/71f6d624f62a4e1190046a9fcd4e9367/?anonymousKey=e39a68cc04203d8137685e01d5f336de5dd77b75
+pub fn migrate_panics_if_migration_has_completed(e: Env) {
+    let operator = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    let owner = UpgradeableMigratableContract::get_owner(&e);
+    clog!(cvlr_soroban::Addr(&owner));
+    let migrate_data: u32 = nondet();
+    clog!(migrate_data);
+    let can_complete_migration = can_complete_migration(&e);
+    clog!(can_complete_migration);
+    cvlr_assume!(!can_complete_migration);
+    UpgradeableMigratableContract::migrate(&e, migrate_data, operator);
+    cvlr_assert!(false);
+}

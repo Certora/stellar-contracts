@@ -1,0 +1,75 @@
+use cvlr::{clog, cvlr_assert, cvlr_assume, cvlr_satisfy, nondet};
+use cvlr_soroban::{nondet_address, nondet_bytes_n};
+use cvlr_soroban_derive::rule;
+use soroban_sdk::Env;
+
+use crate::upgradeable::{
+    can_complete_migration, complete_migration, enable_migration,
+    specs::upgradeable_migratable_contract::UpgradeableMigratableContract, UpgradeableMigratable,
+};
+
+// property: P-12. Upgradeable-Integrity.
+// description: Upgradeable functions change state as expected.
+// status: verified
+
+#[rule]
+// after enable_migration can_complete_migration returns true
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn enable_migration_integrity(e: Env) {
+    let can_complete_migration_pre = can_complete_migration(&e);
+    clog!(can_complete_migration_pre);
+    enable_migration(&e);
+    let can_complete_migration_post = can_complete_migration(&e);
+    clog!(can_complete_migration_post);
+    cvlr_assert!(can_complete_migration_post);
+}
+
+#[rule]
+// after complete_migration can_complete_migration returns false
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn complete_migration_integrity(e: Env) {
+    let can_complete_migration_pre = can_complete_migration(&e);
+    clog!(can_complete_migration_pre);
+    complete_migration(&e);
+    let can_complete_migration_post = can_complete_migration(&e);
+    clog!(can_complete_migration_post);
+    cvlr_assert!(!can_complete_migration_post);
+}
+
+// integrity rules for the contract upgrade and migrate functions
+
+#[rule]
+// after upgrade can_complete_migration is true
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn upgrade_integrity(e: Env) {
+    let wasm_hash: soroban_sdk::BytesN<32> = nondet_bytes_n();
+    clog!(cvlr_soroban::BN(&wasm_hash));
+    let operator = nondet_address();
+    clog!(cvlr_soroban::Addr(&operator));
+    UpgradeableMigratableContract::upgrade(&e, wasm_hash, operator);
+    let can_complete_migration_post = can_complete_migration(&e);
+    clog!(can_complete_migration_post);
+    cvlr_assert!(can_complete_migration_post);
+}
+
+// after upgrade the current contract wasm is the given hash
+// we can't write it because there is no way to access the wasm
+
+#[rule]
+// after migrate can_complete_migration is false
+// status: verified
+// link: https://prover.certora.com/output/5771024/18dcab79cd5e4583a478fd894de6eb97/?anonymousKey=bdf7c7d122edcac69a2e91de959ff12e34ea34be
+pub fn migrate_integrity(e: Env) {
+    let migrate_data: u32 = nondet();
+    let operator = nondet_address();
+    UpgradeableMigratableContract::migrate(&e, migrate_data, operator);
+    let can_complete_migration_post = can_complete_migration(&e);
+    clog!(can_complete_migration_post);
+    cvlr_assert!(!can_complete_migration_post);
+}
+
+// migrate does not change contract wasm
+// we can't write it because there is no way to access the wasm

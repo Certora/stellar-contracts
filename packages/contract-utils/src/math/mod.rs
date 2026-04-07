@@ -49,6 +49,12 @@ pub use i256_fixed_point::{checked_mul_div_i256, mul_div_i256};
 #[cfg(test)]
 mod test;
 
+#[cfg(feature = "certora")]
+pub mod math_64;
+
+#[cfg(feature = "certora")]
+pub mod specs;
+
 use soroban_sdk::{contracterror, contracttype, Env};
 
 /// Trait for computing mul_div fixed-point calculations with Soroban host
