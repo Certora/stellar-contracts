@@ -45,8 +45,14 @@
 //! **Failure to follow this process may result in permanent DoS or silent
 //! security degradation.**
 
+#[cfg(feature = "certora")]
+use cvlr::nondet::Nondet;
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
 use soroban_sdk::{
-    auth::Context, contracterror, contractevent, contracttype, panic_with_error, Address, Env, Vec,
+    auth::Context, contracterror, contracttype, panic_with_error, Address, Env, Vec,
 };
 
 use crate::smart_account::ContextRule;
@@ -70,6 +76,13 @@ pub struct SimplePolicyEnforced {
 pub struct SimpleThresholdAccountParams {
     /// The minimum number of signers required for authorization.
     pub threshold: u32,
+}
+
+#[cfg(feature = "certora")]
+impl Nondet for SimpleThresholdAccountParams {
+    fn nondet() -> Self {
+        SimpleThresholdAccountParams { threshold: u32::nondet() }
+    }
 }
 
 /// Error codes for simple threshold policy operations.
@@ -200,6 +213,7 @@ pub fn enforce(
 
     if authenticated_signers.len() >= threshold {
         // emit event
+        #[cfg(not(feature = "certora"))]
         SimplePolicyEnforced {
             smart_account: smart_account.clone(),
             context: context.clone(),

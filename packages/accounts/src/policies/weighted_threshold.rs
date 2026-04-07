@@ -61,9 +61,16 @@
 //! }
 //! ```
 
+#[cfg(feature = "certora")]
+use cvlr::nondet::*;
+#[cfg(feature = "certora")]
+use cvlr_soroban::nondet_map;
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
 use soroban_sdk::{
-    auth::Context, contracterror, contractevent, contracttype, panic_with_error, Address, Env, Map,
-    Vec,
+    auth::Context, contracterror, contracttype, panic_with_error, Address, Env, Map, Vec,
 };
 
 // re-export
@@ -88,6 +95,13 @@ pub struct WeightedThresholdAccountParams {
     pub signer_weights: Map<Signer, u32>,
     /// The minimum total weight required for authorization.
     pub threshold: u32,
+}
+
+#[cfg(feature = "certora")]
+impl Nondet for WeightedThresholdAccountParams {
+    fn nondet() -> Self {
+        WeightedThresholdAccountParams { signer_weights: nondet_map(), threshold: nondet() }
+    }
 }
 
 /// Error codes for weighted threshold policy operations.
@@ -302,6 +316,7 @@ pub fn enforce(
 
     if total_weight >= params.threshold {
         // emit event
+        #[cfg(not(feature = "certora"))]
         WeightedPolicyEnforced {
             smart_account: smart_account.clone(),
             context: context.clone(),
@@ -491,7 +506,7 @@ pub fn uninstall(e: &Env, context_rule: &ContextRule, smart_account: &Address) {
 ///
 /// * [`WeightedThresholdError::MathOverflow`] - When the total weight
 ///   calculation would overflow.
-fn calculate_total_weight(e: &Env, signer_weights: &Map<Signer, u32>) -> u32 {
+pub fn calculate_total_weight(e: &Env, signer_weights: &Map<Signer, u32>) -> u32 {
     let mut total_weight: u32 = 0;
     for weight in signer_weights.values() {
         total_weight = total_weight

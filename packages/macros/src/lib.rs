@@ -1,15 +1,30 @@
 mod access_control;
+mod default_impl_macro;
 mod helpers;
 mod pausable;
 mod upgradeable;
 
 use access_control::{generate_any_role_check, generate_role_check};
+use default_impl_macro::generate_default_impl;
 use helpers::*;
 use pausable::generate_pause_check;
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput, ItemFn};
 use upgradeable::*;
+
+/* DEFAULT_IMPL_MACRO */
+
+/// Generates missing default implementations for supported contract traits.
+///
+/// This is intended to be used directly above `#[contractimpl]` on a trait
+/// implementation block.
+#[proc_macro_attribute]
+pub fn default_impl(attrs: TokenStream, item: TokenStream) -> TokenStream {
+    assert!(attrs.is_empty(), "This macro does not accept any arguments");
+
+    generate_default_impl(item)
+}
 
 /* ACCESS CONTROL MACROS */
 

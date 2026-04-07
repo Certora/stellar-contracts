@@ -32,10 +32,15 @@
 //!     period_ledgers: 17280,      // ~1 day in ledgers
 //! }
 //! ```
+#[cfg(feature = "certora")]
+use cvlr::nondet::Nondet;
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
 use soroban_sdk::{
     auth::{Context, ContractContext},
-    contracterror, contractevent, contracttype, panic_with_error, symbol_short, Address, Env,
-    TryFromVal, Vec,
+    contracterror, contracttype, panic_with_error, symbol_short, Address, Env, TryFromVal, Vec,
 };
 
 use crate::smart_account::{ContextRule, Signer};
@@ -61,6 +66,13 @@ pub struct SpendingLimitAccountParams {
     pub spending_limit: i128,
     /// The period in ledgers over which the spending limit applies.
     pub period_ledgers: u32,
+}
+
+#[cfg(feature = "certora")]
+impl Nondet for SpendingLimitAccountParams {
+    fn nondet() -> Self {
+        SpendingLimitAccountParams { spending_limit: i128::nondet(), period_ledgers: u32::nondet() }
+    }
 }
 
 /// Internal storage structure for spending limit tracking.
@@ -308,6 +320,7 @@ pub fn enforce(
 
                         e.storage().persistent().set(&key, &data);
 
+                        #[cfg(not(feature = "certora"))]
                         SpendingLimitPolicyEnforced {
                             smart_account: smart_account.clone(),
                             context: context.clone(),
