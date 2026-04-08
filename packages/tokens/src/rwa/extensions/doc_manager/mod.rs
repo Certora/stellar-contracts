@@ -29,7 +29,11 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, BytesN, Env, String, Vec};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, BytesN, Env, String, Vec};
 pub use storage::{
     get_document, get_document_by_index, get_document_count, get_documents, remove_document,
     set_document, Document, DocumentStorageKey,
@@ -170,6 +174,7 @@ pub fn emit_document_updated(
     document_hash: &BytesN<32>,
     timestamp: u64,
 ) {
+    #[cfg(not(feature = "certora"))]
     DocumentUpdated {
         name: name.clone(),
         uri: uri.clone(),
@@ -194,5 +199,6 @@ pub struct DocumentRemoved {
 /// * `e` - The Soroban environment.
 /// * `name` - The document name.
 pub fn emit_document_removed(e: &Env, name: &BytesN<32>) {
+    #[cfg(not(feature = "certora"))]
     DocumentRemoved { name: name.clone() }.publish(e);
 }

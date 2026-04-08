@@ -1,8 +1,8 @@
-use soroban_sdk::{contracttype, panic_with_error, Address, Env, MuxedAddress, String};
+use soroban_sdk::{contracttype, panic_with_error, Address, Env, String};
 
 use crate::fungible::{
-    emit_approve, emit_mint, emit_transfer, Base, FungibleTokenError, BALANCE_EXTEND_AMOUNT,
-    BALANCE_TTL_THRESHOLD,
+    emit_approve, emit_mint, emit_transfer, muxed_address, muxed_id, Base, FungibleTokenError,
+    MuxedAddress, BALANCE_EXTEND_AMOUNT, BALANCE_TTL_THRESHOLD,
 };
 
 /// Storage key that maps to [`AllowanceData`]
@@ -342,9 +342,10 @@ impl Base {
     ///
     /// Authorization for `from` is required.
     pub fn transfer(e: &Env, from: &Address, to: &MuxedAddress, amount: i128) {
+        let to_address = muxed_address(to);
         from.require_auth();
-        Base::update(e, Some(from), Some(&to.address()), amount);
-        emit_transfer(e, from, &to.address(), to.id(), amount);
+        Base::update(e, Some(from), Some(&to_address), amount);
+        emit_transfer(e, from, &to_address, muxed_id(to), amount);
     }
 
     /// Transfers `amount` of tokens from `from` to `to` using the

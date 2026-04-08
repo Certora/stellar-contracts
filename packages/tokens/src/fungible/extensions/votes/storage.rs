@@ -1,7 +1,7 @@
-use soroban_sdk::{Address, Env, MuxedAddress};
+use soroban_sdk::{Address, Env};
 use stellar_governance::votes::transfer_voting_units;
 
-use crate::fungible::{Base, ContractOverrides};
+use crate::fungible::{muxed_address, Base, ContractOverrides, MuxedAddress};
 
 pub struct FungibleVotes;
 
@@ -43,9 +43,10 @@ impl FungibleVotes {
     ///
     /// Authorization for `from` is required.
     pub fn transfer(e: &Env, from: &Address, to: &MuxedAddress, amount: i128) {
+        let to_address = muxed_address(to);
         Base::transfer(e, from, to, amount);
         if amount > 0 {
-            transfer_voting_units(e, Some(from), Some(&to.address()), amount as u128);
+            transfer_voting_units(e, Some(from), Some(&to_address), amount as u128);
         }
     }
 

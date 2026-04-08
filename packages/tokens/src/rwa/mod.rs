@@ -104,7 +104,14 @@ pub mod utils;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, Env, String};
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env, String};
 use stellar_contract_utils::pausable::Pausable;
 pub use storage::{RWAStorageKey, RWA};
 
@@ -445,6 +452,7 @@ pub struct TokenOnchainIdUpdated {
 /// * `e` - Access to the Soroban environment.
 /// * `onchain_id` - The address of the onchain ID.
 pub fn emit_token_onchain_id_updated(e: &Env, onchain_id: &Address) {
+    #[cfg(not(feature = "certora"))]
     TokenOnchainIdUpdated { onchain_id: onchain_id.clone() }.publish(e);
 }
 
@@ -466,6 +474,7 @@ pub struct RecoverySuccess {
 /// * `old_account` - The address of the old account.
 /// * `new_account` - The address of the new account.
 pub fn emit_recovery_success(e: &Env, old_account: &Address, new_account: &Address) {
+    #[cfg(not(feature = "certora"))]
     RecoverySuccess { old_account: old_account.clone(), new_account: new_account.clone() }
         .publish(e);
 }
@@ -488,6 +497,7 @@ pub struct AddressFrozen {
 /// * `user_address` - The wallet address that is affected.
 /// * `is_frozen` - The freezing status of the wallet.
 pub fn emit_address_frozen(e: &Env, user_address: &Address, is_frozen: bool) {
+    #[cfg(not(feature = "certora"))]
     AddressFrozen { user_address: user_address.clone(), is_frozen }.publish(e);
 }
 
@@ -508,6 +518,7 @@ pub struct TokensFrozen {
 /// * `user_address` - The wallet address where tokens are frozen.
 /// * `amount` - The amount of tokens that are frozen.
 pub fn emit_tokens_frozen(e: &Env, user_address: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     TokensFrozen { user_address: user_address.clone(), amount }.publish(e);
 }
 
@@ -528,6 +539,7 @@ pub struct TokensUnfrozen {
 /// * `user_address` - The wallet address where tokens are unfrozen.
 /// * `amount` - The amount of tokens that are unfrozen.
 pub fn emit_tokens_unfrozen(e: &Env, user_address: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     TokensUnfrozen { user_address: user_address.clone(), amount }.publish(e);
 }
 
@@ -548,6 +560,7 @@ pub struct Mint {
 /// * `to` - The address receiving the new tokens.
 /// * `amount` - The amount of tokens minted.
 pub fn emit_mint(e: &Env, to: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     Mint { to: to.clone(), amount }.publish(e);
 }
 
@@ -568,6 +581,7 @@ pub struct Burn {
 /// * `from` - The address from which tokens were burned.
 /// * `amount` - The amount of tokens burned.
 pub fn emit_burn(e: &Env, from: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     Burn { from: from.clone(), amount }.publish(e);
 }
 
@@ -586,6 +600,7 @@ pub struct ComplianceSet {
 /// * `e` - Access to the Soroban environment.
 /// * `compliance` - The address of the Compliance contract.
 pub fn emit_compliance_set(e: &Env, compliance: &Address) {
+    #[cfg(not(feature = "certora"))]
     ComplianceSet { compliance: compliance.clone() }.publish(e);
 }
 
@@ -606,6 +621,7 @@ pub struct ClaimTopicsAndIssuersSet {
 /// * `claim_topics_and_issuers` - The address of the Claim Topics and Issuers
 ///   contract.
 pub fn emit_claim_topics_and_issuers_set(e: &Env, claim_topics_and_issuers: &Address) {
+    #[cfg(not(feature = "certora"))]
     ClaimTopicsAndIssuersSet { claim_topics_and_issuers: claim_topics_and_issuers.clone() }
         .publish(e);
 }
@@ -625,5 +641,6 @@ pub struct IdentityVerifierSet {
 /// * `e` - Access to the Soroban environment.
 /// * `identity_verifier` - The address of the Identity Verifier contract.
 pub fn emit_identity_verifier_set(e: &Env, identity_verifier: &Address) {
+    #[cfg(not(feature = "certora"))]
     IdentityVerifierSet { identity_verifier: identity_verifier.clone() }.publish(e);
 }

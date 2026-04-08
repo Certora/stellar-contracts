@@ -3,7 +3,11 @@ pub mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractevent, Address, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{Address, Env};
 pub use storage::AllowList;
 
 use crate::fungible::FungibleToken;
@@ -99,6 +103,7 @@ pub struct UserDisallowed {
 /// * `e` - Access to Soroban environment.
 /// * `user` - The address that is allowed to transfer tokens.
 pub fn emit_user_allowed(e: &Env, user: &Address) {
+    #[cfg(not(feature = "certora"))]
     UserAllowed { user: user.clone() }.publish(e);
 }
 
@@ -109,5 +114,6 @@ pub fn emit_user_allowed(e: &Env, user: &Address) {
 /// * `e` - Access to Soroban environment.
 /// * `user` - The address that is disallowed from transferring tokens.
 pub fn emit_user_disallowed(e: &Env, user: &Address) {
+    #[cfg(not(feature = "certora"))]
     UserDisallowed { user: user.clone() }.publish(e);
 }

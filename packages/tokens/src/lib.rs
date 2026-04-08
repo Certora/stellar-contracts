@@ -12,8 +12,12 @@
 //! working with the respective token type.
 
 #![no_std]
+#![cfg_attr(feature = "certora", allow(unused_variables, unused_imports, dead_code))]
 
 pub mod fungible;
 pub mod non_fungible;
 pub mod rwa;
+#[cfg(not(feature = "certora"))]
 pub mod vault;
+#[cfg(feature = "certora")]
+pub mod vault_64;

@@ -3,7 +3,7 @@ pub mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracttrait, Address, Env};
+use soroban_sdk::{Address, Env};
 pub use storage::Enumerable;
 
 use crate::non_fungible::NonFungibleToken;
@@ -40,7 +40,6 @@ use crate::non_fungible::NonFungibleToken;
 /// 2. Enumerability can also be offloaded to off-chain services. This extension
 ///    exists for the use-cases where the enumeration is required as an on-chain
 ///    operation.
-#[contracttrait]
 pub trait NonFungibleEnumerable: NonFungibleToken<ContractType = Enumerable> {
     /// Returns the total amount of tokens stored by the contract.
     ///

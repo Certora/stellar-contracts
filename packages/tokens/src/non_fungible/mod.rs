@@ -72,10 +72,17 @@ mod utils;
 #[cfg(test)]
 mod test;
 
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
 pub use extensions::{burnable, consecutive, enumerable, royalties, votes};
 pub use overrides::{Base, ContractOverrides};
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
 // ################## TRAIT ##################
-use soroban_sdk::{contracterror, contractevent, contracttrait, Address, Env, String};
+use soroban_sdk::{contracterror, Address, Env, String};
 pub use storage::{ApprovalData, NFTStorageKey};
 pub use utils::sequential;
 
@@ -118,7 +125,6 @@ pub use utils::sequential;
 /// [`NonFungibleToken::transfer`] is implemented for the `Enumerable` contract
 /// type, you can find it using
 /// [`crate::non_fungible::extensions::enumerable::Enumerable::transfer`].
-#[contracttrait]
 pub trait NonFungibleToken {
     /// Helper type that allows us to override some of the functionality of the
     /// base trait based on the extensions implemented. You should use
@@ -431,6 +437,7 @@ pub struct Transfer {
 /// * `to` - The recipient address.
 /// * `token_id` - The token identifier.
 pub fn emit_transfer(e: &Env, from: &Address, to: &Address, token_id: u32) {
+    #[cfg(not(feature = "certora"))]
     Transfer { from: from.clone(), to: to.clone(), token_id }.publish(e);
 }
 
@@ -463,6 +470,7 @@ pub fn emit_approve(
     token_id: u32,
     live_until_ledger: u32,
 ) {
+    #[cfg(not(feature = "certora"))]
     Approve { approver: approver.clone(), token_id, approved: approved.clone(), live_until_ledger }
         .publish(e);
 }
@@ -487,6 +495,7 @@ pub struct ApproveForAll {
 /// * `operator` - The operator address.
 /// * `live_until_ledger` - The ledger number until which the approval is valid.
 pub fn emit_approve_for_all(e: &Env, owner: &Address, operator: &Address, live_until_ledger: u32) {
+    #[cfg(not(feature = "certora"))]
     ApproveForAll { owner: owner.clone(), operator: operator.clone(), live_until_ledger }
         .publish(e);
 }
@@ -508,5 +517,6 @@ pub struct Mint {
 /// * `to` - The recipient address.
 /// * `token_id` - The token identifier.
 pub fn emit_mint(e: &Env, to: &Address, token_id: u32) {
+    #[cfg(not(feature = "certora"))]
     Mint { to: to.clone(), token_id }.publish(e);
 }

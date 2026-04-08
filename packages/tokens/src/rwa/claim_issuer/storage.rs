@@ -300,8 +300,8 @@ pub fn get_keys_for_topic(e: &Env, claim_topic: u32) -> Vec<SigningKey> {
 ///   topic.
 pub fn get_registries(e: &Env, signing_key: &SigningKey) -> Vec<Address> {
     let pairs_storage_key = ClaimIssuerStorageKey::Pairs(signing_key.clone());
-
-    let iter = e
+    let mut registries = Vec::new(e);
+    let pairs = e
         .storage()
         .persistent()
         .get::<_, Vec<(u32, Address)>>(&pairs_storage_key)
@@ -312,11 +312,13 @@ pub fn get_registries(e: &Env, signing_key: &SigningKey) -> Vec<Address> {
                 KEYS_EXTEND_AMOUNT,
             );
         })
-        .unwrap_or_else(|| panic_with_error!(e, ClaimIssuerError::KeyNotFound))
-        .iter()
-        .map(|(_, addr)| addr);
+        .unwrap_or_else(|| panic_with_error!(e, ClaimIssuerError::KeyNotFound));
 
-    Vec::from_iter(e, iter)
+    for (_, registry) in pairs {
+        registries.push_back(registry);
+    }
+
+    registries
 }
 
 /// Checks if a public key and its scheme are allowed to sign claims for a

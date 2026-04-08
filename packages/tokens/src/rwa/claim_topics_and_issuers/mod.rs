@@ -3,7 +3,11 @@ pub mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractclient, contracterror, contractevent, Address, Env, Map, Vec};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contractclient, contracterror, Address, Env, Map, Vec};
 
 /// Trait for managing claim topics and trusted issuers for RWA tokens.
 ///
@@ -285,6 +289,7 @@ pub struct ClaimTopicAdded {
 /// * `e` - The Soroban environment.
 /// * `claim_topic` - The claim topic that was added.
 pub fn emit_claim_topic_added(e: &Env, claim_topic: u32) {
+    #[cfg(not(feature = "certora"))]
     ClaimTopicAdded { claim_topic }.publish(e);
 }
 
@@ -303,6 +308,7 @@ pub struct ClaimTopicRemoved {
 /// * `e` - The Soroban environment.
 /// * `claim_topic` - The claim topic that was removed.
 pub fn emit_claim_topic_removed(e: &Env, claim_topic: u32) {
+    #[cfg(not(feature = "certora"))]
     ClaimTopicRemoved { claim_topic }.publish(e);
 }
 
@@ -323,6 +329,7 @@ pub struct TrustedIssuerAdded {
 /// * `trusted_issuer` - The trusted issuer that was added.
 /// * `claim_topics` - The claim topics associated with the trusted issuer.
 pub fn emit_trusted_issuer_added(e: &Env, trusted_issuer: &Address, claim_topics: Vec<u32>) {
+    #[cfg(not(feature = "certora"))]
     TrustedIssuerAdded { trusted_issuer: trusted_issuer.clone(), claim_topics }.publish(e);
 }
 
@@ -341,6 +348,7 @@ pub struct TrustedIssuerRemoved {
 /// * `e` - The Soroban environment.
 /// * `trusted_issuer` - The trusted issuer that was removed.
 pub fn emit_trusted_issuer_removed(e: &Env, trusted_issuer: &Address) {
+    #[cfg(not(feature = "certora"))]
     TrustedIssuerRemoved { trusted_issuer: trusted_issuer.clone() }.publish(e);
 }
 
@@ -362,5 +370,6 @@ pub struct IssuerTopicsUpdated {
 /// * `trusted_issuer` - The trusted issuer whose claim topics were updated.
 /// * `claim_topics` - The updated claim topics.
 pub fn emit_issuer_topics_updated(e: &Env, trusted_issuer: &Address, claim_topics: Vec<u32>) {
+    #[cfg(not(feature = "certora"))]
     IssuerTopicsUpdated { trusted_issuer: trusted_issuer.clone(), claim_topics }.publish(e);
 }

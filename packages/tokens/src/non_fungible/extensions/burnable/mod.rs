@@ -4,7 +4,11 @@ use crate::non_fungible::{overrides::BurnableOverrides, NonFungibleToken};
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractevent, contracttrait, Address, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{Address, Env};
 
 /// Burnable Trait for Non-Fungible Token
 ///
@@ -37,7 +41,6 @@ use soroban_sdk::{contractevent, contracttrait, Address, Env};
 ///     }
 /// }
 /// ```
-#[contracttrait]
 pub trait NonFungibleBurnable: NonFungibleToken<ContractType: BurnableOverrides> {
     /// Destroys the token with `token_id` from `from`.
     ///
@@ -110,5 +113,6 @@ pub struct Burn {
 /// * `from` - The sender address.
 /// * `token_id` - The token identifier.
 pub fn emit_burn(e: &Env, from: &Address, token_id: u32) {
+    #[cfg(not(feature = "certora"))]
     Burn { from: from.clone(), token_id }.publish(e);
 }

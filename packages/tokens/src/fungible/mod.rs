@@ -75,13 +75,43 @@ mod utils;
 #[cfg(test)]
 mod test;
 
+#[cfg(feature = "certora")]
+pub mod specs;
+
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
 pub use extensions::{allowlist, blocklist, burnable, capped, votes};
 pub use overrides::{Base, ContractOverrides};
-use soroban_sdk::{
-    contracterror, contractevent, contracttrait, Address, Env, MuxedAddress, String,
-};
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+#[cfg(not(feature = "certora"))]
+pub use soroban_sdk::MuxedAddress;
+use soroban_sdk::{contracterror, Address, Env, String};
 pub use storage::{AllowanceData, AllowanceKey, FungibleStorageKey};
 pub use utils::{sac_admin_generic, sac_admin_wrapper};
+
+#[cfg(feature = "certora")]
+pub type MuxedAddress = Address;
+
+#[cfg(feature = "certora")]
+pub fn muxed_address(address: &MuxedAddress) -> Address {
+    address.clone()
+}
+
+#[cfg(not(feature = "certora"))]
+pub fn muxed_address(address: &MuxedAddress) -> Address {
+    address.address()
+}
+
+#[cfg(feature = "certora")]
+pub fn muxed_id(_: &MuxedAddress) -> Option<u64> {
+    None
+}
+
+#[cfg(not(feature = "certora"))]
+pub fn muxed_id(address: &MuxedAddress) -> Option<u64> {
+    address.id()
+}
 
 /// Vanilla Fungible Token Trait
 ///
@@ -126,7 +156,6 @@ pub use utils::{sac_admin_generic, sac_admin_wrapper};
 /// [`FungibleToken::transfer`] is implemented for the `Allowlist` contract
 /// type, you can find it using
 /// [`crate::fungible::allowlist::AllowList::transfer`].
-#[contracttrait]
 pub trait FungibleToken {
     /// Helper type that allows us to override some of the functionality of the
     /// base trait based on the extensions implemented. You should use
@@ -356,6 +385,7 @@ pub fn emit_transfer(
     to_muxed_id: Option<u64>,
     amount: i128,
 ) {
+    #[cfg(not(feature = "certora"))]
     Transfer { from: from.clone(), to: to.clone(), to_muxed_id, amount }.publish(e);
 }
 
@@ -387,6 +417,7 @@ pub fn emit_approve(
     amount: i128,
     live_until_ledger: u32,
 ) {
+    #[cfg(not(feature = "certora"))]
     Approve { owner: owner.clone(), spender: spender.clone(), amount, live_until_ledger }
         .publish(e);
 }
@@ -408,5 +439,6 @@ pub struct Mint {
 /// * `to` - The address receiving the new tokens.
 /// * `amount` - The amount of tokens to mint.
 pub fn emit_mint(e: &Env, to: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     Mint { to: to.clone(), amount }.publish(e);
 }

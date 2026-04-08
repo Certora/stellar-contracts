@@ -271,12 +271,19 @@
 //! - Non-sensitive jurisdictional data
 //! - Public compliance frameworks where transparency is required
 //! - Testing and development environments
+#[cfg(feature = "certora")]
+pub mod storage;
+#[cfg(not(feature = "certora"))]
 mod storage;
 
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contracterror, contractevent, Address, Env, FromVal, Val, Vec};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contracterror, Address, Env, FromVal, Val, Vec};
 pub use storage::{
     add_country_data_entries, add_identity, delete_country_data, get_country_data,
     get_country_data_entries, get_identity_profile, get_recovered_to, modify_country_data,
@@ -539,6 +546,7 @@ pub struct IdentityStored {
 /// * `account` - The account address associated with the identity.
 /// * `identity` - The identity address that was stored.
 pub fn emit_identity_stored(e: &Env, account: &Address, identity: &Address) {
+    #[cfg(not(feature = "certora"))]
     IdentityStored { account: account.clone(), identity: identity.clone() }.publish(e);
 }
 
@@ -560,6 +568,7 @@ pub struct IdentityUnstored {
 /// * `account` - The account address that had its identity removed.
 /// * `identity` - The identity address that was removed.
 pub fn emit_identity_unstored(e: &Env, account: &Address, identity: &Address) {
+    #[cfg(not(feature = "certora"))]
     IdentityUnstored { account: account.clone(), identity: identity.clone() }.publish(e);
 }
 
@@ -581,6 +590,7 @@ pub struct IdentityModified {
 /// * `old_identity` - The previous identity address.
 /// * `new_identity` - The new identity address.
 pub fn emit_identity_modified(e: &Env, old_identity: &Address, new_identity: &Address) {
+    #[cfg(not(feature = "certora"))]
     IdentityModified { old_identity: old_identity.clone(), new_identity: new_identity.clone() }
         .publish(e);
 }
@@ -603,6 +613,7 @@ pub struct IdentityRecovered {
 /// * `old_account` - The previous account address.
 /// * `new_account` - The new account address.
 pub fn emit_identity_recovered(e: &Env, old_account: &Address, new_account: &Address) {
+    #[cfg(not(feature = "certora"))]
     IdentityRecovered { old_account: old_account.clone(), new_account: new_account.clone() }
         .publish(e);
 }
@@ -649,6 +660,7 @@ pub fn emit_country_data_event(
     account: &Address,
     country_data: &CountryData,
 ) {
+    #[cfg(not(feature = "certora"))]
     match event_type {
         CountryDataEvent::Added =>
             CountryDataAdded { account: account.clone(), country_data: country_data.clone() }

@@ -139,11 +139,18 @@
 //! }
 //! ```
 
+#[cfg(feature = "certora")]
+pub mod storage;
+#[cfg(not(feature = "certora"))]
 mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractclient, contracterror, contractevent, Address, Bytes, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{contractclient, contracterror, Address, Bytes, Env};
 pub use storage::{
     allow_key, build_claim_identifier, decode_claim_data_expiration, encode_claim_data_expiration,
     get_current_nonce_for, get_keys_for_topic, get_registries, invalidate_claim_signatures,
@@ -268,6 +275,7 @@ pub fn emit_key_allowed(
     scheme: u32,
     claim_topic: u32,
 ) {
+    #[cfg(not(feature = "certora"))]
     KeyAllowed { public_key: public_key.clone(), registry: registry.clone(), scheme, claim_topic }
         .publish(e)
 }
@@ -288,6 +296,7 @@ pub fn emit_key_removed(
     scheme: u32,
     claim_topic: u32,
 ) {
+    #[cfg(not(feature = "certora"))]
     KeyRemoved { public_key: public_key.clone(), registry: registry.clone(), scheme, claim_topic }
         .publish(e)
 }
@@ -321,6 +330,7 @@ pub fn emit_revocation_event(
     claim_data: &Bytes,
     revoked: bool,
 ) {
+    #[cfg(not(feature = "certora"))]
     ClaimRevoked {
         identity: identity.clone(),
         claim_topic,
@@ -351,6 +361,7 @@ pub struct SignaturesInvalidated {
 /// * `claim_topic` - The claim topic for which signatures are invalidated.
 /// * `nonce` - The nonce value before invalidation.
 pub fn emit_signatures_invalidated(e: &Env, identity: &Address, claim_topic: u32, nonce: u32) {
+    #[cfg(not(feature = "certora"))]
     SignaturesInvalidated { identity: identity.clone(), claim_topic, nonce }.publish(e);
 }
 

@@ -96,10 +96,22 @@ pub fn add_claim(
     data: &Bytes,
     uri: &String,
 ) -> BytesN<32> {
+
+    #[cfg(not(feature = "certora"))]
     let claim_issuer_client = ClaimIssuerClient::new(e, issuer);
     let identity = e.current_contract_address();
 
+    #[cfg(not(feature = "certora"))]
     claim_issuer_client.is_claim_valid(&identity, &topic, &scheme, signature, data);
+    #[cfg(feature = "certora")]
+    <crate::rwa::specs::mocks::claim_issuer_trivial::ClaimIssuerTrivial as crate::rwa::claim_issuer::ClaimIssuer>::is_claim_valid(
+        e,
+        identity,
+        topic,
+        scheme,
+        signature.clone(),
+        data.clone(),
+    );
 
     let claim_id = generate_claim_id(e, issuer, topic);
 

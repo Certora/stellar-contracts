@@ -3,7 +3,11 @@ mod storage;
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractevent, contracttrait, Address, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{Address, Env};
 
 use crate::fungible::{Base, FungibleToken};
 
@@ -20,7 +24,6 @@ use crate::fungible::{Base, FungibleToken};
 /// Excluding the `burn` functionality from the `[FungibleToken]` trait
 /// is a deliberate design choice to accommodate flexibility and customization
 /// for various smart contract use cases.
-#[contracttrait]
 pub trait FungibleBurnable: FungibleToken {
     /// Destroys `amount` of tokens from `from`. Updates the total
     /// supply accordingly.
@@ -93,5 +96,6 @@ pub struct Burn {
 /// * `from` - The address holding the tokens.
 /// * `amount` - The amount of tokens to be burned.
 pub fn emit_burn(e: &Env, from: &Address, amount: i128) {
+    #[cfg(not(feature = "certora"))]
     Burn { from: from.clone(), amount }.publish(e);
 }

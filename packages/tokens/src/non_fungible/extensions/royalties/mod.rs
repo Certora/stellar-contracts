@@ -1,10 +1,17 @@
+#[cfg(feature = "certora")]
+pub mod storage;
+#[cfg(not(feature = "certora"))]
 mod storage;
 use crate::non_fungible::NonFungibleToken;
 
 #[cfg(test)]
 mod test;
 
-use soroban_sdk::{contractevent, Address, Env};
+#[cfg(feature = "certora")]
+use cvlr_soroban_derive::contractevent;
+#[cfg(not(feature = "certora"))]
+use soroban_sdk::contractevent;
+use soroban_sdk::{Address, Env};
 
 /// Royalties Trait for Non-Fungible Token (ERC2981)
 ///
@@ -148,6 +155,7 @@ pub struct SetDefaultRoyalty {
 /// * `receiver` - The royalty receiver address.
 /// * `basis_points` - The royalty basis points.
 pub fn emit_set_default_royalty(e: &Env, receiver: &Address, basis_points: u32) {
+    #[cfg(not(feature = "certora"))]
     SetDefaultRoyalty { receiver: receiver.clone(), basis_points }.publish(e);
 }
 
@@ -171,6 +179,7 @@ pub struct SetTokenRoyalty {
 /// * `token_id` - The token identifier.
 /// * `basis_points` - The royalty basis points.
 pub fn emit_set_token_royalty(e: &Env, receiver: &Address, token_id: u32, basis_points: u32) {
+    #[cfg(not(feature = "certora"))]
     SetTokenRoyalty { receiver: receiver.clone(), token_id, basis_points }.publish(e);
 }
 
@@ -189,5 +198,6 @@ pub struct RemoveTokenRoyalty {
 /// * `e` - The Soroban environment.
 /// * `token_id` - The token identifier.
 pub fn emit_remove_token_royalty(e: &Env, token_id: u32) {
+    #[cfg(not(feature = "certora"))]
     RemoveTokenRoyalty { token_id }.publish(e);
 }

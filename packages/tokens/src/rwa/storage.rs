@@ -1,8 +1,8 @@
-use soroban_sdk::{contracttype, panic_with_error, Address, Env, MuxedAddress, String};
+use soroban_sdk::{contracttype, panic_with_error, Address, Env, String};
 use stellar_contract_utils::pausable::{paused, PausableError};
 
 use crate::{
-    fungible::{emit_transfer, Base, ContractOverrides},
+    fungible::{emit_transfer, muxed_address, Base, ContractOverrides, MuxedAddress},
     rwa::{
         compliance::ComplianceClient, emit_address_frozen, emit_burn, emit_compliance_set,
         emit_identity_verifier_set, emit_mint, emit_recovery_success,
@@ -33,7 +33,8 @@ pub struct RWA;
 
 impl ContractOverrides for RWA {
     fn transfer(e: &Env, from: &Address, to: &MuxedAddress, amount: i128) {
-        RWA::transfer(e, from, &to.address(), amount);
+        let to_address = muxed_address(to);
+        RWA::transfer(e, from, &to_address, amount);
     }
 
     fn transfer_from(e: &Env, spender: &Address, from: &Address, to: &Address, amount: i128) {
@@ -216,8 +217,12 @@ impl RWA {
         Base::update(e, Some(from), Some(to), amount);
 
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         compliance_client.transferred(from, to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::transferred(e, from.clone(), to.clone(), amount, e.current_contract_address());
 
         emit_transfer(e, from, to, None, amount);
     }
@@ -260,14 +265,24 @@ impl RWA {
     /// ```
     pub fn mint(e: &Env, to: &Address, amount: i128) {
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(to);
 
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial as super::identity_verifier::IdentityVerifier>::verify_identity(e, to);
+
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
 
+        #[cfg(not(feature = "certora"))]
         let can_create: bool =
             compliance_client.can_create(to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        let can_create: bool =
+            <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::can_create(e, to.clone(), amount, e.current_contract_address());
 
         if !can_create {
             panic_with_error!(e, RWAError::MintNotCompliant);
@@ -275,7 +290,10 @@ impl RWA {
 
         Base::update(e, None, Some(to), amount);
 
+        #[cfg(not(feature = "certora"))]
         compliance_client.created(to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::created(e, to.clone(), amount, e.current_contract_address());
 
         emit_mint(e, to, amount);
     }
@@ -324,8 +342,12 @@ impl RWA {
         Base::update(e, Some(user_address), None, amount);
 
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         compliance_client.destroyed(user_address, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::destroyed(e, user_address.clone(), amount, e.current_contract_address());
 
         emit_burn(e, user_address, amount);
     }
@@ -374,12 +396,21 @@ impl RWA {
     pub fn recover_balance(e: &Env, old_account: &Address, new_account: &Address) -> bool {
         // Verify identity for the new account
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(new_account);
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial as super::identity_verifier::IdentityVerifier>::verify_identity(e, new_account);
 
         // Verify that the new account is the recovery target for the old account
+        #[cfg(not(feature = "certora"))]
         let recovery_target = identity_verifier_client
             .recovery_target(old_account)
+            .unwrap_or_else(|| panic_with_error!(e, RWAError::IdentityMismatch));
+
+        #[cfg(feature = "certora")]
+        let recovery_target = <super::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial as super::identity_verifier::IdentityVerifier>::recovery_target(e, old_account)
             .unwrap_or_else(|| panic_with_error!(e, RWAError::IdentityMismatch));
 
         if recovery_target != *new_account {
@@ -638,15 +669,28 @@ impl RWA {
         }
 
         let identity_verifier_addr = Self::identity_verifier(e);
+        #[cfg(not(feature = "certora"))]
         let identity_verifier_client = IdentityVerifierClient::new(e, &identity_verifier_addr);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(from);
+        #[cfg(not(feature = "certora"))]
         identity_verifier_client.verify_identity(to);
+        #[cfg(feature = "certora")]
+        {
+            <super::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial as super::identity_verifier::IdentityVerifier>::verify_identity(e, from);
+            <super::specs::mocks::identity_verifier_trivial::IdentityVerifierTrivial as super::identity_verifier::IdentityVerifier>::verify_identity(e, to);
+        }
 
         // Validate compliance rules for the transfer
         let compliance_addr = Self::compliance(e);
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &compliance_addr);
+        #[cfg(not(feature = "certora"))]
         let can_transfer: bool =
             compliance_client.can_transfer(from, to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        let can_transfer: bool =
+            <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::can_transfer(e, from.clone(), to.clone(), amount, e.current_contract_address());
 
         if !can_transfer {
             panic_with_error!(e, RWAError::TransferNotCompliant);
@@ -680,8 +724,12 @@ impl RWA {
 
         Base::update(e, Some(from), Some(to), amount);
 
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &Self::compliance(e));
+        #[cfg(not(feature = "certora"))]
         compliance_client.transferred(from, to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::transferred(e, from.clone(), to.clone(), amount, e.current_contract_address());
         emit_transfer(e, from, to, None, amount);
     }
 
@@ -710,8 +758,12 @@ impl RWA {
 
         Base::update(e, Some(from), Some(to), amount);
 
+        #[cfg(not(feature = "certora"))]
         let compliance_client = ComplianceClient::new(e, &Self::compliance(e));
+        #[cfg(not(feature = "certora"))]
         compliance_client.transferred(from, to, &amount, &e.current_contract_address());
+        #[cfg(feature = "certora")]
+        <super::specs::mocks::compliance_trivial::ComplianceTrivial as super::compliance::Compliance>::transferred(e, from.clone(), to.clone(), amount, e.current_contract_address());
         emit_transfer(e, from, to, None, amount);
     }
 }

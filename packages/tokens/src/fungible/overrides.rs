@@ -1,4 +1,6 @@
-use soroban_sdk::{Address, Env, MuxedAddress, String};
+use soroban_sdk::{Address, Env, String};
+
+use crate::fungible::MuxedAddress;
 
 /// Based on the extension, some default behavior of
 /// [`crate::fungible::FungibleToken`] might have to be overridden. This is a
