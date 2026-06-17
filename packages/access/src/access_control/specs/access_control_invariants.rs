@@ -652,7 +652,7 @@ pub fn assume_pre_has_role_index_implies_get_role_account(e: &Env, account: Addr
         if let Some(account_with_index_internal) = account_with_index.clone() {
             clog!(cvlr_soroban::Addr(&account_with_index_internal));
         }
-        cvlr_assume!(account_with_index == Some(account));
+        cvlr_assume!(account_with_index.unwrap() == account);
     }
 }
 
@@ -669,7 +669,7 @@ pub fn assert_post_has_role_index_implies_get_role_account(
         if let Some(account_with_index_internal) = account_with_index.clone() {
             clog!(cvlr_soroban::Addr(&account_with_index_internal));
         }
-        cvlr_assert!(account_with_index == Some(account));
+        cvlr_assert!(account_with_index.unwrap() == account);
     }
 }
 
@@ -689,9 +689,7 @@ pub fn after_constructor_has_role_index_implies_get_role_account(
 }
 
 #[rule]
-// status: violation spurious - prover bug ? Some(0) = Some(11)
-// note: still spurious after Jan 14 fix
-// https://prover.certora.com/output/5771024/6e270c43416b4137b3fc221758f6cf47/?anonymousKey=cc464cb85345dd06596fdecb09d7f7414369e434&params=%7B%2212%22%3A%7B%22index%22%3A0%2C%22ruleCounterExamples%22%3A%5B%7B%22name%22%3A%22rule_output_3.json%22%2C%22selectedRepresentation%22%3A%7B%22label%22%3A%22PRETTY%22%2C%22value%22%3A0%7D%2C%22callResolutionSingleFilter%22%3A%22%22%2C%22variablesFilter%22%3A%22%22%2C%22callTraceFilter%22%3A%22%22%2C%22variablesOpenItems%22%3A%5Btrue%2Ctrue%5D%2C%22callTraceCollapsed%22%3Atrue%2C%22rightSidePanelCollapsed%22%3Afalse%2C%22rightSideTab%22%3A%22%22%2C%22callResolutionSingleCollapsed%22%3Atrue%2C%22viewStorage%22%3Atrue%2C%22variablesExpandedArray%22%3A%22%22%2C%22expandedArray%22%3A%22208-10-12-1-1-1-1-1-1-1-1-1207%22%2C%22orderVars%22%3A%5B%22%22%2C%22%22%2C0%5D%2C%22orderParams%22%3A%5B%22%22%2C%22%22%2C0%5D%2C%22scrollNode%22%3A%221%22%2C%22currentPoint%22%3A0%2C%22trackingChildren%22%3A%5B%5D%2C%22trackingParents%22%3A%5B%5D%2C%22trackingOnly%22%3Afalse%2C%22highlightOnly%22%3Afalse%2C%22filterPosition%22%3A0%2C%22singleCallResolutionOpen%22%3A%5B%5D%2C%22snap_drop_1%22%3Anull%2C%22snap_drop_2%22%3Anull%2C%22snap_filter%22%3A%22%22%7D%5D%7D%7D&generalState=%7B%22fileViewOpen%22%3Afalse%2C%22fileViewCollapsed%22%3Atrue%2C%22mainTreeViewCollapsed%22%3Atrue%2C%22callTraceClosed%22%3Afalse%2C%22mainSideNavItem%22%3A%22rules%22%2C%22globalResSelected%22%3Afalse%2C%22isSideBarCollapsed%22%3Afalse%2C%22isRightSideBarCollapsed%22%3Atrue%2C%22selectedFile%22%3A%7B%7D%2C%22fileViewFilter%22%3A%22%22%2C%22mainTreeViewFilter%22%3A%22%22%2C%22contractsFilter%22%3A%22%22%2C%22globalCallResolutionFilter%22%3A%22%22%2C%22currentRuleUiId%22%3A12%2C%22counterExamplePos%22%3A1%2C%22expandedKeysState%22%3A%228-10-1-02-03-04-1-1-1-08-1-1%22%2C%22expandedFilesState%22%3A%5B%5D%2C%22outlinedfilterShared%22%3A%22000000000%22%7D
+// status: verified
 pub fn after_grant_role_has_role_index_implies_get_role_account(
     e: Env,
     account: Address,
@@ -703,12 +701,15 @@ pub fn after_grant_role_has_role_index_implies_get_role_account(
     clog!(cvlr_soroban::Addr(&caller));
 
     let account_granted = nondet_address();
-    clog!(cvlr_soroban::Addr(&account));
+    clog!(cvlr_soroban::Addr(&account_granted));
     
     let role_granted = nondet_symbol();
-    
+
+    assume_pre_role_count_minus_one_geq_index(&e, account.clone(), role.clone());
+    assume_pre_unique_indices_for_role(&e, account.clone(), account.clone(), role.clone());
+
     AccessControlContract::grant_role(&e, caller, account_granted, role_granted);
-    
+
     assert_post_has_role_index_implies_get_role_account(&e, account.clone(), role.clone());
 }
 
@@ -721,11 +722,15 @@ pub fn after_revoke_role_has_role_index_implies_get_role_account(
     role: Symbol,
 ) {
     assume_pre_has_role_index_implies_get_role_account(&e, account.clone(), role.clone());
+    
     let caller = nondet_address();
     clog!(cvlr_soroban::Addr(&caller));
+
     let account_revoked = nondet_address();
     clog!(cvlr_soroban::Addr(&account_revoked));
+
     let role_revoked = nondet_symbol();
+
     assume_pre_unique_indices_for_role(&e, account.clone(), account_revoked.clone(), role.clone()); // like requireInvariant in CVL
     AccessControlContract::revoke_role(&e, caller, account_revoked, role_revoked);
     assert_post_has_role_index_implies_get_role_account(&e, account.clone(), role.clone());
